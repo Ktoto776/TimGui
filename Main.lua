@@ -21,9 +21,9 @@ local function Open()
         else script = game:HttpGet(Setup.linkToDir.."TimGui.lua")
         end loadstring(script)()
     end
-end 
+end
 --Start
-if not _G.TimGUI then
+if not _G.TimGui then
     Open()
 else Open()
 end

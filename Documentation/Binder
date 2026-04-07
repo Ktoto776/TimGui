@@ -20,7 +20,7 @@
         },"TObjectSize":{
             "type":"class",
             "class":"Bind",
-            "description":"Бинд для установки размера кнопкам. Не забывай про TimGui.GuiSize.ButtonSize,TGuiObject.ParentIsGlobal! Параметры: TGuiObject:TGuiObject",
+            "description":"Бинд для установки размера кнопкам. Не забывай про TimGui.GuiSize.ButtonSize! Параметры: TGuiObject:TGuiObject",
             "canChange":false,
             "deprecated":false
         },"ButtonPositionBind":{
@@ -35,10 +35,22 @@
             "description":"Бинд для установки позиции глобальным группам. Параметры: GlobalGroup:TGuiObject+GUIArchitecture,pos:UDim2 --pos=то что вернул, последний запуск бинда, по умолчанию следующая позиция",
             "canChange":true,
             "deprecated":false
+        },"GlobalGroupRefreshSize":{
+            "type":"class",
+            "class":"Bind",
+            "description":"Бинд для установки размера глобальным группам. Не забывай про TimGui.GuiSize.ButtonSize. Параметры: GlobalGroup:TGuiObject+GUIArchitecture",
+            "canChange":true,
+            "deprecated":false
         },"RefreshingBind":{
             "type":"class",
             "class":"Bind",
             "description":"Бинд для запуска обновлений. Параметры: Children:[TGuiObject,...], FromObject:TGuiObject--От какого обьекта начинать. Должно вернуть UDim2 с концом(после последнего обьекта)",
+            "canChange":true,
+            "deprecated":false
+        },"VisibleBind":{
+            "type":"class",
+            "class":"Bind",
+            "description":"Бинд для подсчёта видимости обьекта(свойство Visible работает поверх и его подсчитывать не нужно). Ну забудь про TGuiObject.Parent.Opened(и про проверки что Parent группа). Параметры: TGuiObject:TGuiObject--От какого обьекта начинать. Должно вернуть UDim2 с концом(после последнего обьекта)",
             "canChange":true,
             "deprecated":false
         }

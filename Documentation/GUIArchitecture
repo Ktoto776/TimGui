@@ -10,11 +10,6 @@
             "description":"Размер группы(Последняя полученная точка при запуске :Refresh())",
             "canChange":true,
             "deprecated":false
-        },"SpecialGlobalGroupRefreshPosition":{
-            "type":"UDim2",
-            "description":"Биндер для обновления позиций кнопок в группе. Работает как в Binder.GlobalGroupRefreshPosition",
-            "canChange":true,
-            "deprecated":false
         },"IsGlobal":{
             "type":"boolean",
             "description":"Глобальная ли группа",

@@ -15,6 +15,16 @@
             "description":"Открыта ли группа",
             "canChange":true,
             "deprecated":false
+        },"SpecialGlobalGroupRefreshPosition":{
+            "type":"UDim2",
+            "description":"Биндер для обновления позиций кнопок в группе. Работает как в Binder.GlobalGroupRefreshPosition",
+            "canChange":true,
+            "deprecated":false
+        },"SpecialGlobalGroupRefreshSize":{
+            "type":"UDim2",
+            "description":"Биндер для обновления позиций кнопок в группе. Работает как в Binder.GlobalGroupRefreshSize",
+            "canChange":true,
+            "deprecated":false
         }
     }, 
     "methods":{}, 

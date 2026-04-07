@@ -80,6 +80,11 @@
             "description":"Если true, то этот обьект видим и с ним можно взаимодейсвовать",
             "canChange":true,
             "deprecated":false
+        },"SpecialVisibleBind":{
+            "type":"Bind",
+            "description":"Специальный бинд для точной прорисовки кнопки(если группа не открыта, не показывать. свойство Visible считается само), работает как в Binder.VisibleBind",
+            "canChange":true,
+            "deprecated":false
         }
     }, 
     "methods":{

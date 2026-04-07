@@ -12,7 +12,14 @@
             "deprecated":false
         }
     }, 
-    "methods":{}, 
+    "methods":{
+        "Activate":{
+            "description":"Эмулирует нажатие на кнопку",
+            "args":[],
+            "return":[], 
+            "deprecated":false
+        }
+    }, 
     "events":{
         "Activated":{
             "description":"Если изменился предок(parent или parent.parent и тд)",
