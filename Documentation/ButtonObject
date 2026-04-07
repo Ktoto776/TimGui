@@ -1,0 +1,24 @@
+{
+    "description":"Класс который содержит TextButton",
+    "type":"class",
+    "classes":["TClass","TGuiObject","ButtonObject"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "Button":{
+            "type":"Instance: TextButton",
+            "description":"Кнопка.",
+            "canChange":false,
+            "deprecated":false
+        }
+    }, 
+    "methods":{}, 
+    "events":{
+        "Activated":{
+            "description":"Если изменился предок(parent или parent.parent и тд)",
+            "type":"TEvent.Event",
+            "args":[],
+            "deprecated":false
+        }
+    }
+}

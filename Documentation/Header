@@ -1,0 +1,21 @@
+{
+    "description":"Класс для цветов, использующий пресеты",
+    "type":"class",
+    "classes":["TClass","Preset","Colors"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "SeparatorSize":{
+            "type":"number",
+            "description":"Цвет стрелочки открытия",
+            "canChange":true,
+            "deprecated":false
+        },"FirstName":{
+            "type":"string",
+            "description":"Первая часть Имени",
+            "canChange":true,
+            "deprecated":false
+        }
+    }, "methods":{}, 
+    "events":{}
+}

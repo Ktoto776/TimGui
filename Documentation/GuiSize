@@ -1,0 +1,61 @@
+{
+    "description":"Класс для цветов, использующий пресеты",
+    "type":"class",
+    "classes":["TClass","Preset","GuiSize"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "ButtonCornerRadius":{
+            "type":"UDim",
+            "description":"Радиус скруглённых кнопок",
+            "canChange":true,
+            "deprecated":false
+        },"HeaderSize":{
+            "type":"UDim",
+            "description":"Высота заголовка",
+            "canChange":true,
+            "deprecated":false
+        },"SayingFontSize":{
+            "type":"UDim",
+            "description":"Размер шрифта текста над кнопкой открытия(Scale - размер кнопки)",
+            "canChange":true,
+            "deprecated":false
+        },"AnchorPoint":{
+            "type":"UDim2",
+            "description":"Размер заголовка",
+            "canChange":true,
+            "deprecated":false
+        },"Height":{
+            "type":"UDim",
+            "description":"Высота основы(без заголовка)",
+            "canChange":true,
+            "deprecated":false
+        },"Width":{
+            "type":"UDim",
+            "description":"Ширина основы",
+            "canChange":true,
+            "deprecated":false
+        },"XPosition":{
+            "type":"UDim",
+            "description":"X координата для позиции",
+            "canChange":true,
+            "deprecated":false
+        },"YPosition":{
+            "type":"UDim",
+            "description":"X координата для позиции",
+            "canChange":true,
+            "deprecated":false
+        },"GroupsSize":{
+            "type":"UDim",
+            "description":"Размер для групп",
+            "canChange":true,
+            "deprecated":false
+        },"DefaultPositionEnabled":{
+            "type":"boolean",
+            "description":"Включены ли позиции по умолчанию",
+            "canChange":true,
+            "deprecated":false
+        }
+    }, "methods":{}, 
+    "events":{}
+}

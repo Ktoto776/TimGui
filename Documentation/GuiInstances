@@ -1,0 +1,66 @@
+{
+    "description":"Класс для цветов, использующий пресеты",
+    "type":"class",
+    "classes":["TClass","Preset","GuiInstances"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "ScreenGui":{
+            "type":"Instance: ScreenGui",
+            "description":"Главный ScreenGui",
+            "canChange":false,
+            "deprecated":false
+        },"Main":{
+            "type":"Instance: Frame",
+            "description":"Главный Frame TimGui, на котором расположено само меню",
+            "canChange":false,
+            "deprecated":false
+        },"Header":{
+            "type":"Instance: ImageButton",
+            "description":"Заголовок",
+            "canChange":false,
+            "deprecated":false
+        },"OpenImage":{
+            "type":"Instance: ImageLabel",
+            "description":"Иконка открытия(обычно,стрелочка)",
+            "canChange":false,
+            "deprecated":false
+        },"LoadingStateImage":{
+            "type":"Instance: ImageLabel",
+            "description":"Иконка которая появляется при загрузке вместо кнопки открытия",
+            "canChange":false,
+            "deprecated":false
+        },"ErrorStateImage":{
+            "type":"Instance: ImageLabel",
+            "description":"Иконка которая появляется при ошибке вместо кнопки открытия",
+            "canChange":false,
+            "deprecated":false
+        },"Saying":{
+            "type":"Instance: Frame",
+            "description":"Текст над кнопкой открытия, появляющийся при наводке на эту кнопку",
+            "canChange":false,
+            "deprecated":false
+        },"State":{
+            "type":"Instance: Frame",
+            "description":"Frame со статусами и кнопкой 'Открыть'",
+            "canChange":false,
+            "deprecated":false
+        },"FirstHeaderName":{
+            "type":"Instance: TextLabel",
+            "description":"Первая часть текста заголовка",
+            "canChange":false,
+            "deprecated":false
+        },"SecondHeaderName":{
+            "type":"Instance: TextLabel",
+            "description":"Вторая часть текста заголовка",
+            "canChange":false,
+            "deprecated":false
+        },"HeaderSeparator":{
+            "type":"Instance: Frame",
+            "description":"Разделитель в заголовке",
+            "canChange":false,
+            "deprecated":false
+        }
+    }, "methods":{}, 
+    "events":{}
+}

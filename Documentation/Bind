@@ -1,0 +1,63 @@
+{
+    "description":"Список функций, запускает каждую функцию поочереди с самой недавней и если вернёт не nil вернёт значение",
+    "type":"class",
+    "classes":["TClass","Binder"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "ArrowAnimation":{
+            "type":"class",
+            "class":"Bind",
+            "description":"Бинд для Анимации стрелочки. Параметры: Arrow:UIBase,isOpened:boolean",
+            "canChange":true,
+            "deprecated":false
+        }
+    }, "methods":{
+        "Bind":{
+            "description":"Вставляет функцию в список",
+            "args":[{
+                    "name":"func",
+                    "type":"(...)->(boolean)",
+                    "description":"Функция",
+                    "required":true
+                }
+            ],
+            "return":[], 
+            "deprecated":false
+        },
+        "Run":{
+            "description":"Запускает функции с теме же параметрами с чем и запускался Run(...)",
+            "args":[{
+                    "name":"...",
+                    "type":"any...",
+                    "description":"Всё что угодно, может быть написано в классе Binder",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"any",
+                    "description":"nil - если не одна функция не была запущена успешно."
+                }
+            ], "deprecated":false
+        }
+    }, 
+    "events":{
+        "OnRun":{
+            "description":"Запускается при Bind:Run",
+            "type":"TEvent",
+            "args":[{
+                    "name":"...",
+                    "type":"any...",
+                    "description":"Всё что угодно, может быть написано в классе Binder"
+                }
+            ],
+            "deprecated":false
+        },"OnBinded":{
+            "description":"Запускается при Bind:Bind",
+            "type":"RBXScriptEvent",
+            "args":[],
+            "deprecated":false
+        }
+    }
+}

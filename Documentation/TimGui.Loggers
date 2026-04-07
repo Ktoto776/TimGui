@@ -1,0 +1,48 @@
+{
+    "description":"Хранится в TimGui.Logger",
+    "type":"class",
+    "class":"Loggers",
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "Log":{
+            "type":"table",
+            "description":"Весь лог всех скриптов, массив состоящий из таблиц с ключами: type[string],result[string],place[string?],data[any],stringData[string],scriptName[string],loggerId[number]",
+            "canChange":false,
+            "deprecated":false
+        }
+    }, "methods":{
+        "IsA":{
+            "description":"Сравнивает имя класса с 1 параметром, может также выдать true при сокращенном варианте(Loggers)",
+            "args":[{
+                    "name":"className",
+                    "type":"string",
+                    "description":"Имя класса для сравнения",
+                    "required":true
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"string | nil",
+                    "description":"Является ли потомком этого класса(или самим классом)"
+                }
+            ], "deprecated":false
+        },
+        "New":{
+            "description":"Создаёт новый логгер",
+            "args":[{
+                    "name":"scriptName",
+                    "type":"string",
+                    "description":"Название скрипта",
+                    "required":true
+                }
+            ],
+            "return":[{
+                    "name":"logger",
+                    "type":"Class: TGuiLogger",
+                    "description":"Логгер"
+                }
+            ], "deprecated":false
+        }
+    }, "events":{}
+}

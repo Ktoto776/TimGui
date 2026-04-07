@@ -1,0 +1,122 @@
+{
+    "type":"class",
+    "class":"TClasses",
+    "description":"Класс TClasses для создания своих классов",
+    "deprecated":false,
+    "properties":{},
+    "methods":{
+        "IsA":{
+            "description":"Сравнивает имя класса 1 параметра со 2 параметром. И если оно даже не относится к TClass выдает false",
+            "args":[{
+                    "name":"object",
+                    "type":"any",
+                    "description":"Обьект для сравнения",
+                    "required":true
+                },{
+                    "name":"className",
+                    "type":"string",
+                    "description":"Имя класса для сравнения",
+                    "required":true
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"boolean",
+                    "description":"Является ли потомком этого класса(или самим классом)"
+                }
+            ], "deprecated":false
+        }, "CreateTEvent":{ 
+            "description":"Кастомный Event по типу Bindable Event, чтобы передавать таблицы без ошибок(если ты не сталкиваешься с тупыми ошибками, как при table.clone, то используй встроенный BindableEvent)",
+            "args":[{
+                    "name":"Event",
+                    "type":"TEvent",
+                    "description":"TEvent класс",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"class",
+                    "class":"TClass",
+                    "description":"Класс TClass, база других классов"
+                }
+            ],"deprecated":false
+        },"CreateTClass":{ 
+            "description":"База. Создаёт пустой TClass",
+            "args":[{
+                    "name":"rawData",
+                    "type":"table",
+                    "description":"Сырая таблица",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"class",
+                    "class":"TClass",
+                    "description":"Класс TClass, база других классов"
+                }
+            ],"deprecated":false
+        },"CreatePreset":{ 
+            "description":"Создаёт Preset класс, помогает кастомизировать что угодно",
+            "args":[{
+                    "name":"clearAllOnLoad",
+                    "type":"boolean",
+                    "description":"Заменять ли все значения при :Load()?",
+                    "required":false
+                },{
+                    "name":"rawData",
+                    "type":"table",
+                    "description":"Сырая таблица",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"class",
+                    "class":"Preset",
+                    "description":"Класс Preset"
+                }
+            ],"deprecated":false
+        },"CreateBind":{ 
+            "description":"Создаёт Bind класс, помогает заменять функции для кастомизации через дополнения",
+            "args":[{
+                    "name":"rawData",
+                    "type":"table",
+                    "description":"Сырая таблица",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"class",
+                    "class":"Bind",
+                    "description":"Класс Bind"
+                }
+            ],"deprecated":false
+        },"CreateTranslator":{ 
+            "description":"Создаёт Translator класс, помогает переводить всё что угодно на любой поддерживаемый язык",
+            "args":[
+                {
+                    "name":"englishData",
+                    "type":"any",
+                    "description":"Английское значение",
+                    "required":true
+                },{
+                    "name":"rawData",
+                    "type":"table",
+                    "description":"Сырая таблица",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"class",
+                    "class":"Translator",
+                    "description":"Класс Translator"
+                }
+            ],"deprecated":false
+        }
+    },
+    "events":{}
+}

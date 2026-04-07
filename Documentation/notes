@@ -1,0 +1,13 @@
+Ты можешь создать _G.Setup и оформить его как TimGuiSetupObject
+Object.__type - тип 
+pairs() не работает с TG обьектами. Используй типо:
+    for k,v in TimGuiAnyObject do
+        print(k,v)
+    end
+
+type=="class" также появляется:
+class:string
+classes:[string,...]
+
+Если нету writeSameMode:
+То оно true

@@ -1,0 +1,15 @@
+{
+    "Lua.diagnostics.globals": [
+        "readfile",
+        "writefile"
+    ],
+    "Lua.workspace.ignoreDir": [
+        ".vscode",
+        "OLD"
+    ],
+    "robloxLsp.workspace.ignoreDir": [
+        ".vscode",
+        "**/_Index/**",
+        "OLD"
+    ]
+}

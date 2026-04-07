@@ -1,0 +1,108 @@
+{
+    "description":"Класс относящийся к глобальной Архитектуре интерфейса. Можно получать детей через This.ChildName(также как в Instance и выдаст ошибку если не найдено!)",
+    "type":"class",
+    "classes":["TClass","GUIArchitecture"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "GroupSize":{
+            "type":"UDim2",
+            "description":"Размер группы(Последняя полученная точка при запуске :Refresh())",
+            "canChange":true,
+            "deprecated":false
+        },"SpecialGlobalGroupRefreshPosition":{
+            "type":"UDim2",
+            "description":"Биндер для обновления позиций кнопок в группе. Работает как в Binder.GlobalGroupRefreshPosition",
+            "canChange":true,
+            "deprecated":false
+        },"IsGlobal":{
+            "type":"boolean",
+            "description":"Глобальная ли группа",
+            "canChange":true,
+            "deprecated":false
+        },"SpecialRefreshingBind":{
+            "type":"UDim2",
+            "description":"Биндер для обновления позиций кнопок в группе. Работает как в Binder.RefreshingBind",
+            "canChange":true,
+            "deprecated":false
+        }
+    }, 
+    "methods":{
+        "FindFirstChild":{
+            "description":"Вернёт первого ребёнка с таким именем",
+            "args":[{
+                    "name":"childName",
+                    "type":"string",
+                    "description":"Имя ребёнка",
+                    "required":true
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"TGuiObject",
+                    "description":"nil - если не одна функция не была запущена успешно."
+                }
+            ], 
+            "deprecated":false
+        },
+        "CreateGroup":{
+            "description":"Создаёт группу с parent в этой архитектуре",
+            "args":[{
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Имя группы",
+                    "required":true
+                },{
+                    "name":"Title",
+                    "type":"string | Translator",
+                    "description":"Название которое видит пользователь, если nil берёт из Name",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"TGuiGroup",
+                    "description":"Глобальная группа"
+                }
+            ], "deprecated":false
+        },"RefreshGroup":{
+            "description":"Обновляет позиции всему, что в группе",
+            "args":[{
+                    "name":"After",
+                    "type":"TGuiObject",
+                    "description":"Обновляет после и включая этот обьект. Если nil, то обновляет со старта",
+                    "required":true
+                }
+            ],"return":[], 
+            "deprecated":false
+        }
+    }, 
+    "events":{
+        "ChildAdded":{
+            "description":"Запускается когда добавлен новый ребёнок",
+            "type":"RBXScriptEvent",
+            "args":[{
+                    "name":"child",
+                    "type":"TGuiObject",
+                    "description":"TGuiObject который теперь в этой архитектуре"
+                }
+            ],
+            "deprecated":false
+        },"ChildRemoved":{
+            "description":"Запускается когда убран ребёнок",
+            "type":"RBXScriptEvent",
+            "args":[{
+                    "name":"child",
+                    "type":"TGuiObject",
+                    "description":"TGuiObject который теперь не в этой архитектуре"
+                }
+            ],
+            "deprecated":false
+        },"GroupRefreshed":{
+            "description":"Запускается когда :RefreshGroup() был закончен",
+            "type":"RBXScriptEvent",
+            "args":[],
+            "deprecated":false
+        }
+    }
+}

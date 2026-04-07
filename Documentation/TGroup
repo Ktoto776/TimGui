@@ -1,0 +1,34 @@
+{
+    "description":"Класс групп в интерфейсе, может находится в TimGui.Groups или группа в группе.",
+    "type":"class",
+    "classes":["TClass","TGuiObject","ButtonObject","TGroup"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "Type":{
+            "type":"string",
+            "description":"Равен \"Group\". Нужен для определения типа обьекта",
+            "canChange":false,
+            "deprecated":false
+        },"Opened":{
+            "type":"boolean",
+            "description":"Открыта ли группа",
+            "canChange":true,
+            "deprecated":false
+        }
+    }, 
+    "methods":{}, 
+    "events":{
+        "OnOpen":{
+            "description":"При открытии группы",
+            "type":"RBXScriptEvent",
+            "args":[],
+            "deprecated":false
+        },"OnClose":{
+            "description":"При закрытии группы",
+            "type":"RBXScriptEvent",
+            "args":[],
+            "deprecated":false
+        }
+    }
+}

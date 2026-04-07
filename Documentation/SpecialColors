@@ -1,0 +1,27 @@
+{
+    "description":"Класс для цветов, использующий пресеты",
+    "type":"class",
+    "classes":["TClass","Preset","Colors","SpecialColors"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{},
+    "methods":{
+        "GetColor":{
+            "description":"Получает цвет, если нету здесь то глобальный",
+            "args":[{
+                    "name":"propertyName",
+                    "type":"string",
+                    "description":"Имя цвета",
+                    "required":true
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"Color3 | nil",
+                    "description":"Цвет"
+                }
+            ], "deprecated":false
+        }
+    },
+    "events":{}
+}

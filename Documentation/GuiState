@@ -1,0 +1,60 @@
+{
+    "description":"Класс для создания пресетов, например цветов и размеров",
+    "type":"class",
+    "classes":["TClass","GuiState"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "ActiveState":{
+            "type":"string",
+            "description":"Активный статус: Error/Loading/None",
+            "canChange":true,
+            "deprecated":false
+        },"LoadingSpeed":{
+            "type":"string",
+            "description":"За сколько секунд loading сделает круг.",
+            "canChange":true,
+            "deprecated":false
+        },"SayEnabled":{
+            "type":"boolean",
+            "description":"Служит для включения/выключения надписи при наводке на кнопку открытия",
+            "canChange":true,
+            "deprecated":false
+        },"Saying":{
+            "type":"Translator",
+            "description":"Текст из переводчика который будет появляться при наводе если SayEnabled==true",
+            "canChange":false,
+            "deprecated":false
+        }
+    }, "methods":{
+       "ResetToDefault":{
+            "description":"Сбрасывает статус на None",
+            "args":[],
+            "return":[], 
+            "deprecated":false
+        }, "GetPreset":{
+            "description":"Получает все значения в пресете",
+            "args":[{
+                    "name":"dontUseRBXValues",
+                    "type":"boolean",
+                    "description":"Если true, то возвращает массив с массивами [type,...]",
+                    "required":false
+                }
+            ],"return":[
+                {
+                    "name":"Preset",
+                    "description":"Загруженный пресет",
+                    "type":"table"
+                }
+            ], 
+            "deprecated":false
+        }
+    }, "events":{
+        "onStateChanged":{
+            "description":"Запускается когда изменился статус через любой метод в классе",
+            "type":"RBXScriptEvent",
+            "args":[],
+            "deprecated":false
+        }
+    }
+}

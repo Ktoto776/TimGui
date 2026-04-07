@@ -1,0 +1,236 @@
+{
+    "description":"Главный обьект интерфейса. Можно получить с помощью _G.TimGui (или TimGui, но если поддерживается)",
+    "type":"class",
+    "class":"TimGui",
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "Groups":{
+            "type":"class",
+            "class":"GUIArchitecture",
+            "description":"БАЗА. Группы, в которые ложить можно кнопки итд.",
+            "canChange":false,
+            "deprecated":false
+        },"GuiObjects":{
+            "type":"class",
+            "class":"GUIArchitecture",
+            "description":"БАЗА. Класс для создания кнопок/групп",
+            "canChange":false,
+            "deprecated":false
+        },"Opened":{
+            "type":"boolean",
+            "description":"Открыт ли TimGui. При изменении запускает TimGui.OnOpen",
+            "canChange":true,
+            "deprecated":false
+        },"LanguagesPreference":{
+            "type":"table",
+            "description":"Массив с языковыми предпочтениями, например: [\"ru\",\"uk\",\"en\",...]",
+            "canChange":true,
+            "deprecated":false
+        },"SetupData":{
+            "type":"table",
+            "description":"Данные при старте TimGui, передаются в _G.Setup, подробнее в TimGuiSetupObject",
+            "canChange":false,
+            "deprecated":false
+        },"ScreenGui":{
+            "type":"Instance: ScreenGui",
+            "description":"Главный интерфейс TimGui",
+            "canChange":false,
+            "deprecated":false
+        },
+        "Binder":{
+            "type":"class",
+            "class":"Binder",
+            "description":"Класс для замены стандартных функций (БОЛЬШЕ КАСТОМИЗАЦИИ)",
+            "canChange":false,
+            "deprecated":false
+        },
+        "Colors":{
+            "type":"class",
+            "class":"Colors",
+            "description":"Класс для цветов",
+            "canChange":false,
+            "deprecated":false
+        },
+        "GuiSize":{
+            "type":"class",
+            "class":"GuiSize",
+            "description":"Класс для смены размеров Gui",
+            "canChange":false,
+            "deprecated":false
+        },"Assets":{
+            "type":"class",
+            "class":"Assets",
+            "description":"Класс для смены assets Gui",
+            "canChange":false,
+            "deprecated":false
+        },"GuiAnimations":{
+            "type":"class",
+            "class":"GuiAnimations",
+            "description":"Класс для настройки анимации интерфейса",
+            "canChange":false,
+            "deprecated":false
+        },"Header":{
+            "type":"class",
+            "class":"Header",
+            "description":"Класс для смены заголовка",
+            "canChange":false,
+            "deprecated":false
+        },"State":{
+            "type":"class",
+            "class":"GuiState",
+            "description":"Класс для изменения кнопки открытия в статус, например загрузка или ошибка(Блокирует открытие)",
+            "canChange":false,
+            "deprecated":false
+        },"GuiInstances":{
+            "type":"class",
+            "class":"GuiInstances",
+            "description":"Класс для хранения обьектов интерфейса",
+            "canChange":false,
+            "deprecated":false
+        },
+        "Classes":{
+            "type":"class",
+            "class":"TClasses",
+            "description":"Класс TClasses для создания своих классов",
+            "canChange":false,
+            "deprecated":false
+        },
+        "BuildCount":{
+            "type":"number",
+            "description":"Текущая версия TGui. Например 1",
+            "canChange":false,
+            "deprecated":false
+        },
+        "Version":{
+            "type":"string",
+            "description":"Текущая версия TGui в формате строки. Например 1.0.0",
+            "canChange":false,
+            "deprecated":false
+        },
+        "CoreBuildCount":{
+            "type":"number",
+            "description":"Текущая версия ядра TGui. Например 1",
+            "canChange":false,
+            "deprecated":false
+        },
+        "CoreVersion":{
+            "type":"string",
+            "description":"Текущая версия ядра TGui в формате строки. Например 3.0.0",
+            "canChange":false,
+            "deprecated":false
+        },
+        "BaseDir":{
+            "type":"string",
+            "description":"Локальная директория в которой находятся файлы TGui, используемые для сохранений",
+            "canChange":false,
+            "deprecated":false
+        },
+        "httpGet_BaseDir":{
+            "type":"string",
+            "description":"Директория в которой находятся файлы TGui(Ссылка или локально, можно определить через httpGet_BaseDirIsLocal)",
+            "canChange":false,
+            "deprecated":false
+        },
+        "httpGet_BaseDirIsLocal":{
+            "type":"string",
+            "description":"httpGet_BaseDir локальная или нет?",
+            "canChange":false,
+            "deprecated":false
+        },
+        "GlobalOpenedGroup":{
+            "type":"TGroup",
+            "description":"Глобально открытая группа(типо та которая в группах слево)",
+            "canChange":false,
+            "deprecated":false
+        }
+    }, "methods":{
+        "IsA":{
+            "description":"Сравнивает имя класса с 1 параметром",
+            "args":[{
+                    "name":"className",
+                    "type":"string",
+                    "description":"Имя класса для сравнения",
+                    "required":true
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"boolean",
+                    "description":"Является ли потомком этого класса(или самим классом)"
+                }
+            ], "deprecated":false
+        }, "GetFrameGuiPosition":{
+            "description":"Возвращает позицию TimGui",
+            "args":[{
+                    "name":"Opened",
+                    "type":"boolean",
+                    "description":"Если nil, то получает для текущего состояния",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"Position",
+                    "type":"UDim2",
+                    "description":"Позиция"
+                }
+            ], "deprecated":false
+        },
+        "HttpGet":{
+            "description":"Получает данные из инета. Если начинается на './', то получает из директории скрипта",
+            "args":[{
+                    "name":"URL",
+                    "type":"string",
+                    "description":"Ссылка на получение.",
+                    "required":true
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"string | nil",
+                    "description":"Полученный результат"
+                }
+            ], "deprecated":false
+        },
+        "Exit":{
+            "description":"Закрывает TimGui",
+            "args":[],
+            "return":[], 
+            "deprecated":false
+        }
+    }, "events":{
+        "OnOpened":{
+            "description":"Запускается если TimGui.Opened изменился",
+            "type":"RBXScriptEvent",
+            "args":[
+                {
+                    "name":"isOpened",
+                    "type":"boolean",
+                    "description":"Новое состояние(открыт или нет)"
+                }
+            ],
+            "deprecated":false
+        },"OnExit":{
+            "description":"Запускается если TimGui:Exit() запущен, чтобы закрыть Меню",
+            "type":"RBXScriptEvent",
+            "args":[],
+            "deprecated":false
+        },"GlobalOpenedGroupChanged":{
+            "description":"Если глобально открытая группа изменилась",
+            "type":"RBXScriptEvent",
+            "args":[],
+            "deprecated":false
+        },"LanguageChanged":{
+            "description":"Запускается если TimGui.Opened изменился",
+            "type":"RBXScriptEvent",
+            "args":[
+                {
+                    "name":"langCode",
+                    "type":"string",
+                    "description":"Код языка например ru, en, uk"
+                }
+            ],
+            "deprecated":false
+        }
+    }
+}

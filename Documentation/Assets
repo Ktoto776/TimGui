@@ -1,0 +1,16 @@
+{
+    "description":"Класс для цветов, использующий пресеты",
+    "type":"class",
+    "classes":["TClass","Preset","Colors"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "Arrow":{
+            "type":"string",
+            "description":"rbxassetid:// на стрелочку открытия",
+            "canChange":true,
+            "deprecated":false
+        }
+    }, "methods":{}, 
+    "events":{}
+}

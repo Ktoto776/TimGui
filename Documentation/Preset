@@ -1,0 +1,65 @@
+{
+    "description":"Класс для создания пресетов, например цветов и размеров",
+    "type":"class",
+    "classes":["TClass","Preset"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "PresetName":{
+            "type":"string",
+            "description":"Имя пресета",
+            "canChange":true,
+            "deprecated":false
+        },"Default":{
+            "type":"table",
+            "description":"Стандартный пресет, нету отдельных функций в его сохранение.",
+            "canChange":true,
+            "deprecated":false
+        }
+    }, "methods":{
+       "Refresh":{
+            "description":"Обновляет все пресеты",
+            "args":[{
+                    "name":"Preset",
+                    "type":"table",
+                    "description":"Таблица с значениями(может быть массивом с [type,...]), если есть запускает :Load()",
+                    "required":false
+                }
+            ],"return":[], 
+            "deprecated":false
+        },"Load":{
+            "description":"Обновляет все пресеты",
+            "args":[{
+                    "name":"Preset",
+                    "type":"table",
+                    "description":"Таблица с значениями(может быть массивом с [type,...])",
+                    "required":true
+                }
+            ],"return":[], 
+            "deprecated":false
+        }, "GetPreset":{
+            "description":"Получает все значения в пресете",
+            "args":[{
+                    "name":"dontUseRBXValues",
+                    "type":"boolean",
+                    "description":"Если true, то возвращает массив с массивами [type,...]",
+                    "required":false
+                }
+            ],"return":[
+                {
+                    "name":"Preset",
+                    "description":"Загруженный пресет",
+                    "type":"table"
+                }
+            ], 
+            "deprecated":false
+        }
+    }, "events":{
+        "OnRefresh":{
+            "description":"Запускается при Preset.Refresh",
+            "type":"RBXScriptEvent",
+            "args":[],
+            "deprecated":false
+        }
+    }
+}

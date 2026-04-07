@@ -1,0 +1,53 @@
+{
+    "description":"Класс для анимаций, использующий пресеты",
+    "type":"class",
+    "classes":["TClass","Preset","GuiAnimations"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "ArrowRotateAnimationEnabled":{
+            "type":"boolean",
+            "description":"Включена ли анимация поворота стрелочки",
+            "canChange":true,
+            "deprecated":false
+        }, "OpenAnimationEnabled":{
+            "type":"boolean",
+            "description":"Включена ли анимация открытия",
+            "canChange":true,
+            "deprecated":false
+        }, "ArrowRotateTI":{
+            "type":"TweenInfo",
+            "description":"TweenInfo поворота стрелочки",
+            "canChange":true,
+            "deprecated":false
+        }, "OpenTI":{
+            "type":"TweenInfo",
+            "description":"TweenInfo открытия",
+            "canChange":true,
+            "deprecated":false
+        }
+    }, "methods":{
+        "ArrowRotateAnimation":{
+            "description":"Анимировать прокрутку стрелочки(как при открытии)",
+            "args":[{
+                    "name":"isOpened",
+                    "type":"boolean",
+                    "description":"Состояние стрелки, если nil то возьмёт из _G.TimGui.Opened",
+                    "required":false
+                }
+            ],
+            "return":[], "deprecated":false
+        },"OpenAnimation":{
+            "description":"Анимировать открытие",
+            "args":[{
+                    "name":"isOpened",
+                    "type":"boolean",
+                    "description":"Состояние открытия, если nil то возьмёт из _G.TimGui.Opened",
+                    "required":false
+                }
+            ],
+            "return":[], "deprecated":false
+        }
+    }, 
+    "events":{}
+}

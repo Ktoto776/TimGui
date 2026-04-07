@@ -1,0 +1,39 @@
+{
+    "type":"class",
+    "class":"TEvent",
+    "description":"Кастомный Event по типу Bindable Event, чтобы передавать таблицы без ошибок(если ты не сталкиваешься с тупыми ошибками, как при table.clone, то используй встроенный BindableEvent)",
+    "deprecated":false,
+    "properties":{
+        "Event":{
+            "type":"table (TEvent.Event)",
+            "description":"Таблица с функциями как в bindableEvent, но без ConnectParallel: :Connect(callback); :Once(callback); :Wait()",
+            "canChange":true,
+            "deprecated":false
+        },"args":{
+            "type":"table",
+            "description":"Массив, с последними args",
+            "canChange":true,
+            "deprecated":false
+        },"BEvent":{
+            "type":"Instance: BindableEvent",
+            "description":"BindableEvent с помощью которого работают ожидания :Fire()",
+            "canChange":true,
+            "deprecated":false
+        }
+    },
+    "methods":{
+        "Fire":{ 
+            "description":"",
+            "args":[{
+                    "name":"...",
+                    "type":"any",
+                    "description":"...",
+                    "required":false
+                }
+            ],
+            "return":[],
+            "deprecated":false
+        }
+    },
+    "events":{}
+}

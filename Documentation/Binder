@@ -1,0 +1,58 @@
+{
+    "description":"Класс для замены стандартных функций.",
+    "type":"class",
+    "classes":["TClass","Binder"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "ArrowAnimation":{
+            "type":"class",
+            "class":"Bind",
+            "description":"Бинд для Анимации стрелочки. Не забывай про TimGui.GuiAnimations.ArrowRotateAnimationEnabled(при выкл просто тп)/ArrowRotateTI. Параметры: Arrow:UIBase,isOpen:boolean",
+            "canChange":false,
+            "deprecated":false
+        },"OpenAnimation":{
+            "type":"class",
+            "class":"Bind",
+            "description":"Бинд для Анимации открытия. Не забывай про TimGui.GuiAnimations.OpenAnimationEnabled(при выкл просто тп)/OpenTI. Параметры: Frame:UIBase,isOpen:boolean",
+            "canChange":false,
+            "deprecated":false
+        },"TObjectSize":{
+            "type":"class",
+            "class":"Bind",
+            "description":"Бинд для установки размера кнопкам. Не забывай про TimGui.GuiSize.ButtonSize,TGuiObject.ParentIsGlobal! Параметры: TGuiObject:TGuiObject",
+            "canChange":false,
+            "deprecated":false
+        },"ButtonPositionBind":{
+            "type":"class",
+            "class":"Bind",
+            "description":"Бинд для установки позиции кнопкам(или не глобальным группам). Не забывай про ВСЕ(ну или почти) параметры в TGuiObject. Параметры: child:TGuiObject,pos:UDim2 --pos=то что вернул, последний запуск бинда, по умолчанию следующая позиция",
+            "canChange":true,
+            "deprecated":false
+        },"GlobalGroupRefreshPosition":{
+            "type":"class",
+            "class":"Bind",
+            "description":"Бинд для установки позиции глобальным группам. Параметры: GlobalGroup:TGuiObject+GUIArchitecture,pos:UDim2 --pos=то что вернул, последний запуск бинда, по умолчанию следующая позиция",
+            "canChange":true,
+            "deprecated":false
+        },"RefreshingBind":{
+            "type":"class",
+            "class":"Bind",
+            "description":"Бинд для запуска обновлений. Параметры: Children:[TGuiObject,...], FromObject:TGuiObject--От какого обьекта начинать. Должно вернуть UDim2 с концом(после последнего обьекта)",
+            "canChange":true,
+            "deprecated":false
+        }
+    }, "methods":{
+        "New":{
+            "description":"Создаёт класс Bind",
+            "args":[],
+            "return":[{
+                    "name":"Bind",
+                    "type":"Bind",
+                    "description":"Класс Bind"
+                }
+            ], "deprecated":false
+        }
+    }, 
+    "events":{}
+}

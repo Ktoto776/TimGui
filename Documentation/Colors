@@ -1,0 +1,61 @@
+{
+    "description":"Класс для цветов, использующий пресеты",
+    "type":"class",
+    "classes":["TClass","Preset","Colors"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "ArrowColor":{
+            "type":"Color3",
+            "description":"Цвет стрелочки открытия",
+            "canChange":true,
+            "deprecated":false
+        },"HeaderSeparatorColor":{
+            "type":"Color3",
+            "description":"Цвет разделителя в заголовке",
+            "canChange":true,
+            "deprecated":false
+        },"HeaderFirstNameColor":{
+            "type":"Color3",
+            "description":"Цвет первой части имени в заголовке",
+            "canChange":true,
+            "deprecated":false
+        },"HeaderSecondNameColor":{
+            "type":"Color3",
+            "description":"Цвет второй части имени в заголовке",
+            "canChange":true,
+            "deprecated":false
+        },"HeaderBackgroundColor":{
+            "type":"Color3",
+            "description":"Цвет фона в заголовке",
+            "canChange":true,
+            "deprecated":false
+        },"MainBackgroundColor":{
+            "type":"Color3",
+            "description":"Цвет фона",
+            "canChange":true,
+            "deprecated":false
+        },"GroupsBackgroundColor":{
+            "type":"Color3",
+            "description":"Цвет фона в Группах",
+            "canChange":true,
+            "deprecated":false
+        },"ErrorColor":{
+            "type":"Color3",
+            "description":"Цвет ошибки на кнопке открытия",
+            "canChange":true,
+            "deprecated":false
+        },"ButtonBackground":{
+            "type":"Color3",
+            "description":"Цвет фона кнопок",
+            "canChange":true,
+            "deprecated":false
+        },"TextColor":{
+            "type":"Color3",
+            "description":"Цвет текста кнопок",
+            "canChange":true,
+            "deprecated":false
+        }
+    }, "methods":{}, 
+    "events":{}
+}

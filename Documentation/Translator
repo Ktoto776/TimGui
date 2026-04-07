@@ -1,0 +1,41 @@
+{
+    "description":"Класс для перевода текстов, можно создать с помощью TClasses:CreateTranslator()",
+    "type":"class",
+    "classes":["TClass","Preset","Translator"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "en":{
+            "type":"string",
+            "description":"Английский вариант, стандартный и должен быть всегда",
+            "canChange":true,
+            "deprecated":false
+        }
+    }, "methods":{
+        "Translate":{
+            "description":"Получить переведённый вариант",
+            "args":[],
+            "return":[], 
+            "deprecated":false
+        }, "GetLangCode":{
+            "description":"Получает доступный нужный перевод текста",
+            "args":[],
+            "return":[
+                {
+                    "name":"langCode",
+                    "description":"Код языка например: ru; en; uk",
+                    "type":"string"
+                }
+            ], 
+            "deprecated":false
+        }
+    }, 
+    "events":{
+        "TranslateValueChanged":{
+            "description":"Запускается когда изменился нужный перевод текста",
+            "type":"RBXScriptEvent",
+            "args":[],
+            "deprecated":false
+        }
+    }
+}

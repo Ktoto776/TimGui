@@ -1,0 +1,11 @@
+{
+    "description":"Таблица с параметрами запуска TimGui, потом превратится в TimGui.SetupData",
+    "type":"table",
+    "values":{
+        "linkToDir":"https://raw.githubusercontent.com/Robloxer228s/TimGUI/main/",
+        "HttpGet":"<function(URL) -- Заменяет метод TimGUI.HttpGet>",
+        "FirstHeaderName":"Tim --[may be a table, for example {en=\"tim\",...}]",
+        "SecondHeaderName":"Gui --[may be a table]",
+        "coreDebugEnabled":false
+    }
+}
