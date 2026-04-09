@@ -55,6 +55,16 @@
             "description":"Цвет текста кнопок",
             "canChange":true,
             "deprecated":false
+        },"GroupOpenArrowColor":{
+            "type":"Color3",
+            "description":"Цвет стрелочки для статуса открытия не глобальных групп",
+            "canChange":true,
+            "deprecated":false
+        },"GroupVisibleIndent":{
+            "type":"Color3",
+            "description":"Цвет видимого отступа не глобальных групп",
+            "canChange":true,
+            "deprecated":false
         }
     }, "methods":{}, 
     "events":{}

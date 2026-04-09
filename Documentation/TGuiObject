@@ -119,12 +119,7 @@
         }
     }, 
     "events":{
-        "AncestorChanged":{
-            "description":"Если изменился предок(parent или parent.parent и тд)",
-            "type":"RBXScriptEvent",
-            "args":[],
-            "deprecated":false
-        },"Destroyed":{
+        "Destroyed":{
             "description":"Запускается когда :Destroy() был запущен",
             "type":"RBXScriptEvent",
             "args":[],

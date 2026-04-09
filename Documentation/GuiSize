@@ -55,6 +55,21 @@
             "description":"Включены ли позиции по умолчанию",
             "canChange":true,
             "deprecated":false
+        },"GroupOpenImageSize":{
+            "type":"UDim",
+            "description":"Размер для статуса открытия не глобальных групп. Scale - Y размер кнопки",
+            "canChange":true,
+            "deprecated":false
+        },"NotGlobalGroupIndent":{
+            "type":"UDim",
+            "description":"Размер отступа не глобальных групп",
+            "canChange":true,
+            "deprecated":false
+        },"NotGlobalGroupVisibleIndent":{
+            "type":"UDim",
+            "description":"Размер видимого отступа не глобальных групп",
+            "canChange":true,
+            "deprecated":false
         }
     }, "methods":{}, 
     "events":{}

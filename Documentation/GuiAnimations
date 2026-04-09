@@ -15,6 +15,11 @@
             "description":"Включена ли анимация открытия",
             "canChange":true,
             "deprecated":false
+        }, "EnableGroupAnimation":{
+            "type":"boolean",
+            "description":"Включена ли анимация открытия/закрытия групп",
+            "canChange":true,
+            "deprecated":false
         }, "ArrowRotateTI":{
             "type":"TweenInfo",
             "description":"TweenInfo поворота стрелочки",

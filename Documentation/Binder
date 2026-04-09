@@ -53,6 +53,12 @@
             "description":"Бинд для подсчёта видимости обьекта(свойство Visible работает поверх и его подсчитывать не нужно). Ну забудь про TGuiObject.Parent.Opened(и про проверки что Parent группа). Параметры: TGuiObject:TGuiObject--От какого обьекта начинать. Должно вернуть UDim2 с концом(после последнего обьекта)",
             "canChange":true,
             "deprecated":false
+        },"GroupOpenArrowBind":{
+            "type":"class",
+            "class":"Bind",
+            "description":"Бинд для анимации откртия не глобальных групп. Параметры: TGroup:TGroup. Не забудь TimGui.GuiAnimations.EnableGroupAnimation",
+            "canChange":true,
+            "deprecated":false
         }
     }, "methods":{
         "New":{

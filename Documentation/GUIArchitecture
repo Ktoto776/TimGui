@@ -66,7 +66,12 @@
                     "name":"After",
                     "type":"TGuiObject",
                     "description":"Обновляет после и включая этот обьект. Если nil, то обновляет со старта",
-                    "required":true
+                    "required":false
+                },{
+                    "name":"notParentRefreshing",
+                    "type":"boolean",
+                    "description":"Нужно ли обновлять Parent(если parent группа и не TimGui.Groups)",
+                    "required":false
                 }
             ],"return":[], 
             "deprecated":false

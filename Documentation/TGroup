@@ -16,14 +16,34 @@
             "canChange":true,
             "deprecated":false
         },"SpecialGlobalGroupRefreshPosition":{
-            "type":"UDim2",
-            "description":"Биндер для обновления позиций кнопок в группе. Работает как в Binder.GlobalGroupRefreshPosition",
+            "type":"Bind",
+            "description":"Бинд для обновления позиций кнопок в группе. Работает как в Binder.GlobalGroupRefreshPosition",
             "canChange":true,
             "deprecated":false
         },"SpecialGlobalGroupRefreshSize":{
-            "type":"UDim2",
-            "description":"Биндер для обновления позиций кнопок в группе. Работает как в Binder.GlobalGroupRefreshSize",
+            "type":"Bind",
+            "description":"Бинд для обновления позиций кнопок в группе. Работает как в Binder.GlobalGroupRefreshSize",
             "canChange":true,
+            "deprecated":false
+        },"OpenLabel":{
+            "type":"Instance: ImageLabel",
+            "description":"Стрелочка статуса открытия для не глобальных групп",
+            "canChange":false,
+            "deprecated":false
+        },"SpecialGroupOpenArrowBind":{
+            "type":"Bind",
+            "description":"Бинд для анимации. Работает как в Binder.GroupOpenArrowBind",
+            "canChange":false,
+            "deprecated":false
+        },"GroupIndentBind":{
+            "type":"Bind",
+            "description":"Бинд для кастомного отступа не глобальных групп. Параметры: TGroup:TGroup, VisibleIndent: Frame, GroupFrame: Frame",
+            "canChange":false,
+            "deprecated":false
+        },"GroupFrame":{
+            "type":"Instance: Frame",
+            "description":"Frame с кнопками в группе",
+            "canChange":false,
             "deprecated":false
         }
     }, 

@@ -52,7 +52,7 @@ end
 local OnExitEvent = Instance.new("BindableEvent")
 local TimGuiReadOnly = {"SetupData","CoreVersion","CoreBuildCount"}
 local onOpenedEvent = Instance.new("BindableEvent")
-local TimGui = GetClassMetatable("TimGui",TimGuiRaw,TimGuiReadOnly,true,nil,function(key, _, new)
+TimGui = GetClassMetatable("TimGui",TimGuiRaw,TimGuiReadOnly,true,nil,function(key, _, new)
     if key=="Opened" then
         onOpenedEvent:Fire(new)
     end
@@ -413,8 +413,10 @@ TimGui.Colors = Colors
 table.insert(TimGuiReadOnly,"Colors")
 Colors.PresetName = "Default"
 Colors.ArrowColor = Color3.new(1,1,1)
+Colors.GroupOpenArrowColor = Color3.new(1,1,1)
 Colors.LoadingColor = Color3.new(1,1,1)
 Colors.TextColor = Color3.new(1,1,1)
+Colors.GroupVisibleIndent = Color3.new(1,1,1)
 Colors.HeaderSeparatorColor = Color3.new(0,0,0)
 Colors.HeaderFirstNameColor = Color3.new(1,1,0)
 Colors.HeaderSecondNameColor = Color3.new(1,0,1)
@@ -439,8 +441,11 @@ GuiSize.YPosition = UDim.new(1,0)
 GuiSize.GroupsSize = UDim.new(0,100)
 GuiSize.SayingFontSize = UDim.new(0.65,0)
 GuiSize.GlobalGroupSize = UDim2.new(1,-5,0,50)
+GuiSize.GroupOpenImageSize = UDim.new(0,25)
 GuiSize.ButtonSize = UDim2.new(1,0,0,50)
 GuiSize.ButtonCornerRadius = UDim.new(0.5,0)
+GuiSize.NotGlobalGroupIndent = UDim.new(0,2)
+GuiSize.NotGlobalGroupVisibleIndent = UDim.new(0,2)
 GuiSize.Default = GuiSize:GetPreset()
 function TimGui:GetFrameGuiPosition(opened:boolean?)
     if opened==nil then opened = TimGui.Opened end
@@ -457,6 +462,7 @@ table.insert(TimGuiReadOnly,"Assets")
 Assets.PresetName = "Default"
 Assets.Error = "rbxassetid://75662198735241"
 Assets.Arrow = "rbxassetid://16341277046"
+Assets.GroupOpenArrow = "rbxassetid://16341277046"
 Assets.Loading = "rbxasset://textures/DarkThemeLoadingCircle.png"
 Assets.Default = Assets:GetPreset()
 -- #FIND_POINT GuiAnimations
@@ -872,8 +878,8 @@ local function MakeGUIArchitectureClass(raw:{any?}?)
     GUIArchitecture:SetReadOnly("SpecialRefreshingBind")
     SpecialRefreshingBind:Bind(function(...)
         return RefreshingBind:Run(...)
-    end) GUIArchitecture.GroupSize = UDim2.new(0,0,0,0)
-    function GUIArchitecture:RefreshGroup(FromObject:any?)
+    end)
+    function GUIArchitecture:RefreshGroup(FromObject:any?,notParentRefreshing:boolean?)
         logger:debug("GUIArchitecture","running "..GUIArchitecture.ClassName..":RefreshGroup()")
         if waitRefresh then
             if waitRefresh==true or waitRefresh==FromObject then
@@ -885,7 +891,7 @@ local function MakeGUIArchitectureClass(raw:{any?}?)
             end logger:debug("GUIArchitecture","dropping last refresh request")
         end if lastRefreshed then waitRefresh = FromObject or true
             RunService.RenderStepped:Wait()
-            if waitRefresh~=FromObject then return end
+            if waitRefresh~=(FromObject or true) then return end
             waitRefresh = false
         end lastRefreshed = true
         logger:debug("GUIArchitecture","Refreshing "..GUIArchitecture.ClassName.."!")
@@ -895,19 +901,21 @@ local function MakeGUIArchitectureClass(raw:{any?}?)
             else return a.Id<b.Id
             end
         end) GUIArchitecture.GroupSize = SpecialRefreshingBind:Run(self:GetChildren(),FromObject)
-        if Classes:IsA(GUIArchitecture,"TGuiObject") then
+        if Classes:IsA(GUIArchitecture,"TGuiObject") and not notParentRefreshing then
             if Classes:IsA(GUIArchitecture.Parent,"GUIArchitecture") and GUIArchitecture.Parent~=TimGui.Groups then
                 GUIArchitecture.Parent:RefreshGroup()
             end
         end onRefreshed:Fire()
+        RunService.RenderStepped:Once(function()
+            lastRefreshed = false
+        end)
     end SpecialRefreshingBind.OnBinded:Connect(function()
         logger:debug("GUIArchitecture","new special refresh bind! Refreshing.")
         GUIArchitecture:RefreshGroup()
     end) RefreshingBind.OnBinded:Connect(function()
         logger:debug("GUIArchitecture","new refresh bind! Refreshing.")
         GUIArchitecture:RefreshGroup()
-    end) 
-    return GUIArchitecture
+    end) return GUIArchitecture
 end
 local LastTGuiObjectId = 0
 local function TGuiObjectClass(Name:string,Title:string|{string}?,Parent:any?,Object:any?)
@@ -934,12 +942,7 @@ local function TGuiObjectClass(Name:string,Title:string|{string}?,Parent:any?,Ob
     Object.Title = Title
     Object:SetReadOnly("Title")
     Object.Indent = UDim2.new(0,0,0,0)
-    local onAncestorChangedEvent = Instance.new("BindableEvent")
-    Object.AncestorChanged = onAncestorChangedEvent.Event
-    Object:SetReadOnly("AncestorChanged")
-    onAncestorChanged[Object] = function()
-        onAncestorChangedEvent:Fire()
-    end Object.Id = currentId
+    Object.Id = currentId
     Object:SetReadOnly("Id")
     Object.Position = 0
     function Object:GetGlobalGroup()
@@ -1017,7 +1020,7 @@ local function TGuiObjectClass(Name:string,Title:string|{string}?,Parent:any?,Ob
     function Object:RefreshPosition() if destroyed then return end
         logger:debug("TGuiObjectClass","Refreshing position for "..Object.Name.." ["..Object.Type.."]")
         if Classes:IsA(Object.Parent,"GUIArchitecture") then
-            Object:RefreshGroup()
+            Object.Parent:RefreshGroup()
         end
     end Object:GetPropertyChangedEvent("Position"):Connect(function()
         logger:debug("TGuiObject.PositionChanged","Property Position of '"..Object.Name.."' ["..Object.Type.."] changed")
@@ -1114,6 +1117,10 @@ end local GlobalOpenedGroup
 local GlobalOpenedGroupChanged = Instance.new("BindableEvent")
 TimGui.GlobalOpenedGroupChanged = GlobalOpenedGroupChanged.Event
 table.insert(TimGuiReadOnly,"GlobalOpenedGroupChanged")
+local GroupOpenArrowBind = Classes:CreateBind()
+Binder.GroupOpenArrowBind = GroupOpenArrowBind
+Binder:SetReadOnly("GroupOpenArrowBind")
+GuiAnimations.EnableGroupAnimation = true
 function GuiObjects:CreateGroup(Name:string,Title:string?,Parent:any?)
     logger:debug("GuiObjects:CreateGroup","Creating new group '"..Name.."'")
     local Group = TGuiObjectClass(Name,Title,Parent,MakeGUIArchitectureClass())
@@ -1151,7 +1158,38 @@ function GuiObjects:CreateGroup(Name:string,Title:string?,Parent:any?)
         if Group.IsGlobal then
             return SpecialGGSizeBind:Run(...)
         end
-    end) Group:GetPropertyChangedEvent("Opened"):Connect(function()
+    end) local SpecialGroupOpenArrowBind = Classes:CreateBind()
+    SpecialGroupOpenArrowBind:Bind(function(...)
+        return GroupOpenArrowBind:Run(...)
+    end) Group.SpecialGroupOpenArrowBind = SpecialGroupOpenArrowBind
+    Group:SetReadOnly("SpecialGroupOpenArrowBind")
+    local Frame = Instance.new("Frame",Group.Frame)
+    Frame.Position = UDim2.new(0,0,1,0)
+    Frame.BackgroundTransparency = 1
+    Group:GetPropertyChangedEvent("GroupSize"):Connect(function()
+        Frame.Size = UDim2.new(UDim.new(1,0),Group.GroupSize.Y)
+    end) Frame.Size = UDim2.new(UDim.new(1,0),Group.GroupSize.Y)
+    local GroupFrame = Instance.new("Frame",Frame)
+    GroupFrame.BackgroundTransparency = 1
+    Group.GroupFrame = GroupFrame
+    Group:SetReadOnly("GroupFrame")
+    local VisibleIndent = Instance.new("Frame",Frame)
+    Group.SpecialColors:GetColorChangedSignal("GroupVisibleIndent"):Connect(function()
+        VisibleIndent.BackgroundColor3 = Group.SpecialColors:GetColor("GroupVisibleIndent")
+    end) VisibleIndent.BackgroundColor3 = Group.SpecialColors:GetColor("GroupVisibleIndent")
+    local GroupIndentBind = Classes:CreateBind()
+    GroupIndentBind:Bind(function(BGroup,Indent: Frame,GroupF: Frame)
+        Indent.Size = UDim2.new(GuiSize.NotGlobalGroupVisibleIndent,UDim.new(1,0))
+        Indent.Position = UDim2.new(GuiSize.NotGlobalGroupIndent,UDim.new(0,0))
+        GroupF.Size = UDim2.new(UDim.new(1,0)-GuiSize.NotGlobalGroupIndent*2,UDim.new(1,0))
+        GroupF.Position = UDim2.new(GuiSize.NotGlobalGroupIndent*2,UDim.new(1,0))
+        return true
+    end) Group.GroupIndentBind = GroupIndentBind
+    Group:SetReadOnly("GroupIndentBind")
+    local function refreshGroup()
+        GroupIndentBind:Run(Group,VisibleIndent,GroupF)
+    end
+    Group:GetPropertyChangedEvent("Opened"):Connect(function()
         logger:debug("TGroup",`Property Opened changed for {Group.Name}. Is Opened: {Group.Opened}`)
         if Group.IsGlobal then
             if GlobalOpenedGroup==Group then
@@ -1168,21 +1206,61 @@ function GuiObjects:CreateGroup(Name:string,Title:string?,Parent:any?)
             end
         end for _,v:{} in Group:GetChildren() do
             v:RefreshVisible()
-        end 
+        end SpecialGroupOpenArrowBind:Run(Group)
+        if not Group.IsGlobal then
+            Group:RefreshPosition()
+        end
     end) Group:GetPropertyChangedEvent("GroupSize"):Connect(function()
-        ButtonsSFrame.CanvasSize = Group.GroupSize
-    end) local OpenImage = Instance.new("ImageLabel",Group.Frame)
+        if GlobalOpenedGroup==Group then
+            ButtonsSFrame.CanvasSize = Group.GroupSize
+        end
+    end) local OpenImage = Instance.new("ImageLabel",Group.Button)
     OpenImage.Position = UDim2.new(1,0,0.5,0)
     OpenImage.AnchorPoint = Vector2.new(1,0.5)
+    OpenImage.Name = "Open"
+    Group.OpenLabel = OpenImage
+    Group:SetReadOnly("OpenLabel")
+    Assets:GetPropertyChangedEvent("GroupOpenArrow"):Connect(function()
+        OpenImage.Image = Assets.GroupOpenArrow
+    end) OpenImage.Image = Assets.GroupOpenArrow
+    Group.SpecialColors:GetColorChangedSignal("GroupOpenArrowColor"):Connect(function()
+        OpenImage.ImageColor3 = Group.SpecialColors:GetColor("GroupOpenArrowColor")
+    end) OpenImage.ImageColor3 = Group.SpecialColors:GetColor("GroupOpenArrowColor")
+    OpenImage.BackgroundTransparency = 1
+    local TextLabel = Instance.new("TextLabel",Group.Button)
+    TextLabel.BackgroundTransparency = 1
+    Group.Button:GetPropertyChangedSignal("Text"):Connect(function()
+        TextLabel.Text = Group.Button.Text
+    end) TextLabel.Text = Group.Button.Text
+    Group.Button.TextTransparency = 1
+    Group.Button:GetPropertyChangedSignal("FontFace"):Connect(function()
+        TextLabel.FontFace = Group.Button.FontFace
+    end) TextLabel.FontFace = Group.Button.FontFace
+    Group.Button:GetPropertyChangedSignal("TextSize"):Connect(function()
+        TextLabel.TextSize = Group.Button.TextSize
+    end) TextLabel.TextSize = Group.Button.TextSize
+    Group.Button:GetPropertyChangedSignal("TextScaled"):Connect(function()
+        TextLabel.TextScaled = Group.Button.TextScaled
+    end) TextLabel.TextScaled = Group.Button.TextScaled
+    Group.Button:GetPropertyChangedSignal("TextWrapped"):Connect(function()
+        TextLabel.TextWrapped = Group.Button.TextWrapped
+    end) TextLabel.TextWrapped = Group.Button.TextWrapped
+    Group.Button:GetPropertyChangedSignal("TextColor3"):Connect(function()
+        TextLabel.TextColor3 = Group.Button.TextColor3
+    end) TextLabel.TextColor3 = Group.Button.TextColor3
     local function refreshIsGlobal()
+        OpenImage.Visible = not Group.IsGlobal
         if Group.IsGlobal then
-            Group.Button.Size = UDim2.new(1,0,1,0)
-        else Group.Button.Size = UDim2.new(UDim.new(1,0),UDim.new(1,0))
+            TextLabel.Size = UDim2.new(1,0,1,0)
+        else local GroupOpenImageSize = UDim.new(0,GuiSize.GroupOpenImageSize.Offset+GuiSize.GroupOpenImageSize.Scale*Group.Button.AbsoluteSize.Y)
+            TextLabel.Size = UDim2.new(UDim.new(1,0)-GroupOpenImageSize,UDim.new(1,0))
+            OpenImage.Size = UDim2.new(GroupOpenImageSize,GroupOpenImageSize)
         end
     end Group:GetPropertyChangedEvent("IsGlobal"):Connect(function()
         refreshIsGlobal() Group:RefreshSize()
-    end)
-    refreshIsGlobal()
+    end) GuiSize:GetPropertyChangedEvent("GroupOpenImageSize"):Connect(function()
+        refreshIsGlobal()
+    end) refreshIsGlobal()
     Group.Activated:Connect(function()
         if Group.IsGlobal then
             Group.Opened = true
@@ -1192,19 +1270,28 @@ function GuiObjects:CreateGroup(Name:string,Title:string?,Parent:any?)
     return Group
 end 
 -- #FIND_POINT Set Binds for Groups/Buttons
+local oldPositions = {}
 RefreshingBind:Bind(function(children:{any},FromObject:any?)
     local pos=UDim2.new(0,0,0,0)
     local zeroPos = pos
-    for _,v in children do
-        if FromObject then
-            if v.Position<FromObject.Position then 
+    local needPos
+    if FromObject then
+        local oldPos = oldPositions[FromObject]
+        needPos = FromObject.Position
+        if oldPos[1]>FromObject.Position and oldPos[2]==FromObject.Parent then
+            needPos = oldPos[1]
+        end
+    end for k,v in children do
+        if needPos then
+            if needPos>k then
                 if v.LastRefreshingPos~=zeroPos then
                     pos = v.LastRefreshingPos
                 end continue
             elseif pos==zeroPos then
                 RefreshingBind:Run(children)
             end
-        end logger:debug("RefreshingBind:Bind",`Set new pos to {v.Name}`)
+        end oldPositions[v] = {v.Position,v.Parent}
+        logger:debug("RefreshingBind:Bind",`Set new pos to {v.Name}`)
         pos = v.SpecialButtonPositionBind:Run(v,pos)
     end return pos
 end) SizeBind:Bind(function(TGuiObject)
@@ -1237,7 +1324,7 @@ end) VisibleBind:Bind(function(Object:any)
     end return visible
 end)
 local function setNewPosition(TGuiObject,pos:UDim2)
-    if not TGuiObject then logger:critical_error("TGuiObject is incorrect. Expected: TGuiObject") TGuiObject=TGuiObjectClass() end
+    if not TGuiObject then logger:critical_error("TGuiObject is incorrect. Expected: TGuiObject") TGuiObject=GuiObjects:CreateGroup() end
     local Frame:Frame = TGuiObject.Frame
     if Frame and Frame.Parent then
         local thisPos = UDim2.new(pos.X,UDim.new(0,0))
@@ -1254,11 +1341,39 @@ local function setNewPosition(TGuiObject,pos:UDim2)
             end
         end Frame.Position = thisPos
         logger:debug("ButtonPositionBind:Bind",`Position for '{TGuiObject.Name}' [{TGuiObject.Type}]: {thisPos}`)
-        return pos+Frame.Size --Сделать если не вмещается в бок то в низ
+        local add = Frame.Size
+        return pos+add --Сделать если не вмещается в бок то в низ
     end
 end
-ButtonPositionBind:Bind(setNewPosition)
+ButtonPositionBind:Bind(function(TGuiObject,pos)
+    pos = setNewPosition(TGuiObject,pos)
+    if TGuiObject:IsA("TGroup") and TGuiObject.Opened then
+        pos += TGuiObject.GroupSize
+    end return pos
+end)
 GGPositionsBind:Bind(setNewPosition)
+-- Types -----------
+GuiAnimations.GroupOpenArrowTI = GuiAnimations.ArrowRotateTI
+local LastGroupTweens = {}
+GroupOpenArrowBind:Bind(function(Group:table)
+    if not Group then Group = GuiObjects:CreateGroup() end
+    local rotation
+    local Arrow = Group.OpenLabel
+    if Group.Opened then
+        rotation = 180
+    else rotation = 360
+    end local LastGArrowTween = LastGroupTweens[Group]
+    if GuiAnimations.ArrowRotateAnimationEnabled then
+        Arrow.Rotation = rotation-180
+        if LastGArrowTween then LastGArrowTween:Cancel() end
+        LastGArrowTween = TweenService:Create(Arrow,GuiAnimations.GroupOpenArrowTI,{Rotation=rotation})
+        LastGArrowTween:Play()
+        LastGArrowTween.Completed:Once(function()
+            LastGArrowTween = nil
+        end) LastGroupTweens[Group] = LastGArrowTween
+    else Arrow.Rotation = rotation
+    end return true
+end)
 
 local s,Groups = pcall(function()
     local Groups = MakeGUIArchitectureClass()
