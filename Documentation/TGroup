@@ -40,9 +40,9 @@
             "description":"Бинд для кастомного отступа не глобальных групп. Параметры: TGroup:TGroup, VisibleIndent: Frame, GroupFrame: Frame",
             "canChange":false,
             "deprecated":false
-        },"GroupFrame":{
+        },"NotGlobalGroupFrame":{
             "type":"Instance: Frame",
-            "description":"Frame с кнопками в группе",
+            "description":"Frame с кнопками в не глобальной группе",
             "canChange":false,
             "deprecated":false
         }

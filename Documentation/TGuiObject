@@ -85,6 +85,11 @@
             "description":"Специальный бинд для точной прорисовки кнопки(если группа не открыта, не показывать. свойство Visible считается само), работает как в Binder.VisibleBind",
             "canChange":true,
             "deprecated":false
+        },"GlobalName":{
+            "type":"string",
+            "description":"Можно изменить сразу при создании(после task.wait) уже нельзя, по умолчанию ставится также через task.wait(), нужно для индефикации этого обьекта после перезахода(например конфигураций)",
+            "canChange":true,
+            "deprecated":false
         }
     }, 
     "methods":{

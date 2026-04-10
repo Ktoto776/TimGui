@@ -20,6 +20,11 @@
             "description":"Биндер для обновления позиций кнопок в группе. Работает как в Binder.RefreshingBind",
             "canChange":true,
             "deprecated":false
+        },"GroupFrame":{
+            "type":"Instance: Frame",
+            "description":"Frame с кнопками в группе,canChange: true, но false в TimGui.Groups",
+            "canChange":true,
+            "deprecated":false
         }
     }, 
     "methods":{
