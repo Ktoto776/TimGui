@@ -1,0 +1,10 @@
+{
+    "description":"Класс кнопок в интерфейсе, просто пустая кнопка",
+    "type":"class",
+    "classes":["TClass","TGuiObject","ButtonObject","TButton"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{}, 
+    "methods":{}, 
+    "events":{}
+}

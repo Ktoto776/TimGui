@@ -1,7 +1,7 @@
 {
     "description":"Класс групп в интерфейсе, может находится в TimGui.Groups или группа в группе.",
     "type":"class",
-    "classes":["TClass","TGuiObject","ButtonObject","TGroup"],
+    "classes":["TClass","GUIArchitecture","TGuiObject","ButtonObject","TGroup"],
     "writeSameMode":true,
     "deprecated":false,
     "properties":{
@@ -45,6 +45,31 @@
             "description":"Frame с кнопками в не глобальной группе",
             "canChange":false,
             "deprecated":false
+        },"CreateButton":{
+            "description":"Создаёт группу",
+            "args":[{
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Имя группы",
+                    "required":true
+                },{
+                    "name":"Title",
+                    "type":"string | Translator | {langCode=string}",
+                    "description":"Название которое видит пользователь, если nil берёт из Name, string-только англ",
+                    "required":false
+                },{
+                    "name":"function",
+                    "type":"(TButton)->()",
+                    "description":"Функция, для установки на клик, запускается с этой же кнопкой(нужно, чтобы не нагружать код лишними переменными)",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"TGroup",
+                    "description":"Глобальная группа"
+                }
+            ], "deprecated":false
         }
     }, 
     "methods":{}, 

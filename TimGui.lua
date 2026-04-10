@@ -905,7 +905,7 @@ local function MakeGUIArchitectureClass(raw:{any?}?)
         end) GUIArchitecture.GroupSize = SpecialRefreshingBind:Run(self:GetChildren(),FromObject)
         if Classes:IsA(GUIArchitecture,"TGuiObject") and not notParentRefreshing then
             if Classes:IsA(GUIArchitecture.Parent,"GUIArchitecture") and GUIArchitecture.Parent~=TimGui.Groups then
-                GUIArchitecture.Parent:RefreshGroup()
+                GUIArchitecture.Parent:RefreshGroup(GUIArchitecture)
             end
         end onRefreshed:Fire()
         RunService.RenderStepped:Once(function()
@@ -1028,11 +1028,13 @@ local function TGuiObjectClass(Name:string,Title:string|{string}?,Parent:any?,Ob
     local SBind = Classes:CreateBind()
     SBind:Bind(function(...)
         return SizeBind:Run(...)
-    end) function Object:RefreshSize()
+    end) function Object:RefreshSize(dontRefreshPos:boolean?)
         if destroyed then return end
         logger:debug("TGuiObjectClass","Refreshing size for "..Object.Name.." ["..Object.Type.."]")
         SBind:Run(self)
-        self:RefreshPosition()
+        if not dontRefreshPos then
+            self:RefreshPosition()
+        end
     end SBind.OnBinded:Connect(function()
         Object:RefreshSize()
     end) SizeBind.OnBinded:Connect(function()
@@ -1050,7 +1052,7 @@ local function TGuiObjectClass(Name:string,Title:string|{string}?,Parent:any?,Ob
     function Object:RefreshPosition() if destroyed then return end
         logger:debug("TGuiObjectClass","Refreshing position for "..Object.Name.." ["..Object.Type.."]")
         if Classes:IsA(Object.Parent,"GUIArchitecture") then
-            Object.Parent:RefreshGroup()
+            Object.Parent:RefreshGroup(Object)
         end
     end Object:GetPropertyChangedEvent("Position"):Connect(function()
         logger:debug("TGuiObject.PositionChanged","Property Position of '"..Object.Name.."' ["..Object.Type.."] changed")
@@ -1118,7 +1120,10 @@ local function CreateButtonForTGuiObject(TGuiObject)
     end TGuiObject:AddClassName("ButtonObject")
     TGuiObject.Frame.BackgroundTransparency = 1
     local Button = Instance.new("TextButton",TGuiObject.Frame)
-    Button.Size = UDim2.new(1,0,1,0)
+    local destroyed = false
+    TGuiObject.Destroying:Connect(function()
+        destroyed = true
+    end) Button.Size = UDim2.new(1,0,1,0)
     TGuiObject.Title.TranslateValueChanged:Connect(function()
         Button.Text = TGuiObject.Title:Translate()
     end) Button.Text = TGuiObject.Title:Translate()
@@ -1137,11 +1142,30 @@ local function CreateButtonForTGuiObject(TGuiObject)
     Button.Activated:Connect(function()
         Activated:Fire()
     end) function TGuiObject:Activate()
-        logger:info("ButtonObject","Emulating Activated event.")
+        if destroyed then return end
+        logger:info("ButtonObject: "..TGuiObject.Name.."["..TGuiObject.ClassName.."]","Emulating Activated event.")
         Activated:Fire()
     end TGuiObject:SetReadOnly("Activated")
     return TGuiObject
-end local GlobalOpenedGroup
+end local function CopyButtonToTextLabel(Button:TextButton,TextLabel:TextLabel)
+    Button:GetPropertyChangedSignal("FontFace"):Connect(function()
+        TextLabel.FontFace = Button.FontFace
+    end) TextLabel.FontFace = Button.FontFace
+    Button:GetPropertyChangedSignal("TextSize"):Connect(function()
+        TextLabel.TextSize = Button.TextSize
+    end) TextLabel.TextSize = Button.TextSize
+    Button:GetPropertyChangedSignal("TextScaled"):Connect(function()
+        TextLabel.TextScaled = Button.TextScaled
+    end) TextLabel.TextScaled = Button.TextScaled
+    Button:GetPropertyChangedSignal("TextWrapped"):Connect(function()
+        TextLabel.TextWrapped = Button.TextWrapped
+    end) TextLabel.TextWrapped = Button.TextWrapped
+    Button:GetPropertyChangedSignal("TextColor3"):Connect(function()
+        TextLabel.TextColor3 = Button.TextColor3
+    end) TextLabel.TextColor3 = Button.TextColor3
+end
+-- #FIND_POINT TGroups
+local GlobalOpenedGroup
 local GlobalOpenedGroupChanged = Instance.new("BindableEvent")
 TimGui.GlobalOpenedGroupChanged = GlobalOpenedGroupChanged.Event
 table.insert(TimGuiReadOnly,"GlobalOpenedGroupChanged")
@@ -1149,7 +1173,7 @@ local GroupOpenArrowBind = Classes:CreateBind()
 Binder.GroupOpenArrowBind = GroupOpenArrowBind
 Binder:SetReadOnly("GroupOpenArrowBind")
 GuiAnimations.EnableGroupAnimation = true
-function GuiObjects:CreateGroup(Name:string,Title:string?,Parent:any?)
+function GuiObjects:CreateGroup(Name:string,Title:string|{[string]:string}?,Parent:any?)
     logger:debug("GuiObjects:CreateGroup","Creating new group '"..Name.."'")
     local Group = TGuiObjectClass(Name,Title,Parent,MakeGUIArchitectureClass())
     Group = CreateButtonForTGuiObject(Group)
@@ -1223,7 +1247,7 @@ function GuiObjects:CreateGroup(Name:string,Title:string?,Parent:any?)
         logger:debug("TGroup: refreshTGroup",`Refreshing Indent for {Group.Name}[{Group.ClassName}]`)
         GroupIndentBind:Run(Group,VisibleIndent,GroupFrame)
         for _,v in Group:GetChildren() do
-            v:RefreshSize()
+            v:RefreshSize(true)
         end
     end GroupIndentBind.OnBinded:Connect(function()
         refreshGroup()
@@ -1282,21 +1306,7 @@ function GuiObjects:CreateGroup(Name:string,Title:string?,Parent:any?)
         TextLabel.Text = Group.Button.Text
     end) TextLabel.Text = Group.Button.Text
     Group.Button.TextTransparency = 1
-    Group.Button:GetPropertyChangedSignal("FontFace"):Connect(function()
-        TextLabel.FontFace = Group.Button.FontFace
-    end) TextLabel.FontFace = Group.Button.FontFace
-    Group.Button:GetPropertyChangedSignal("TextSize"):Connect(function()
-        TextLabel.TextSize = Group.Button.TextSize
-    end) TextLabel.TextSize = Group.Button.TextSize
-    Group.Button:GetPropertyChangedSignal("TextScaled"):Connect(function()
-        TextLabel.TextScaled = Group.Button.TextScaled
-    end) TextLabel.TextScaled = Group.Button.TextScaled
-    Group.Button:GetPropertyChangedSignal("TextWrapped"):Connect(function()
-        TextLabel.TextWrapped = Group.Button.TextWrapped
-    end) TextLabel.TextWrapped = Group.Button.TextWrapped
-    Group.Button:GetPropertyChangedSignal("TextColor3"):Connect(function()
-        TextLabel.TextColor3 = Group.Button.TextColor3
-    end) TextLabel.TextColor3 = Group.Button.TextColor3
+    CopyButtonToTextLabel(Group.Button,TextLabel)
     local function refreshIsGlobal()
         OpenImage.Visible = not Group.IsGlobal
         if Group.IsGlobal then
@@ -1321,33 +1331,54 @@ function GuiObjects:CreateGroup(Name:string,Title:string?,Parent:any?)
             Group.Opened = true
         else Group.Opened = not Group.Opened
         end
-    end)
+    end) function Group:CreateButton(Name:string?,Title:string|{[string]: string}?,func:(any)->())
+        return GuiObjects:CreateButton(Name,Title,Group,func)
+    end
     return Group
 end 
+-- #FIND_POINT TButton
+function GuiObjects:CreateButton(Name:string,Title:string|{[string]:string}?,Parent:any?,func:(any)->()?)
+    logger:debug("GuiObjects:CreateButton","Creating new button '"..Name.."'")
+    local Button = TGuiObjectClass(Name,Title,Parent)
+    Button = CreateButtonForTGuiObject(Button)
+    Button:AddClassName("TButton")
+    Button.Type = "Button"
+    Button.Activated:Connect(function()
+        func(Button)
+    end) return Button
+end
 -- #FIND_POINT Set Binds for Groups/Buttons
 local oldPositions = {}
 RefreshingBind:Bind(function(children:{any},FromObject:any?)
-    local pos=UDim2.new(0,0,0,0)
-    local zeroPos = pos
+    local zeroPos = UDim2.new(0,0,0,0)
+    local pos = zeroPos
     local needPos
-    if FromObject then
+    if Classes:IsA(FromObject,"TGuiObject") then
+        logger:debug("RefreshingBind:Bind",`FromObject: {FromObject.Name}.`)
         local oldPos = oldPositions[FromObject]
-        needPos = FromObject.Position
-        if oldPos[1]>FromObject.Position and oldPos[2]==FromObject.Parent then
-            needPos = oldPos[1]
+        needPos = table.find(children,FromObject)
+        if oldPos and needPos then
+            if oldPos[1]<needPos and oldPos[2]==FromObject.Parent then
+                needPos = oldPos[1]
+            end
         end
     end for k,v in children do
         if needPos then
             if needPos>k then
+                print(111,v.LastRefreshingPos)
                 if v.LastRefreshingPos~=zeroPos then
                     pos = v.LastRefreshingPos
                 end continue
             elseif pos==zeroPos then
+                print(needPos,k,pos==zeroPos)
+                logger:debug("RefreshingBind:Bind","Zero pos restart without FromObject")
                 return RefreshingBind:Run(children)
             end
-        end oldPositions[v] = {v.Position,v.Parent}
+        end oldPositions[v] = {k,v.Parent}
         logger:debug("RefreshingBind:Bind",`Set new pos to {v.Name}`)
         pos = v.SpecialButtonPositionBind:Run(v,pos)
+        print(v.LastRefreshingPos,pos)
+        v.LastRefreshingPos = pos
     end return pos
 end) SizeBind:Bind(function(TGuiObject)
     if not TGuiObject then logger:critical_error("TGuiObject is incorrect. Expected: TGuiObject") TGuiObject=TGuiObjectClass() end 
@@ -1476,8 +1507,15 @@ end) if not s then
     logger:critical_error("MAIN","Error to create Settings group: \n"..tostring(Settings))
 end 
 local s2 = TimGui.Groups:CreateGroup("Settings2","Settings2")
-Groups:RefreshGroup()
 State:ResetToDefault()
+s2:CreateButton("TestingRefreshin")
+s2:CreateButton("Testing",{
+    ru="Переместить настройки",
+    en="Move 'Settings' group",
+    uk="Перемістити налаштування"
+},function(Button)
+    Settings.Parent = s2
+end)
 --GuiSize.GlobalGroupSize и GuiSize.ButtonSize
 --Сделать: кнопки, binder для их позиций, и скролл который будет брать самую нижнюю для y и правую для x(учитывай AnchorPoint)
 --Сделай систему для авто Y кнопкам и переменную ypos, а также присваивай id каждому уникальный

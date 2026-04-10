@@ -100,7 +100,13 @@
             "deprecated":false
         },"RefreshSize":{
             "description":"Обновляет размер, запуская специальный Bind(SizeBind)",
-            "args":[],
+            "args":[{
+                    "name":"dontRefreshPosition",
+                    "type":"boolean",
+                    "description":"Не запускать ли обновление позиции",
+                    "required":false
+                }
+            ],
             "return":[], 
             "deprecated":false
         },"GetGlobalGroup":{
