@@ -98,6 +98,26 @@
                     "description":"Переключатель"
                 }
             ], "deprecated":false
+        },"CreateText":{
+            "description":"Создаёт текст с parent в этой группе",
+            "args":[{
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Имя текста",
+                    "required":true
+                },{
+                    "name":"Title",
+                    "type":"string | Translator | {langCode=string}",
+                    "description":"Текст который видит пользователь, если nil берёт из Name, string-только англ",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"TText",
+                    "description":"Текст"
+                }
+            ], "deprecated":false
         }
     }, 
     "events":{

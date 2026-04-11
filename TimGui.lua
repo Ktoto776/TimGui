@@ -416,6 +416,7 @@ Colors.ArrowColor = Color3.new(1,1,1)
 Colors.GroupOpenArrowColor = Color3.new(1,1,1)
 Colors.LoadingColor = Color3.new(1,1,1)
 Colors.TextColor = Color3.new(1,1,1)
+Colors.TTextColor = Color3.new(1,1,1)
 Colors.GroupVisibleIndent = Color3.new(1,1,1)
 Colors.HeaderSeparatorColor = Color3.new(0,0,0)
 Colors.HeaderFirstNameColor = Color3.new(1,1,0)
@@ -1125,6 +1126,7 @@ local function CreateButtonForTGuiObject(TGuiObject)
     local destroyed = false
     TGuiObject.Destroying:Connect(function()
         destroyed = true
+        Button:Destroy()
     end) Button.Size = UDim2.new(1,0,1,0)
     TGuiObject.Title.TranslateValueChanged:Connect(function()
         Button.Text = TGuiObject.Title:Translate()
@@ -1132,7 +1134,7 @@ local function CreateButtonForTGuiObject(TGuiObject)
     TGuiObject.SpecialColors:GetColorChangedSignal("ButtonBackground"):Connect(function()
         Button.BackgroundColor3 = TGuiObject.SpecialColors:GetColor("ButtonBackground")
     end) Button.BackgroundColor3 = TGuiObject.SpecialColors:GetColor("ButtonBackground")
-    TGuiObject.SpecialColors:GetColorChangedSignal("ButtonBackground"):Connect(function()
+    TGuiObject.SpecialColors:GetColorChangedSignal("TextColor"):Connect(function()
         Button.TextColor3 = TGuiObject.SpecialColors:GetColor("TextColor")
     end) Button.TextColor3 = TGuiObject.SpecialColors:GetColor("TextColor")
     Button.TextScaled = true
@@ -1246,11 +1248,14 @@ function GuiObjects:CreateGroup(Name:string,Title:string|{[string]:string}?,Pare
         return true
     end) Group.GroupIndentBind = GroupIndentBind
     Group:SetReadOnly("GroupIndentBind")
+    local lastAbsoluteX
     local function refreshGroup()
         logger:debug("TGroup: refreshTGroup",`Refreshing Indent for {Group.Name}[{Group.ClassName}]`)
         GroupIndentBind:Run(Group,VisibleIndent,GroupFrame)
-        for _,v in Group:GetChildren() do
-            v:RefreshSize(true)
+        if lastAbsoluteX~=GroupFrame.AbsoluteSize.X then
+            for _,v in Group:GetChildren() do
+                v:RefreshSize(true)
+            end lastAbsoluteX = GroupFrame.AbsoluteSize.X
         end
     end GroupIndentBind.OnBinded:Connect(function()
         refreshGroup()
@@ -1338,6 +1343,8 @@ function GuiObjects:CreateGroup(Name:string,Title:string|{[string]:string}?,Pare
         return GuiObjects:CreateButton(Name,Title,Group,func)
     end function Group:CreateToggle(Name:string?,Title:string|{[string]: string}?,func:(any)->())
         return GuiObjects:CreateToggle(Name,Title,Group,func)
+    end function Group:CreateText(Name:string?,Title:string|{[string]: string}?)
+        return GuiObjects:CreateText(Name,Title,Group)
     end
     return Group
 end 
@@ -1411,6 +1418,33 @@ function GuiObjects:CreateToggle(Name:string,Title:string|{[string]:string}?,Par
     end) Button.Activated:Connect(function()
         Button.Value = not Button.Value
     end) return Button
+end
+-- #FIND_POINT Text
+function GuiObjects:CreateText(Name:string,Title:string|{[string]:string}?,Parent:any?)
+    local Text = TGuiObjectClass(Name,Title,Parent)
+    Text:AddClassName("TText")
+    Text.Type = "Text"
+    Text:SetReadOnly("Type")
+    Text.Frame.BackgroundTransparency = 1
+    local TextLabel = Instance.new("TextLabel",Text.Frame)
+    TextLabel.BackgroundTransparency = 1
+    TextLabel.TextScaled = true
+    TextLabel.Size = UDim2.new(1,0,1,0)
+    Text.TextLabel = TextLabel
+    Text:SetReadOnly("TextLabel")
+    local destroyed = false
+    Text.Destroying:Connect(function()
+        destroyed = true
+        TextLabel:Destroy()
+    end) TextLabel.Size = UDim2.new(1,0,1,0)
+    Text.Title.TranslateValueChanged:Connect(function()
+        if destroyed then return end
+        TextLabel.Text = Text.Title:Translate()
+    end) TextLabel.Text = Text.Title:Translate()
+    Text.SpecialColors:GetColorChangedSignal("TTextColor"):Connect(function()
+        TextLabel.TextColor3 = Text.SpecialColors:GetColor("TTextColor")
+    end) TextLabel.TextColor3 = Text.SpecialColors:GetColor("TTextColor")
+    return Text
 end
 -- #FIND_POINT Set Binds for Groups/Buttons
 local oldPositions = {}
@@ -1604,6 +1638,7 @@ s2:CreateToggle("Working Toggle",nil,function(b)
 end).OnTrue:Connect(function()
     print("TRUE!!!!!!!!!")
 end)
+s2:CreateText("WTF","ITS WORKING TEXT????")
 
 --[[
 План:

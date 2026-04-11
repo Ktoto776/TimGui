@@ -65,6 +65,11 @@
             "description":"Цвет видимого отступа не глобальных групп",
             "canChange":true,
             "deprecated":false
+        },"TTextColor":{
+            "type":"Color3",
+            "description":"Цвет текста для Обьектов без фона, например TText",
+            "canChange":true,
+            "deprecated":false
         }
     }, "methods":{}, 
     "events":{}

@@ -91,6 +91,31 @@
                     "description":"Кнопка"
                 }
             ], "deprecated":false
+        },"CreateText":{
+            "description":"Создаёт текст",
+            "args":[{
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Имя текста",
+                    "required":true
+                },{
+                    "name":"Title",
+                    "type":"string | Translator | {langCode=string}",
+                    "description":"Текст который видит пользователь, если nil берёт из Name, string-только англ",
+                    "required":false
+                },{
+                    "name":"Parent",
+                    "type":"GUIArchitecture",
+                    "description":"Parent для новой книпки",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"TText",
+                    "description":"Текст"
+                }
+            ], "deprecated":false
         }
     }, 
     "events":{
