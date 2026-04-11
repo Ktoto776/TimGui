@@ -5,7 +5,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/Robloxer228s/TimGUI/m
 
 ]] local GSetup = _G.Setup or {}
 local Setup = {
-    linkToDir= GSetup.linkToDir or "https://raw.githubusercontent.com/Robloxer228s/TimGUI/main/"
+    linkToDir= GSetup.linkToDir or "https://raw.githubusercontent.com/Ktoto776/TimGUI/main/"
 }
 local isLocalDir = not (string.find(Setup.linkToDir,"http") and string.find(Setup.linkToDir,"://"))
 local printText = "TimGui starting"

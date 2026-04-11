@@ -76,7 +76,7 @@ table.insert(TimGuiReadOnly,"LanguageChanged")
 TimGui.LanguagePreferences = {"uk","en"}
 -- #FIND_POINT HttpGet
 local HttpGet = TimGuiRaw.SetupData.HttpGet
-TimGui.httpGet_BaseDir = TimGui.SetupData.linkToDir or "https://raw.githubusercontent.com/Robloxer228s/TimGUI/main/"
+TimGui.httpGet_BaseDir = TimGui.SetupData.linkToDir or "https://raw.githubusercontent.com/Ktoto776/TimGUI/main/"
 TimGui.httpGet_BaseDirIsLocal = not (string.find(TimGui.httpGet_BaseDir,"http") and string.find(TimGui.httpGet_BaseDir,"://"))
 table.insert(TimGuiReadOnly,"httpGet_BaseDirIsLocal")
 table.insert(TimGuiReadOnly,"httpGet_BaseDir")
