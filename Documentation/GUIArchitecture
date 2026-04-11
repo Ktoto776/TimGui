@@ -61,8 +61,8 @@
             ],
             "return":[{
                     "name":"response",
-                    "type":"TGuiGroup",
-                    "description":"Глобальная группа"
+                    "type":"TGroup",
+                    "description":"Группа"
                 }
             ], "deprecated":false
         },"RefreshGroup":{

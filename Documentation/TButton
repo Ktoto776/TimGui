@@ -4,7 +4,14 @@
     "classes":["TClass","TGuiObject","ButtonObject","TButton"],
     "writeSameMode":true,
     "deprecated":false,
-    "properties":{}, 
+    "properties":{
+        "Type":{
+            "type":"string",
+            "description":"Равен \"Button\". Нужен для определения типа обьекта",
+            "canChange":false,
+            "deprecated":false
+        }
+    }, 
     "methods":{}, 
     "events":{}
 }

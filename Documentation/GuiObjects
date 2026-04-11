@@ -31,12 +31,12 @@
                     "description":"Глобальная группа"
                 }
             ], "deprecated":false
-        },"CreateButton":{
-            "description":"Создаёт группу",
+        },"CreateToggle":{
+            "description":"Создаёт переключатель",
             "args":[{
                     "name":"Name",
                     "type":"string",
-                    "description":"Имя группы",
+                    "description":"Имя переключателя",
                     "required":true
                 },{
                     "name":"Title",
@@ -46,7 +46,7 @@
                 },{
                     "name":"Parent",
                     "type":"GUIArchitecture",
-                    "description":"Parent для новой группы",
+                    "description":"Parent для новой переключателя",
                     "required":false
                 },{
                     "name":"function",
@@ -57,8 +57,38 @@
             ],
             "return":[{
                     "name":"response",
-                    "type":"TGroup",
-                    "description":"Глобальная группа"
+                    "type":"TToggle",
+                    "description":"Переключатель"
+                }
+            ], "deprecated":false
+        },"CreateButton":{
+            "description":"Создаёт кнопку",
+            "args":[{
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Имя кнопки",
+                    "required":true
+                },{
+                    "name":"Title",
+                    "type":"string | Translator | {langCode=string}",
+                    "description":"Название которое видит пользователь, если nil берёт из Name, string-только англ",
+                    "required":false
+                },{
+                    "name":"Parent",
+                    "type":"GUIArchitecture",
+                    "description":"Parent для новой книпки",
+                    "required":false
+                },{
+                    "name":"function",
+                    "type":"(TButton)->()",
+                    "description":"Функция, для установки на клик, запускается с этой же кнопкой(нужно, чтобы не нагружать код лишними переменными)",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"TButton",
+                    "description":"Кнопка"
                 }
             ], "deprecated":false
         }

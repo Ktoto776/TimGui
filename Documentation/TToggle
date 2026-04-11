@@ -1,0 +1,56 @@
+{
+    "description":"Класс кнопок в интерфейсе, просто пустая кнопка",
+    "type":"class",
+    "classes":["TClass","TGuiObject","ButtonObject","TToggle"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "SpecialTextColorForToggle":{
+            "type":"Bind",
+            "description":"Бинд для (анимации) цвета текста в зависимости от значения. Работает как в Binder.TextColorForToggle",
+            "canChange":true,
+            "deprecated":false
+        },"Value":{
+            "type":"boolean",
+            "description":"Значение",
+            "canChange":true,
+            "deprecated":false
+        }
+    }, 
+    "methods":{
+        "RefreshTextColorFromValue":{
+            "description":"Обновляет цвет текста",
+            "args":[{
+                    "name":"NotAnimate",
+                    "type":"boolean",
+                    "description":"Не анимировать(если true, резко установит цвет на нужный)",
+                    "required":false
+                }
+            ],"return":[], 
+            "deprecated":false
+        }
+    }, 
+    "events":{
+        "Changed":{
+            "description":"Запускается когда Value изменилось",
+            "type":"RBXScriptEvent",
+            "args":[{
+                    "name":"value",
+                    "type":"boolean",
+                    "description":"Значение"
+                }
+            ],
+            "deprecated":false
+        },"OnTrue":{
+            "description":"Запускается когда Value изменилось на true",
+            "type":"RBXScriptEvent",
+            "args":[],
+            "deprecated":false
+        },"OnFalse":{
+            "description":"Запускается когда Value изменилось на false",
+            "type":"RBXScriptEvent",
+            "args":[],
+            "deprecated":false
+        }
+    }
+}

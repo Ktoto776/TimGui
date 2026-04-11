@@ -6,6 +6,7 @@
         "HttpGet":"<function(URL) -- Заменяет метод TimGUI.HttpGet>",
         "FirstHeaderName":"Tim --[may be a table, for example {en=\"tim\",...}]",
         "SecondHeaderName":"Gui --[may be a table]",
+        "SeparatorSize":3,
         "coreDebugEnabled":false
     }
 }

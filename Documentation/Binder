@@ -27,37 +27,43 @@
             "type":"class",
             "class":"Bind",
             "description":"Бинд для установки позиции кнопкам(или не глобальным группам). Не забывай про ВСЕ(ну или почти) параметры в TGuiObject. Параметры: child:TGuiObject,pos:UDim2 --pos=то что вернул, последний запуск бинда, по умолчанию следующая позиция",
-            "canChange":true,
+            "canChange":false,
             "deprecated":false
         },"GlobalGroupRefreshPosition":{
             "type":"class",
             "class":"Bind",
             "description":"Бинд для установки позиции глобальным группам. Параметры: GlobalGroup:TGuiObject+GUIArchitecture,pos:UDim2 --pos=то что вернул, последний запуск бинда, по умолчанию следующая позиция",
-            "canChange":true,
+            "canChange":false,
             "deprecated":false
         },"GlobalGroupRefreshSize":{
             "type":"class",
             "class":"Bind",
             "description":"Бинд для установки размера глобальным группам. Не забывай про TimGui.GuiSize.ButtonSize. Параметры: GlobalGroup:TGuiObject+GUIArchitecture",
-            "canChange":true,
+            "canChange":false,
             "deprecated":false
         },"RefreshingBind":{
             "type":"class",
             "class":"Bind",
             "description":"Бинд для запуска обновлений. Параметры: Children:[TGuiObject,...], FromObject:TGuiObject--От какого обьекта начинать. Должно вернуть UDim2 с концом(после последнего обьекта)",
-            "canChange":true,
+            "canChange":false,
             "deprecated":false
         },"VisibleBind":{
             "type":"class",
             "class":"Bind",
             "description":"Бинд для подсчёта видимости обьекта(свойство Visible работает поверх и его подсчитывать не нужно). Ну забудь про TGuiObject.Parent.Opened(и про проверки что Parent группа). Параметры: TGuiObject:TGuiObject--От какого обьекта начинать. Должно вернуть UDim2 с концом(после последнего обьекта)",
-            "canChange":true,
+            "canChange":false,
             "deprecated":false
         },"GroupOpenArrowBind":{
             "type":"class",
             "class":"Bind",
-            "description":"Бинд для анимации откртия не глобальных групп. Параметры: TGroup:TGroup. Не забудь TimGui.GuiAnimations.EnableGroupAnimation",
-            "canChange":true,
+            "description":"Бинд для анимации открытия не глобальных групп. Параметры: TGroup:TGroup. Не забудь TimGui.GuiAnimations.EnableGroupAnimation",
+            "canChange":false,
+            "deprecated":false
+        },"TextColorForToggle":{
+            "type":"class",
+            "class":"Bind",
+            "description":"Бинд для (анимации) смены цвета в Toggle в зависимости от значения. Должен ждать конца анимации. Параметры: Toggle:TTogle, enableAnimate:boolean--стоит ли анимировать(если false просто резкая смена цвета)",
+            "canChange":false,
             "deprecated":false
         }
     }, "methods":{

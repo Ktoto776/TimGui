@@ -425,6 +425,8 @@ Colors.MainBackgroundColor = Color3.new(0.15, 0.15, 0.3)
 Colors.GroupsBackgroundColor = Color3.new(0.15, 0.15, 0.25)
 Colors.ButtonBackground = Color3.fromRGB(50,50,100)
 Colors.ErrorColor = Color3.new(1,0.3,0.3)
+Colors.ToggleTrue = Color3.new(0.25,1,0.25)
+Colors.ToggleFalse = Color3.new(1,0.25,0.25)
 Colors.Default = Colors:GetPreset()
 -- #FIND_POINT GuiSize
 local GuiSize = Classes:CreatePreset()
@@ -639,7 +641,7 @@ Header:GetPropertyChangedEvent("SeparatorSize"):Connect(function()
     end local xoffset = -(Header.SeparatorSize+1)/2
     FirstName.Size = UDim2.new(0.5,xoffset,1,0)
     TwoName.Size = UDim2.new(0.5,xoffset,1,0)
-end) Header.SeparatorSize = 3
+end) Header.SeparatorSize = tonumber(TimGui.SetupData.SeparatorSize) or 3
 Header.FirstName = Classes:CreateTranslator("Tim")
 if type(TimGui.SetupData["FirstHeaderName"])=="table" then
     Header.FirstName:Load(TimGui.SetupData["FirstHeaderName"])
@@ -1181,6 +1183,7 @@ function GuiObjects:CreateGroup(Name:string,Title:string|{[string]:string}?,Pare
     Group:AddClassName("TGroup")
     Group.Opened = false
     Group.Type = "Group"
+    Group:SetReadOnly("Type")
     local onOpened = Instance.new("BindableEvent")
     local onClose = Instance.new("BindableEvent")
     Group.OnOpen = onOpened.Event
@@ -1333,6 +1336,8 @@ function GuiObjects:CreateGroup(Name:string,Title:string|{[string]:string}?,Pare
         end
     end) function Group:CreateButton(Name:string?,Title:string|{[string]: string}?,func:(any)->())
         return GuiObjects:CreateButton(Name,Title,Group,func)
+    end function Group:CreateToggle(Name:string?,Title:string|{[string]: string}?,func:(any)->())
+        return GuiObjects:CreateToggle(Name,Title,Group,func)
     end
     return Group
 end 
@@ -1343,8 +1348,68 @@ function GuiObjects:CreateButton(Name:string,Title:string|{[string]:string}?,Par
     Button = CreateButtonForTGuiObject(Button)
     Button:AddClassName("TButton")
     Button.Type = "Button"
+    Button:SetReadOnly("Type")
     Button.Activated:Connect(function()
         func(Button)
+    end) return Button
+end
+-- #FIND_POINT TToggle
+local RefreshColorValueBind = Classes:CreateBind()
+Binder.TextColorForToggle = RefreshColorValueBind
+Binder:SetReadOnly("TextColorForToggle")
+GuiAnimations.TextColorForToggleTI = TweenInfo.new(0.5)
+GuiAnimations.EnableTextColorForToggleAnimation = true
+function GuiObjects:CreateToggle(Name:string,Title:string|{[string]:string}?,Parent:any?,func:(any)->()?)
+    logger:debug("GuiObjects:CreateButton","Creating new button '"..Name.."'")
+    local Button = TGuiObjectClass(Name,Title,Parent)
+    Button = CreateButtonForTGuiObject(Button)
+    Button:AddClassName("Toggle")
+    Button.Type = "Toggle"
+    Button:SetReadOnly("Type")
+    Button.Value = false
+    local ChangedEvent = Instance.new("BindableEvent")
+    local EnabledEvent = Instance.new("BindableEvent")
+    local DisabledEvent = Instance.new("BindableEvent")
+    Button.Changed = ChangedEvent.Event
+    Button.OnTrue = EnabledEvent.Event
+    Button.OnFalse = DisabledEvent.Event
+    Button:SetReadOnly("Changed")
+    Button:SetReadOnly("OnTrue")
+    Button:SetReadOnly("OnFalse")
+    local SpecialRefreshColorValueBind = Classes:CreateBind()
+    Button.SpecialTextColorForToggle = SpecialRefreshColorValueBind
+    Button:SetReadOnly("SpecialTextColorForToggle")
+    SpecialRefreshColorValueBind:Bind(function(...)
+        return RefreshColorValueBind:Run(...)
+    end) local refreshing = false
+    local function refreshValueColor(NotAnimate:boolean,async:boolean)
+        if not refreshing or async then
+            logger:debug("Toggle","Refresh color for Toggle '"..Button.Name.."'")
+            refreshing = true
+            SpecialRefreshColorValueBind:Run(Button,not NotAnimate and GuiAnimations.EnableTextColorForToggleAnimation)
+            refreshing = false
+        end
+    end SpecialRefreshColorValueBind.OnBinded:Connect(refreshValueColor)
+    RefreshColorValueBind.OnBinded:Connect(refreshValueColor)
+    Button.SpecialColors:GetColorChangedSignal("ToggleTrue"):Connect(function()
+        if Button.Value then refreshValueColor() end
+    end) Button.SpecialColors:GetColorChangedSignal("ToggleFalse"):Connect(function()
+        if not Button.Value then refreshValueColor() end
+    end) Button.Button:GetPropertyChangedSignal("TextColor3"):Connect(function()
+        refreshValueColor(true)
+    end) refreshValueColor(true)
+    function Button:RefreshTextColorFromValue(NotAnimate:boolean)
+        return refreshValueColor(NotAnimate,true)
+    end Button:GetPropertyChangedEvent("Value"):Connect(function()
+        ChangedEvent:Fire(Button.Value)
+        if Button.Value then
+            EnabledEvent:Fire()
+        else DisabledEvent:Fire()
+        end refreshValueColor(false,true)
+    end) Button.Changed:Connect(function()
+        func(Button)
+    end) Button.Activated:Connect(function()
+        Button.Value = not Button.Value
     end) return Button
 end
 -- #FIND_POINT Set Binds for Groups/Buttons
@@ -1456,9 +1521,26 @@ GroupOpenArrowBind:Bind(function(Group:table)
         LastGArrowTween = TweenService:Create(Arrow,GuiAnimations.GroupOpenArrowTI,{Rotation=rotation})
         LastGArrowTween:Play()
         LastGArrowTween.Completed:Once(function()
-            LastGArrowTween = nil
+            LastGroupTweens[Group] = nil
         end) LastGroupTweens[Group] = LastGArrowTween
     else Arrow.Rotation = rotation
+    end return true
+end)
+local LastToggleTweens = {}
+RefreshColorValueBind:Bind(function(Toggle,Animate:boolean)
+    if not Toggle then error("TToggle is incorrect") Toggle=GuiObjects:CreateToggle() end
+    local color if Toggle.Value then
+        color = Toggle.SpecialColors:GetColor("ToggleTrue")
+    else color = Toggle.SpecialColors:GetColor("ToggleFalse")
+    end local LastTween = LastToggleTweens[Toggle]
+    if Animate then
+        if LastTween then LastTween:Cancel() end
+        LastTween = TweenService:Create(Toggle.Button,GuiAnimations.TextColorForToggleTI,{TextColor3=color})
+        LastTween:Play()
+        LastToggleTweens[Toggle] = LastTween
+        LastTween.Completed:Wait()
+        LastToggleTweens[Toggle] = nil
+    else Toggle.Button.TextColor3 = color
     end return true
 end)
 
@@ -1516,22 +1598,26 @@ s2:CreateButton("Testing",{
 },function(Button)
     Settings.Parent = s2
 end)
---GuiSize.GlobalGroupSize и GuiSize.ButtonSize
---Сделать: кнопки, binder для их позиций, и скролл который будет брать самую нижнюю для y и правую для x(учитывай AnchorPoint)
---Сделай систему для авто Y кнопкам и переменную ypos, а также присваивай id каждому уникальный
+
+s2:CreateToggle("Working Toggle",nil,function(b)
+    print(b.Value)
+end).OnTrue:Connect(function()
+    print("TRUE!!!!!!!!!")
+end)
+
 --[[
 План:
     Сделать старые функции:
         Нормальные плавающие кнопки на бабафонах
-        Добавить размер разделителя в Setup
         Обширный Setup, со своей цветовой политрой размерами и тд
         языки, теперь с возможностью на другой язык
         choose(было askYN),свои кнопки(на Translator если не дали то Да или Нет) можно добавить :Run() или :Ask() или :Choose()
             и классы чтоб можно было менять уже запущенный
         notify(было print), также на Translator и с классами
-        конфиги
+        конфиги(С новым интерфейсом)
         часы, и чтоб можно было кастомить
     Новое:
+        Как Dev Инструмент смотреть иерархию, тоесть проводник, и показывать ошибки(например когда кнопка в глобальных группах и из-за этого не отображается)
         TextBoxPrompt, промпт где спросить юзера написать текста
         NumberPrompt тоже что и выше, только с цифрами
         Сделать Number TGuiObject

@@ -45,12 +45,15 @@
             "description":"Frame с кнопками в не глобальной группе",
             "canChange":false,
             "deprecated":false
-        },"CreateButton":{
-            "description":"Создаёт группу",
+        }
+    }, 
+    "methods":{
+        "CreateButton":{
+            "description":"Создаёт кнопку с parent в этой группе",
             "args":[{
                     "name":"Name",
                     "type":"string",
-                    "description":"Имя группы",
+                    "description":"Имя кнопки",
                     "required":true
                 },{
                     "name":"Title",
@@ -66,13 +69,37 @@
             ],
             "return":[{
                     "name":"response",
-                    "type":"TGroup",
-                    "description":"Глобальная группа"
+                    "type":"TButton",
+                    "description":"Кнопка"
+                }
+            ], "deprecated":false
+        },"CreateToggle":{
+            "description":"Создаёт переключатель с parent в этой группе",
+            "args":[{
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Имя переключателя",
+                    "required":true
+                },{
+                    "name":"Title",
+                    "type":"string | Translator | {langCode=string}",
+                    "description":"Название которое видит пользователь, если nil берёт из Name, string-только англ",
+                    "required":false
+                },{
+                    "name":"function",
+                    "type":"(TToggle)->()",
+                    "description":"Функция, для установки на смену значения, запускается с этой же кнопкой(нужно, чтобы не нагружать код лишними переменными)",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"TTogle",
+                    "description":"Переключатель"
                 }
             ], "deprecated":false
         }
     }, 
-    "methods":{}, 
     "events":{
         "OnOpen":{
             "description":"При открытии группы",

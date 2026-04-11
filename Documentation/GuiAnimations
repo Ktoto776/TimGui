@@ -20,6 +20,11 @@
             "description":"Включена ли анимация открытия/закрытия групп",
             "canChange":true,
             "deprecated":false
+        }, "EnableTextColorForToggleAnimation":{
+            "type":"boolean",
+            "description":"Включена ли анимация смены цвет Toggle",
+            "canChange":true,
+            "deprecated":false
         }, "ArrowRotateTI":{
             "type":"TweenInfo",
             "description":"TweenInfo поворота стрелочки",
@@ -28,6 +33,16 @@
         }, "OpenTI":{
             "type":"TweenInfo",
             "description":"TweenInfo открытия",
+            "canChange":true,
+            "deprecated":false
+        }, "TextColorForToggleTI":{
+            "type":"TweenInfo",
+            "description":"TweenInfo анимации цвета Toggle",
+            "canChange":true,
+            "deprecated":false
+        }, "GroupOpenArrowTI":{
+            "type":"TweenInfo",
+            "description":"TweenInfo анимации стрелочки групп",
             "canChange":true,
             "deprecated":false
         }
