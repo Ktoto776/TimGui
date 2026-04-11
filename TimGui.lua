@@ -413,11 +413,8 @@ TimGui.Colors = Colors
 table.insert(TimGuiReadOnly,"Colors")
 Colors.PresetName = "Default"
 Colors.ArrowColor = Color3.new(1,1,1)
-Colors.GroupOpenArrowColor = Color3.new(1,1,1)
 Colors.LoadingColor = Color3.new(1,1,1)
 Colors.TextColor = Color3.new(1,1,1)
-Colors.TTextColor = Color3.new(1,1,1)
-Colors.GroupVisibleIndent = Color3.new(1,1,1)
 Colors.HeaderSeparatorColor = Color3.new(0,0,0)
 Colors.HeaderFirstNameColor = Color3.new(1,1,0)
 Colors.HeaderSecondNameColor = Color3.new(1,0,1)
@@ -426,8 +423,18 @@ Colors.MainBackgroundColor = Color3.new(0.15, 0.15, 0.3)
 Colors.GroupsBackgroundColor = Color3.new(0.15, 0.15, 0.25)
 Colors.ButtonBackground = Color3.fromRGB(50,50,100)
 Colors.ErrorColor = Color3.new(1,0.3,0.3)
+--Types -------------------------
+Colors.GroupOpenArrowColor = Color3.new(1,1,1)
+Colors.GroupVisibleIndent = Color3.new(1,1,1)
+Colors.TTextColor = Color3.new(1,1,1)
 Colors.ToggleTrue = Color3.new(0.25,1,0.25)
 Colors.ToggleFalse = Color3.new(1,0.25,0.25)
+Colors.TextBoxBackgroundColor = Color3.fromRGB(38, 38, 76)
+Colors.TextInTextBoxColor = Color3.new(1,1,1)
+Colors.AddButtonBackgroundInTextBoxColor = Color3.new(0.3,1,0.3)
+Colors.AddButtonTextInTextBoxColor = Color3.new(1,1,1)
+Colors.SubtractButtonBackgroundInTextBoxColor = Color3.new(1,0,0.3)
+Colors.SubtractButtonTextInTextBoxColor = Color3.new(1,1,1)
 Colors.Default = Colors:GetPreset()
 -- #FIND_POINT GuiSize
 local GuiSize = Classes:CreatePreset()
@@ -449,6 +456,11 @@ GuiSize.ButtonSize = UDim2.new(1,0,0,50)
 GuiSize.ButtonCornerRadius = UDim.new(0.5,0)
 GuiSize.NotGlobalGroupIndent = UDim.new(0,3)
 GuiSize.NotGlobalGroupVisibleIndent = UDim.new(0,2)
+--Types-------------------
+GuiSize.TextSizeInTTextBox = UDim2.new(0.5,0,1,0)
+GuiSize.IndentSizeBetweenInTTextBox = UDim2.new(0,0,0,0)
+GuiSize.TextBoxSizeInTTextBox = UDim2.new(0.3,0,1,0)
+GuiSize.ButtonsSizeInTTextBox = UDim2.new(0.1,0,1,0)
 GuiSize.Default = GuiSize:GetPreset()
 function TimGui:GetFrameGuiPosition(opened:boolean?)
     if opened==nil then opened = TimGui.Opened end
@@ -1178,6 +1190,7 @@ Binder.GroupOpenArrowBind = GroupOpenArrowBind
 Binder:SetReadOnly("GroupOpenArrowBind")
 GuiAnimations.EnableGroupAnimation = true
 function GuiObjects:CreateGroup(Name:string,Title:string|{[string]:string}?,Parent:any?)
+    if type(Name)~="string" then logger:critical_error("CreateGroup","Name is incorrect") end
     logger:debug("GuiObjects:CreateGroup","Creating new group '"..Name.."'")
     local Group = TGuiObjectClass(Name,Title,Parent,MakeGUIArchitectureClass())
     Group = CreateButtonForTGuiObject(Group)
@@ -1252,7 +1265,8 @@ function GuiObjects:CreateGroup(Name:string,Title:string|{[string]:string}?,Pare
     local function refreshGroup()
         logger:debug("TGroup: refreshTGroup",`Refreshing Indent for {Group.Name}[{Group.ClassName}]`)
         GroupIndentBind:Run(Group,VisibleIndent,GroupFrame)
-        if lastAbsoluteX~=GroupFrame.AbsoluteSize.X then
+        if not Group.IsGlobal and lastAbsoluteX~=GroupFrame.AbsoluteSize.X then 
+            task.wait() logger:debug("refreshGroup","Refreshing Size for objects")
             for _,v in Group:GetChildren() do
                 v:RefreshSize(true)
             end lastAbsoluteX = GroupFrame.AbsoluteSize.X
@@ -1326,7 +1340,7 @@ function GuiObjects:CreateGroup(Name:string,Title:string|{[string]:string}?,Pare
             OpenImage.Size = UDim2.new(GroupOpenImageSize,GroupOpenImageSize)
             Frame.Visible = Group.Opened
             Group.GroupFrame = GroupFrame
-        end
+        end refreshGroup()
     end Group:GetPropertyChangedEvent("IsGlobal"):Connect(function()
         if Group.IsGlobal then
             Group.Opened = false
@@ -1345,20 +1359,27 @@ function GuiObjects:CreateGroup(Name:string,Title:string|{[string]:string}?,Pare
         return GuiObjects:CreateToggle(Name,Title,Group,func)
     end function Group:CreateText(Name:string?,Title:string|{[string]: string}?)
         return GuiObjects:CreateText(Name,Title,Group)
-    end
+    end function Group:CreateTextbox(Name:string?,Title:string|{[string]: string}?,func:(any)->())
+        return GuiObjects:CreateTextbox(Name,Title,Group,func)
+    end 
     return Group
 end 
 -- #FIND_POINT TButton
 function GuiObjects:CreateButton(Name:string,Title:string|{[string]:string}?,Parent:any?,func:(any)->()?)
+    if type(Name)~="string" then logger:critical_error("CreateButton","Name is incorrect") end
+    if type(Title)=="function" then func=Title Title=nil end
+    if type(Parent)=="function" then func=Parent Parent=nil end
     logger:debug("GuiObjects:CreateButton","Creating new button '"..Name.."'")
     local Button = TGuiObjectClass(Name,Title,Parent)
     Button = CreateButtonForTGuiObject(Button)
     Button:AddClassName("TButton")
     Button.Type = "Button"
     Button:SetReadOnly("Type")
-    Button.Activated:Connect(function()
-        func(Button)
-    end) return Button
+    if type(func)=="function" then
+        Button.Activated:Connect(function()
+            func(Button)
+        end)
+    end return Button
 end
 -- #FIND_POINT TToggle
 local RefreshColorValueBind = Classes:CreateBind()
@@ -1367,6 +1388,9 @@ Binder:SetReadOnly("TextColorForToggle")
 GuiAnimations.TextColorForToggleTI = TweenInfo.new(0.5)
 GuiAnimations.EnableTextColorForToggleAnimation = true
 function GuiObjects:CreateToggle(Name:string,Title:string|{[string]:string}?,Parent:any?,func:(any)->()?)
+    if type(Name)~="string" then logger:critical_error("CreateToggle","Name is incorrect") end
+    if type(Title)=="function" then func=Title Title=nil end
+    if type(Parent)=="function" then func=Parent Parent=nil end
     logger:debug("GuiObjects:CreateButton","Creating new button '"..Name.."'")
     local Button = TGuiObjectClass(Name,Title,Parent)
     Button = CreateButtonForTGuiObject(Button)
@@ -1413,19 +1437,17 @@ function GuiObjects:CreateToggle(Name:string,Title:string|{[string]:string}?,Par
             EnabledEvent:Fire()
         else DisabledEvent:Fire()
         end refreshValueColor(false,true)
-    end) Button.Changed:Connect(function()
-        func(Button)
-    end) Button.Activated:Connect(function()
+    end) if type(func)=="function" then
+        Button.Changed:Connect(function()
+            func(Button)
+        end)
+    end Button.Activated:Connect(function()
         Button.Value = not Button.Value
     end) return Button
 end
 -- #FIND_POINT Text
-function GuiObjects:CreateText(Name:string,Title:string|{[string]:string}?,Parent:any?)
-    local Text = TGuiObjectClass(Name,Title,Parent)
-    Text:AddClassName("TText")
-    Text.Type = "Text"
-    Text:SetReadOnly("Type")
-    Text.Frame.BackgroundTransparency = 1
+local function MakeTextObject(Text:any)
+    if not Text then error("TGuiObject is incorrect.") Text = TGuiObjectClass() end
     local TextLabel = Instance.new("TextLabel",Text.Frame)
     TextLabel.BackgroundTransparency = 1
     TextLabel.TextScaled = true
@@ -1436,15 +1458,191 @@ function GuiObjects:CreateText(Name:string,Title:string|{[string]:string}?,Paren
     Text.Destroying:Connect(function()
         destroyed = true
         TextLabel:Destroy()
-    end) TextLabel.Size = UDim2.new(1,0,1,0)
-    Text.Title.TranslateValueChanged:Connect(function()
+    end) Text.Title.TranslateValueChanged:Connect(function()
         if destroyed then return end
         TextLabel.Text = Text.Title:Translate()
     end) TextLabel.Text = Text.Title:Translate()
-    Text.SpecialColors:GetColorChangedSignal("TTextColor"):Connect(function()
-        TextLabel.TextColor3 = Text.SpecialColors:GetColor("TTextColor")
-    end) TextLabel.TextColor3 = Text.SpecialColors:GetColor("TTextColor")
     return Text
+end
+function GuiObjects:CreateText(Name:string,Title:string|{[string]:string}?,Parent:any?)
+    if type(Name)~="string" then logger:critical_error("CreateText","Name is incorrect") end
+    local Text = TGuiObjectClass(Name,Title,Parent)
+    Text:AddClassName("TText")
+    Text.Type = "Text"
+    Text:SetReadOnly("Type")
+    Text.Frame.BackgroundTransparency = 1
+    Text = MakeTextObject(Text)
+    Text.SpecialColors:GetColorChangedSignal("TTextColor"):Connect(function()
+        Text.TextLabel.TextColor3 = Text.SpecialColors:GetColor("TTextColor")
+    end) Text.TextLabel.TextColor3 = Text.SpecialColors:GetColor("TTextColor")
+    return Text
+end
+-- #FIND_POINT TextBox
+local function MakeTextBoxObject(Object)
+    if not Object then error("TGuiObject is incorrect.") Object = TGuiObjectClass() end
+    local TextBox = Instance.new("TextBox",Object.Frame)
+    TextBox.TextScaled = true
+    TextBox.Size = UDim2.new(1,0,1,0)
+    TextBox.Text = ""
+    Object.TextBox = TextBox
+    Object:SetReadOnly("TextLabel")
+    Object.Destroying:Connect(function()
+        TextBox:Destroy()
+    end) return Object
+end local refreshTextBoxBind = Classes:CreateBind()
+Binder.RefreshTextBoxSizes = refreshTextBoxBind
+Binder:SetReadOnly("RefreshTextBoxSizes")
+local numberAllowed = {"1","2","3","4","5","6","7","8","9","0","."}
+local numberOperations = {"-","+","(",")","/","*"}
+local function getNumber(str:string)
+    local num = tonumber(str)
+    if not num then
+        for _,v in pairs(numberOperations) do
+            str = str:gsub("%"..v,v.."0")
+        end local s,r = pcall(function()
+            return loadstring("return tonumber("..str..")","gettingNumber[TGui-Core]")()
+        end) if s and r then
+            return r
+        end
+    end return num or 0
+end
+local InputTypes = {
+    number=function(str:string,inTextBox:boolean,syntaxOnly:boolean)
+        local res = ""
+        for v in tostring(str):gmatch(".") do
+            if table.find(numberAllowed,v) or table.find(numberOperations,v) then
+                res = res..v
+            end
+        end if syntaxOnly then
+            return res
+        end if inTextBox==true then
+            if str=="" then return "" end
+        end str = tostring(str)
+        res = getNumber(res)
+        if inTextBox=="" and res==0 then
+            return ""
+        end return res
+    end, string=tostring
+} local ButtonsEnabledForInpType = {"number"}
+local ButtonsInpTypeFuncs = {
+    number=function(value,scale,buttonType)
+        if buttonType=="add" then
+            return value+scale
+        else return value-scale
+        end
+    end
+}
+function GuiObjects:CreateTextbox(Name:string,Title:string|{[string]:string}?,Parent:any?,func:(any)->()?)
+    if type(Name)~="string" then logger:critical_error("CreateTextbox","Name is incorrect") end
+    if type(Title)=="function" then func=Title Title=nil end
+    if type(Parent)=="function" then func=Parent Parent=nil end
+    local Textbox = TGuiObjectClass(Name,Title,Parent,Classes:CreateTClass(nil,nil,{"Value"}))
+    Textbox:AddClassName("TTextBox")
+    Textbox.Type = "TextBox"
+    Textbox:SetReadOnly("Type")
+    Textbox = MakeTextObject(Textbox)
+    Textbox = MakeTextBoxObject(Textbox)
+    Textbox.Value = ""
+    Textbox.InputType = "string"
+    Textbox:GetPropertyChangedEvent("InputType"):Connect(function()
+        if InputTypes[Textbox.InputType] then
+            Textbox.Value = InputTypes[Textbox.InputType](Textbox.Value,false)
+        else Textbox.InputType = "string"
+        end Textbox.ButtonsEnabled = table.find(ButtonsEnabledForInpType,Textbox.InputType)~=nil
+    end) local changedEvent = Instance.new("BindableEvent")
+    Textbox.Changed = changedEvent.Event
+    Textbox:SetReadOnly("Changed")
+    Textbox.TextBox:GetPropertyChangedSignal("Text"):Connect(function()
+        local val = InputTypes[Textbox.InputType](Textbox.TextBox.Text,false)
+        if val~=Textbox.Value then
+            Textbox.Value = val
+        end if Textbox.TextBox:IsFocused() then
+            Textbox.TextBox.Text = InputTypes[Textbox.InputType](Textbox.TextBox.Text,true,true)
+        end
+    end) Textbox.TextBox.FocusLost:Connect(function(input)
+        Textbox.TextBox.Text = InputTypes[Textbox.InputType](Textbox.TextBox.Text,true)
+    end) Textbox:GetPropertyChangedEvent("Value"):Connect(function()
+        if not Textbox.TextBox:IsFocused() then
+            Textbox.TextBox.Text = (InputTypes[Textbox.InputType](Textbox.Value,Textbox.TextBox.Text)) or ""
+        end local val = InputTypes[Textbox.InputType](Textbox.Value,false)
+        if val==Textbox.Value then
+            changedEvent:Fire()
+        else Textbox.Value = val
+        end
+    end) local Buttons = Instance.new("Frame",Textbox.Frame)
+    Textbox.Buttons = Buttons
+    Textbox:SetReadOnly("Buttons")
+    Buttons.Visible = false
+    local ButtonClicked = Instance.new("BindableEvent")
+    Textbox.ButtonClicked = ButtonClicked
+    Textbox:SetReadOnly("ButtonClicked")
+    function Textbox:FireButton(ButtonType:string)
+        if not Textbox.ButtonsEnabled then return end
+        local f = ButtonsInpTypeFuncs[Textbox.InputType]
+        if f then
+            local val = f(Textbox.Value,Textbox.ScaleOfButtons,ButtonType)
+            Textbox.Value = val
+        end ButtonClicked:Fire(ButtonType)
+    end Textbox.ButtonsEnabled = false
+    Textbox.ScaleOfButtons = 1
+    local AddButton = Instance.new("TextButton",Buttons)
+    AddButton.Size = UDim2.new(1,0,0.5,0)
+    AddButton.Name = "add"
+    AddButton.Text = "+"
+    AddButton.TextScaled = true
+    Instance.new("UICorner",AddButton).CornerRadius = UDim.new(1,0)
+    AddButton.Activated:Connect(function()
+        Textbox:FireButton("add")
+    end) Textbox.SpecialColors:GetColorChangedSignal("AddButtonBackgroundInTextBoxColor"):Connect(function()
+        AddButton.BackgroundColor3 = Textbox.SpecialColors:GetColor("AddButtonBackgroundInTextBoxColor")
+    end) AddButton.BackgroundColor3 = Textbox.SpecialColors:GetColor("AddButtonBackgroundInTextBoxColor")
+    Textbox.SpecialColors:GetColorChangedSignal("AddButtonTextInTextBoxColor"):Connect(function()
+        AddButton.TextColor3 = Textbox.SpecialColors:GetColor("AddButtonTextInTextBoxColor")
+    end) AddButton.TextColor3 = Textbox.SpecialColors:GetColor("AddButtonTextInTextBoxColor")
+    local SubtractButton = Instance.new("TextButton",Buttons)
+    SubtractButton.Position = UDim2.new(0,0,0.5,0)
+    SubtractButton.Size = UDim2.new(1,0,0.5,0)
+    SubtractButton.Name = "subtract"
+    SubtractButton.Text = "-"
+    SubtractButton.TextScaled = true
+    Instance.new("UICorner",SubtractButton).CornerRadius = UDim.new(1,0)
+    SubtractButton.Activated:Connect(function()
+        Textbox:FireButton("subtract")
+    end) Textbox.SpecialColors:GetColorChangedSignal("SubtractButtonBackgroundInTextBoxColor"):Connect(function()
+        SubtractButton.BackgroundColor3 = Textbox.SpecialColors:GetColor("SubtractButtonBackgroundInTextBoxColor")
+    end) SubtractButton.BackgroundColor3 = Textbox.SpecialColors:GetColor("SubtractButtonBackgroundInTextBoxColor")
+    Textbox.SpecialColors:GetColorChangedSignal("SubtractButtonTextInTextBoxColor"):Connect(function()
+        SubtractButton.TextColor3 = Textbox.SpecialColors:GetColor("SubtractButtonTextInTextBoxColor")
+    end) SubtractButton.TextColor3 = Textbox.SpecialColors:GetColor("SubtractButtonTextInTextBoxColor")
+    -- Colors -----------------
+    Textbox.SpecialColors:GetColorChangedSignal("TextColor"):Connect(function()
+        Textbox.TextLabel.TextColor3 = Textbox.SpecialColors:GetColor("TextColor")
+    end) Textbox.TextLabel.TextColor3 = Textbox.SpecialColors:GetColor("TextColor")
+    Textbox.SpecialColors:GetColorChangedSignal("TextBoxBackgroundColor"):Connect(function()
+        Textbox.TextBox.BackgroundColor3 = Textbox.SpecialColors:GetColor("TextBoxBackgroundColor")
+        Buttons.BackgroundColor3 = Textbox.SpecialColors:GetColor("TextBoxBackgroundColor")
+    end) Textbox.TextBox.BackgroundColor3 = Textbox.SpecialColors:GetColor("TextBoxBackgroundColor")
+    Buttons.BackgroundColor3 = Textbox.SpecialColors:GetColor("TextBoxBackgroundColor")
+    Textbox.SpecialColors:GetColorChangedSignal("TextInTextBoxColor"):Connect(function()
+        Textbox.TextBox.TextColor3 = Textbox.SpecialColors:GetColor("TextInTextBoxColor")
+    end) Textbox.TextBox.TextColor3 = Textbox.SpecialColors:GetColor("TextInTextBoxColor")
+    local specialRefreshTextBoxBind = Classes:CreateBind()
+    Textbox.SpecialRefreshTextBoxSizes = specialRefreshTextBoxBind
+    Textbox:SetReadOnly("SpecialRefreshTextBoxSizes")
+    specialRefreshTextBoxBind:Bind(function(...)
+        return refreshTextBoxBind:Run(...)
+    end) local function refresh()
+        specialRefreshTextBoxBind:Run(Textbox,Textbox.TextLabel,Textbox.TextBox,Buttons)
+    end GuiSize:GetPropertyChangedEvent("IndentSizeBetweenInTTextBox"):Connect(refresh)
+    GuiSize:GetPropertyChangedEvent("TextBoxSizeInTTextBox"):Connect(refresh)
+    GuiSize:GetPropertyChangedEvent("TextSizeInTTextBox"):Connect(refresh)
+    Textbox:GetPropertyChangedEvent("ButtonsEnabled"):Connect(function()
+        Buttons.Visible = Textbox.ButtonsEnabled refresh()
+    end) if type(func)=="function" then
+        Textbox.Changed:Connect(function()
+            func(Textbox)
+        end)
+    end refresh() return Textbox
 end
 -- #FIND_POINT Set Binds for Groups/Buttons
 local oldPositions = {}
@@ -1464,19 +1662,16 @@ RefreshingBind:Bind(function(children:{any},FromObject:any?)
     end for k,v in children do
         if needPos then
             if needPos>k then
-                print(111,v.LastRefreshingPos)
                 if v.LastRefreshingPos~=zeroPos then
                     pos = v.LastRefreshingPos
                 end continue
             elseif pos==zeroPos then
-                print(needPos,k,pos==zeroPos)
                 logger:debug("RefreshingBind:Bind","Zero pos restart without FromObject")
                 return RefreshingBind:Run(children)
             end
         end oldPositions[v] = {k,v.Parent}
         logger:debug("RefreshingBind:Bind",`Set new pos to {v.Name}`)
         pos = v.SpecialButtonPositionBind:Run(v,pos)
-        print(v.LastRefreshingPos,pos)
         v.LastRefreshingPos = pos
     end return pos
 end) SizeBind:Bind(function(TGuiObject)
@@ -1539,6 +1734,16 @@ ButtonPositionBind:Bind(function(TGuiObject,pos)
 end)
 GGPositionsBind:Bind(setNewPosition)
 -- Types -----------
+refreshTextBoxBind:Bind(function(Object,TextLabel:TextLabel,TextBox:TextBox,Buttons:Frame)
+    TextLabel.Size = GuiSize.TextSizeInTTextBox
+    TextBox.Position = UDim2.new(GuiSize.TextSizeInTTextBox.X,UDim.new(0,0))+GuiSize.IndentSizeBetweenInTTextBox
+    TextBox.Size = GuiSize.TextBoxSizeInTTextBox
+    if not Object.ButtonsEnabled then
+        TextBox.Size += UDim2.new(GuiSize.ButtonsSizeInTTextBox.X,UDim.new(0,0))
+    end Buttons.Size = GuiSize.ButtonsSizeInTTextBox
+    Buttons.Position = UDim2.new((GuiSize.TextSizeInTTextBox+GuiSize.TextBoxSizeInTTextBox).X,UDim.new(0,0))
+    return true
+end)
 GuiAnimations.GroupOpenArrowTI = GuiAnimations.ArrowRotateTI
 local LastGroupTweens = {}
 GroupOpenArrowBind:Bind(function(Group:table)
@@ -1639,7 +1844,12 @@ end).OnTrue:Connect(function()
     print("TRUE!!!!!!!!!")
 end)
 s2:CreateText("WTF","ITS WORKING TEXT????")
-
+s2:CreateTextbox("TextBox",function(v)
+    print(v.Value,type(v.Value))
+end)
+s2:CreateTextbox("TextBox with InputType: 'number'",nil,function(v)
+    print(v.Value,type(v.Value))
+end).InputType = "number"
 --[[
 План:
     Сделать старые функции:

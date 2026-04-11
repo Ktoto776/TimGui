@@ -118,6 +118,31 @@
                     "description":"Текст"
                 }
             ], "deprecated":false
+        },"CreateTextbox":{
+            "description":"Создаёт поле для ввода данных(TextBox), данные могут быть не только текстовыми, с parent в этой группе",
+            "args":[{
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Имя",
+                    "required":true
+                },{
+                    "name":"Title",
+                    "type":"string | Translator | {langCode=string}",
+                    "description":"Название которое видит пользователь, если nil берёт из Name, string-только англ",
+                    "required":false
+                },{
+                    "name":"function",
+                    "type":"(TToggle)->()",
+                    "description":"Функция, для установки на смену значения, запускается с этим же TTextBox(нужно, чтобы не нагружать код лишними переменными)",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"TTextBox",
+                    "description":"Поле для ввода данных"
+                }
+            ], "deprecated":false
         }
     }, 
     "events":{

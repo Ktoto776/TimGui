@@ -1,0 +1,17 @@
+{
+    "description":"Класс для TextLabel, не устанавливает цвета самостоятельно",
+    "type":"class",
+    "classes":["TClass","TGuiObject","TextObject"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "TextLabel":{
+            "type":"Instance: TextLabel",
+            "description":"Основной TextLabel",
+            "canChange":false,
+            "deprecated":false
+        }
+    }, 
+    "methods":{}, 
+    "events":{}
+}

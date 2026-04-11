@@ -76,7 +76,7 @@
                 },{
                     "name":"Parent",
                     "type":"GUIArchitecture",
-                    "description":"Parent для новой книпки",
+                    "description":"Parent для новой кнопки",
                     "required":false
                 },{
                     "name":"function",
@@ -106,7 +106,7 @@
                 },{
                     "name":"Parent",
                     "type":"GUIArchitecture",
-                    "description":"Parent для новой книпки",
+                    "description":"Parent для нового текста",
                     "required":false
                 }
             ],
@@ -114,6 +114,36 @@
                     "name":"response",
                     "type":"TText",
                     "description":"Текст"
+                }
+            ], "deprecated":false
+        },"CreateTextbox":{
+            "description":"Создаёт поле для ввода данных(TextBox), данные могут быть не только текстовыми",
+            "args":[{
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Имя",
+                    "required":true
+                },{
+                    "name":"Title",
+                    "type":"string | Translator | {langCode=string}",
+                    "description":"Название которое видит пользователь, если nil берёт из Name, string-только англ",
+                    "required":false
+                },{
+                    "name":"Parent",
+                    "type":"GUIArchitecture",
+                    "description":"Parent для нового для ввода данных",
+                    "required":false
+                },{
+                    "name":"function",
+                    "type":"(TToggle)->()",
+                    "description":"Функция, для установки на смену значения, запускается с этим же TTextBox(нужно, чтобы не нагружать код лишними переменными)",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"TTextBox",
+                    "description":"Поле для ввода данных"
                 }
             ], "deprecated":false
         }

@@ -19,7 +19,7 @@ local function Open()
     else if isLocalDir then
             script = readfile(Setup.linkToDir.."TimGUI.lua")
         else script = game:HttpGet(Setup.linkToDir.."TimGui.lua")
-        end loadstring(script)()
+        end loadstring(script,"TimGUI-Core")()
     end
 end
 --Start

@@ -1,5 +1,5 @@
 {
-    "description":"Класс кнопок в интерфейсе, просто пустая кнопка",
+    "description":"Класс кнопок в интерфейсе, просто пустая кнопка. P.S: Используй TButton.Activated",
     "type":"class",
     "classes":["TClass","TGuiObject","ButtonObject","TButton"],
     "writeSameMode":true,

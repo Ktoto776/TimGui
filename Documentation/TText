@@ -1,18 +1,13 @@
 {
-    "description":"Класс кнопок в интерфейсе, просто пустая кнопка",
+    "description":"Класс текста(или заголовка) в интерфейсе, просто текст",
     "type":"class",
-    "classes":["TClass","TGuiObject","TButton"],
+    "classes":["TClass","TGuiObject","TextObject","TText"],
     "writeSameMode":true,
     "deprecated":false,
     "properties":{
         "Type":{
             "type":"string",
             "description":"Равен \"Text\". Нужен для определения типа обьекта",
-            "canChange":false,
-            "deprecated":false
-        },"TextLabel":{
-            "type":"Instance: TextLabel",
-            "description":"Основной TextLabel",
             "canChange":false,
             "deprecated":false
         }

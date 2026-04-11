@@ -65,6 +65,12 @@
             "description":"Бинд для (анимации) смены цвета в Toggle в зависимости от значения. Должен ждать конца анимации. Параметры: Toggle:TTogle, enableAnimate:boolean--стоит ли анимировать(если false просто резкая смена цвета)",
             "canChange":false,
             "deprecated":false
+        },"RefreshTextBoxSizes":{
+            "type":"class",
+            "class":"Bind",
+            "description":"Бинд для установки позиций названия и поля для ввода. Параметры: TTextBox:TTextBox, TextLabel:TextLabel, TextBox: TextBox",
+            "canChange":false,
+            "deprecated":false
         }
     }, "methods":{
         "New":{
