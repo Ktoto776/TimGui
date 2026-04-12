@@ -32,7 +32,7 @@
             "deprecated":false
         },"SpecialGroupOpenArrowBind":{
             "type":"Bind",
-            "description":"Бинд для анимации. Работает как в Binder.GroupOpenArrowBind",
+            "description":"Бинд для анимации стрелочки. Работает как в Binder.GroupOpenArrowBind",
             "canChange":false,
             "deprecated":false
         },"GroupIndentBind":{

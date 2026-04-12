@@ -70,6 +70,21 @@
             "description":"Размер видимого отступа не глобальных групп",
             "canChange":true,
             "deprecated":false
+        },"SequenceOpenImageSize":{
+            "type":"UDim",
+            "description":"Размер для статуса открытия TSequence. Scale - Y размер кнопки",
+            "canChange":true,
+            "deprecated":false
+        },"NotGlobalSequenceIndent":{
+            "type":"UDim",
+            "description":"Размер отступа TSequence",
+            "canChange":true,
+            "deprecated":false
+        },"NotGlobalSequenceVisibleIndent":{
+            "type":"UDim",
+            "description":"Размер видимого отступа TSequence",
+            "canChange":true,
+            "deprecated":false
         }
     }, "methods":{}, 
     "events":{}

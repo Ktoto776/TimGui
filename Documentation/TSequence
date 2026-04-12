@@ -1,0 +1,54 @@
+{
+    "description":"Класс для установки порядка исполнения(например, порядок языков)",
+    "type":"class",
+    "classes":["TClass","TGuiObject","ButtonObject","TSequence"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "Type":{
+            "type":"string",
+            "description":"Равен \"Sequence\". Нужен для определения типа обьекта",
+            "canChange":false,
+            "deprecated":false
+        },"Opened":{
+            "type":"boolean",
+            "description":"Открыт ли",
+            "canChange":false,
+            "deprecated":false
+        },"Size":{
+            "type":"UDim2",
+            "description":"Размер",
+            "canChange":false,
+            "deprecated":false
+        },"IndentBind":{
+            "type":"Bind",
+            "description":"Бинд для кастомного отступа. Параметры: TSequence:TSequence, VisibleIndent: Frame, SequenceFrame: Frame",
+            "canChange":false,
+            "deprecated":false
+        },"OpenLabel":{
+            "type":"Instance: ImageLabel",
+            "description":"Стрелочка статуса открытия",
+            "canChange":false,
+            "deprecated":false
+        },"SpecialOpenArrowBind":{
+            "type":"Bind",
+            "description":"Бинд для анимации стрелочки. Работает как в Binder.SequenceOpenArrowBind",
+            "canChange":false,
+            "deprecated":false
+        }
+    }, 
+    "methods":{}, 
+    "events":{
+        "OnOpen":{
+            "description":"При открытии группы",
+            "type":"RBXScriptEvent",
+            "args":[],
+            "deprecated":false
+        },"OnClose":{
+            "description":"При закрытии группы",
+            "type":"RBXScriptEvent",
+            "args":[],
+            "deprecated":false
+        }
+    }
+}

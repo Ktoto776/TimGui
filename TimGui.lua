@@ -435,6 +435,8 @@ Colors.AddButtonBackgroundInTextBoxColor = Color3.new(0.3,1,0.3)
 Colors.AddButtonTextInTextBoxColor = Color3.new(1,1,1)
 Colors.SubtractButtonBackgroundInTextBoxColor = Color3.new(1,0,0.3)
 Colors.SubtractButtonTextInTextBoxColor = Color3.new(1,1,1)
+Colors.SequenceVisibleIndent = Color3.new(1,1,1)
+Colors.SequenceOpenArrowColor = Color3.new(1,1,1)
 Colors.Default = Colors:GetPreset()
 -- #FIND_POINT GuiSize
 local GuiSize = Classes:CreatePreset()
@@ -451,9 +453,10 @@ GuiSize.YPosition = UDim.new(1,0)
 GuiSize.GroupsSize = UDim.new(0,100)
 GuiSize.SayingFontSize = UDim.new(0.65,0)
 GuiSize.GlobalGroupSize = UDim2.new(1,-5,0,50)
-GuiSize.GroupOpenImageSize = UDim.new(0,25)
 GuiSize.ButtonSize = UDim2.new(1,0,0,50)
 GuiSize.ButtonCornerRadius = UDim.new(0.5,0)
+-- Not global group -----
+GuiSize.GroupOpenImageSize = UDim.new(0,25)
 GuiSize.NotGlobalGroupIndent = UDim.new(0,3)
 GuiSize.NotGlobalGroupVisibleIndent = UDim.new(0,2)
 --Types-------------------
@@ -461,6 +464,10 @@ GuiSize.TextSizeInTTextBox = UDim2.new(0.5,0,1,0)
 GuiSize.IndentSizeBetweenInTTextBox = UDim2.new(0,0,0,0)
 GuiSize.TextBoxSizeInTTextBox = UDim2.new(0.3,0,1,0)
 GuiSize.ButtonsSizeInTTextBox = UDim2.new(0.1,0,1,0)
+-- Sequence ------------------
+GuiSize.SequenceOpenImageSize = UDim.new(0,25)
+GuiSize.SequenceIndent = UDim.new(0,3)
+GuiSize.SequenceVisibleIndent = UDim.new(0,2)
 GuiSize.Default = GuiSize:GetPreset()
 function TimGui:GetFrameGuiPosition(opened:boolean?)
     if opened==nil then opened = TimGui.Opened end
@@ -478,6 +485,7 @@ Assets.PresetName = "Default"
 Assets.Error = "rbxassetid://75662198735241"
 Assets.Arrow = "rbxassetid://16341277046"
 Assets.GroupOpenArrow = "rbxassetid://16341277046"
+Assets.SequenceOpenArrow = "rbxassetid://16341277046"
 Assets.Loading = "rbxasset://textures/DarkThemeLoadingCircle.png"
 Assets.Default = Assets:GetPreset()
 -- #FIND_POINT GuiAnimations
@@ -1188,7 +1196,7 @@ table.insert(TimGuiReadOnly,"GlobalOpenedGroupChanged")
 local GroupOpenArrowBind = Classes:CreateBind()
 Binder.GroupOpenArrowBind = GroupOpenArrowBind
 Binder:SetReadOnly("GroupOpenArrowBind")
-GuiAnimations.EnableGroupAnimation = true
+GuiAnimations.EnableArrowGroupAnimation = true
 function GuiObjects:CreateGroup(Name:string,Title:string|{[string]:string}?,Parent:any?)
     if type(Name)~="string" then logger:critical_error("CreateGroup","Name is incorrect") end
     logger:debug("GuiObjects:CreateGroup","Creating new group '"..Name.."'")
@@ -1236,7 +1244,6 @@ function GuiObjects:CreateGroup(Name:string,Title:string|{[string]:string}?,Pare
     Group:SetReadOnly("SpecialGroupOpenArrowBind")
     local Frame = Instance.new("Frame",Group.Frame)
     Frame.Position = UDim2.new(0,0,1,0)
-    Frame.Size = UDim2.new(0,100,1,0)
     Frame.BackgroundTransparency = 1
     Group:GetPropertyChangedEvent("GroupSize"):Connect(function()
         Frame.Size = UDim2.new(UDim.new(1,0),Group.GroupSize.Y)
@@ -1644,6 +1651,98 @@ function GuiObjects:CreateTextbox(Name:string,Title:string|{[string]:string}?,Pa
         end)
     end refresh() return Textbox
 end
+-- #FIND_POINT Sequence
+local SequenceOpenArrowBind = Classes:CreateBind()
+Binder.SequenceOpenArrowBind = SequenceOpenArrowBind
+Binder:SetReadOnly("SequenceOpenArrowBind")
+function GuiObjects:CreateSequence(Name:string,Title:string|{[string]:string}?,Parent:any?,func:(any)->()?,Values:{string})
+    local Sequence = TGuiObjectClass(Name,Title,Parent)
+    Sequence = CreateButtonForTGuiObject(Sequence)
+    Sequence:AddClassName("TSequence")
+    Sequence.Opened = false
+    Sequence.Type = "Sequence"
+    Sequence:SetReadOnly("Type")
+    local onOpened = Instance.new("BindableEvent")
+    local onClose = Instance.new("BindableEvent")
+    Sequence.OnOpen = onOpened.Event
+    Sequence.OnClose = onClose.Event
+    Sequence:SetReadOnly("OnOpen")
+    Sequence:SetReadOnly("OnClose")
+    Sequence:GetPropertyChangedEvent("Opened"):Connect(function()
+        if Sequence.Opened then
+            onOpened:Fire()
+        else onClose:Fire()
+        end
+    end) Sequence.Size = UDim2.new(0,0,0,0)
+    local Frame = Instance.new("Frame",Sequence.Frame)
+    Frame.Position = UDim2.new(0,0,1,0)
+    Frame.BackgroundTransparency = 1
+    Sequence:GetPropertyChangedEvent("Size"):Connect(function()
+        Frame.Size = UDim2.new(UDim.new(1,0),Sequence.Size.Y)
+    end) Frame.Size = UDim2.new(UDim.new(1,0),Sequence.Size.Y)
+    local SequenceFrame = Instance.new("Frame",Frame)
+    SequenceFrame.BackgroundTransparency = 1
+    SequenceFrame.Name = "SequenceFrame"
+    local VisibleIndent = Instance.new("Frame",Frame)
+    VisibleIndent.Name = "Indent"
+    Sequence.SpecialColors:GetColorChangedSignal("SequenceVisibleIndent"):Connect(function()
+        VisibleIndent.BackgroundColor3 = Sequence.SpecialColors:GetColor("SequenceVisibleIndent")
+    end) VisibleIndent.BackgroundColor3 = Sequence.SpecialColors:GetColor("SequenceVisibleIndent")
+    local IndentBind = Classes:CreateBind()
+    IndentBind:Bind(function(BSequence,Indent: Frame,SequenceF: Frame)
+        Indent.Size = UDim2.new(GuiSize.SequenceVisibleIndent,UDim.new(1,0))
+        Indent.Position = UDim2.new(GuiSize.SequenceIndent,UDim.new(0,0))
+        local SI2 = UDim.new(GuiSize.SequenceIndent.Scale*2,GuiSize.SequenceIndent.Offset*2)
+        SequenceF.Size = UDim2.new(UDim.new(1,0)-SI2-GuiSize.SequenceVisibleIndent,UDim.new(1,0))
+        SequenceF.Position = UDim2.new(SI2+GuiSize.SequenceVisibleIndent,UDim.new(0,0))
+        return true
+    end) Sequence.IndentBind = IndentBind
+    Sequence:SetReadOnly("IndentBind")
+    local function refresh()
+        logger:debug("TSequence: refreshTSequence",`Refreshing Indent for {Sequence.Name}[{Sequence.ClassName}]`)
+        IndentBind:Run(Sequence,VisibleIndent,SequenceFrame)
+    end IndentBind.OnBinded:Connect(refresh)
+    local SpecialOpenArrowBind = Classes:CreateBind()
+    SpecialOpenArrowBind:Bind(function(...)
+        return SequenceOpenArrowBind:Run(...)
+    end) Sequence.SpecialOpenArrowBind = SpecialOpenArrowBind
+    Sequence:SetReadOnly("SpecialOpenArrowBind")
+    Sequence:GetPropertyChangedEvent("Opened"):Connect(function()
+        Frame.Visible = Sequence.Opened
+        SpecialOpenArrowBind:Run(Sequence)
+        Sequence:RefreshPosition()
+    end) Frame.Visible = Sequence.Opened
+    GuiSize:GetPropertyChangedEvent("SequenceVisibleIndent"):Connect(refresh)
+    GuiSize:GetPropertyChangedEvent("SequenceIndent"):Connect(refresh)
+    -- Open/Title ------------------------
+    local OpenImage = Instance.new("ImageLabel",Sequence.Button)
+    OpenImage.Position = UDim2.new(1,0,0.5,0)
+    OpenImage.AnchorPoint = Vector2.new(1,0.5)
+    OpenImage.Name = "Open"
+    Sequence.OpenLabel = OpenImage
+    Sequence:SetReadOnly("OpenLabel")
+    Assets:GetPropertyChangedEvent("SequenceOpenArrow"):Connect(function()
+        OpenImage.Image = Assets.SequenceOpenArrow
+    end) OpenImage.Image = Assets.SequenceOpenArrow
+    Sequence.SpecialColors:GetColorChangedSignal("SequenceOpenArrowColor"):Connect(function()
+        OpenImage.ImageColor3 = Sequence.SpecialColors:GetColor("SequenceOpenArrowColor")
+    end) OpenImage.ImageColor3 = Sequence.SpecialColors:GetColor("SequenceOpenArrowColor")
+    OpenImage.BackgroundTransparency = 1
+    local TextLabel = Instance.new("TextLabel",Sequence.Button)
+    TextLabel.BackgroundTransparency = 1
+    Sequence.Button:GetPropertyChangedSignal("Text"):Connect(function()
+        TextLabel.Text = Sequence.Button.Text
+    end) TextLabel.Text = Sequence.Button.Text
+    Sequence.Button.TextTransparency = 1
+    CopyButtonToTextLabel(Sequence.Button,TextLabel)
+    local function refreshSize()
+        local OpenImageSize = UDim.new(0,GuiSize.SequenceOpenImageSize.Offset+GuiSize.SequenceOpenImageSize.Scale*Sequence.Button.AbsoluteSize.Y)
+        TextLabel.Size = UDim2.new(UDim.new(1,0)-OpenImageSize,UDim.new(1,0))
+        OpenImage.Size = UDim2.new(OpenImageSize,OpenImageSize)
+    end refreshSize()
+    GuiSize:GetPropertyChangedEvent("SequenceOpenImageSize"):Connect(refreshSize)
+    return Sequence
+end
 -- #FIND_POINT Set Binds for Groups/Buttons
 local oldPositions = {}
 RefreshingBind:Bind(function(children:{any},FromObject:any?)
@@ -1730,6 +1829,8 @@ ButtonPositionBind:Bind(function(TGuiObject,pos)
     pos = setNewPosition(TGuiObject,pos)
     if TGuiObject:IsA("TGroup") and TGuiObject.Opened then
         pos += TGuiObject.GroupSize
+    elseif TGuiObject:IsA("TSequence") and TGuiObject.Opened then
+        pos += TGuiObject.Size
     end return pos
 end)
 GGPositionsBind:Bind(setNewPosition)
@@ -1754,7 +1855,7 @@ GroupOpenArrowBind:Bind(function(Group:table)
         rotation = 180
     else rotation = 360
     end local LastGArrowTween = LastGroupTweens[Group]
-    if GuiAnimations.ArrowRotateAnimationEnabled then
+    if GuiAnimations.EnableArrowGroupAnimation then
         Arrow.Rotation = rotation-180
         if LastGArrowTween then LastGArrowTween:Cancel() end
         LastGArrowTween = TweenService:Create(Arrow,GuiAnimations.GroupOpenArrowTI,{Rotation=rotation})
@@ -1762,6 +1863,28 @@ GroupOpenArrowBind:Bind(function(Group:table)
         LastGArrowTween.Completed:Once(function()
             LastGroupTweens[Group] = nil
         end) LastGroupTweens[Group] = LastGArrowTween
+    else Arrow.Rotation = rotation
+    end return true
+end)
+local LastSequenceTweens = {}
+GuiAnimations.SequenceOpenArrowTI = GuiAnimations.GroupOpenArrowTI
+GuiAnimations.ArrowSequenceAnimationEnabled = true
+SequenceOpenArrowBind:Bind(function(Seq:table)
+    if not Seq then Seq = GuiObjects:CreateSequence() end
+    local rotation
+    local Arrow = Seq.OpenLabel
+    if Seq.Opened then
+        rotation = 180
+    else rotation = 360
+    end local LastArrowTween = LastSequenceTweens[Seq]
+    if GuiAnimations.ArrowSequenceAnimationEnabled then
+        Arrow.Rotation = rotation-180
+        if LastArrowTween then LastArrowTween:Cancel() end
+        LastArrowTween = TweenService:Create(Arrow,GuiAnimations.SequenceOpenArrowTI,{Rotation=rotation})
+        LastArrowTween:Play()
+        LastArrowTween.Completed:Once(function()
+            LastSequenceTweens[Seq] = nil
+        end) LastSequenceTweens[Seq] = LastArrowTween
     else Arrow.Rotation = rotation
     end return true
 end)
@@ -1805,13 +1928,12 @@ end) if not s then
     } State:SetErrorStateAndClose()
     logger:critical_error("MAIN","Error to create Settings group: \n"..tostring(Groups))
 end
-task.wait(1)
+--MAIN --------
 local s,Settings = pcall(function() 
     local Settings = TimGui.Groups:CreateGroup("Settings")
     TimGui.GlobalOpenedGroup = Settings
     Settings.Opened = true
-    Settings:CreateGroup("Типо группа"):CreateGroup("Group2","Группа в группе")
-    --Settings:CreateGroup("Tester")
+    --Settings:CreateGroup("Типо группа"):CreateGroup("Group2","Группа в группе")
     Settings.Title:Load{ -- #LANG_REQUIRED
         ru="Настройки",
         en="Settings",
@@ -1826,30 +1948,9 @@ end) if not s then
         uk="Виникла помилка при створенні групи. Див у консолі"
     } State:SetErrorStateAndClose()
     logger:critical_error("MAIN","Error to create Settings group: \n"..tostring(Settings))
-end 
-local s2 = TimGui.Groups:CreateGroup("Settings2","Settings2")
+end
+GuiObjects:CreateSequence("Test","TEST",Settings)
 State:ResetToDefault()
-s2:CreateButton("TestingRefreshin")
-s2:CreateButton("Testing",{
-    ru="Переместить настройки",
-    en="Move 'Settings' group",
-    uk="Перемістити налаштування"
-},function(Button)
-    Settings.Parent = s2
-end)
-
-s2:CreateToggle("Working Toggle",nil,function(b)
-    print(b.Value)
-end).OnTrue:Connect(function()
-    print("TRUE!!!!!!!!!")
-end)
-s2:CreateText("WTF","ITS WORKING TEXT????")
-s2:CreateTextbox("TextBox",function(v)
-    print(v.Value,type(v.Value))
-end)
-s2:CreateTextbox("TextBox with InputType: 'number'",nil,function(v)
-    print(v.Value,type(v.Value))
-end).InputType = "number"
 --[[
 План:
     Сделать старые функции:

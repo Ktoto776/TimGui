@@ -1,13 +1,33 @@
 {
     "description":"Класс для цветов, использующий пресеты",
     "type":"class",
-    "classes":["TClass","Preset","Colors"],
+    "classes":["TClass","Preset","Assets"],
     "writeSameMode":true,
     "deprecated":false,
     "properties":{
         "Arrow":{
             "type":"string",
             "description":"rbxassetid:// на стрелочку открытия",
+            "canChange":true,
+            "deprecated":false
+        },"Error":{
+            "type":"string",
+            "description":"rbxassetid:// на картинку ошибки",
+            "canChange":true,
+            "deprecated":false
+        },"Loading":{
+            "type":"string",
+            "description":"rbxassetid:// на картинку загрузки",
+            "canChange":true,
+            "deprecated":false
+        },"GroupOpenArrow":{
+            "type":"string",
+            "description":"rbxassetid:// на стрелочку статуса группы",
+            "canChange":true,
+            "deprecated":false
+        },"SequenceOpenArrow":{
+            "type":"string",
+            "description":"rbxassetid:// на стрелочку статуса TSequence",
             "canChange":true,
             "deprecated":false
         }
