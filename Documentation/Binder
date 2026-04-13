@@ -71,6 +71,12 @@
             "description":"Бинд для установки позиций названия и поля для ввода. Параметры: TTextBox:TTextBox, TextLabel:TextLabel, TextBox: TextBox",
             "canChange":false,
             "deprecated":false
+        },"SequenceCreateObject":{
+            "type":"class",
+            "class":"Bind",
+            "description":"Бинд для создания обьекта. Параметры: TSequence:TSequence, Name:string, Position:number. Должен вернуть таблицу с Button:Frame, OnNewPosition:RBXScriptSignal(args= NewPos:number) и с функциями: SetTitle(Title:string)--устанавливает новое название; SetPosition(Pos:number)--устанавливает позицию; GetNextPos=()->(UDim2) возвращает позицию после этого обьекта",
+            "canChange":false,
+            "deprecated":false
         }
     }, "methods":{
         "New":{

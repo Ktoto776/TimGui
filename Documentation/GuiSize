@@ -85,6 +85,16 @@
             "description":"Размер видимого отступа TSequence",
             "canChange":true,
             "deprecated":false
+        },"SequenceObjectSize":{
+            "type":"UDim2",
+            "description":"Размер обьектов в TSequence",
+            "canChange":true,
+            "deprecated":false
+        },"SequenceObjectGrabSize":{
+            "type":"UDim",
+            "description":"Размер кнопки для перемещения дли обьекта TSequence. Scale - Y всего frame",
+            "canChange":true,
+            "deprecated":false
         }
     }, "methods":{}, 
     "events":{}

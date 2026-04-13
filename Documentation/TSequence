@@ -35,9 +35,61 @@
             "description":"Бинд для анимации стрелочки. Работает как в Binder.SequenceOpenArrowBind",
             "canChange":false,
             "deprecated":false
+        },"SpecialCreateObject":{
+            "type":"Bind",
+            "description":"Бинд для создания обьектов в TSequence. Работает как в Binder.SequenceCreateObject",
+            "canChange":false,
+            "deprecated":false
+        },"SequenceFrame":{
+            "type":"Instance: Frame",
+            "description":"Frame со всеми кнопками",
+            "canChange":false,
+            "deprecated":false
         }
     }, 
-    "methods":{}, 
+    "methods":{
+        "SetObjectPosition":{
+            "description":"Изменяет позицию для обьекта в TSequence",
+            "args":[{
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Имя обьекта",
+                    "required":true
+                },{
+                    "name":"New position",
+                    "type":"number",
+                    "description":"Позиция",
+                    "required":true
+                }
+            ],
+            "return":[{
+                    "name":"success",
+                    "type":"boolean",
+                    "description":"Успешно ли(обычно возвращает false, если обьекта не существует)"
+                }
+            ], "deprecated":false
+        },"AddObject":{
+            "description":"Добавляет обьект",
+            "args":[{
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Имя обьекта",
+                    "required":true
+                },{
+                    "name":"Title",
+                    "type":"string | {[string]:string} | Translator?",
+                    "description":"Название которое видит пользователь",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"success",
+                    "type":"boolean",
+                    "description":"Успешно ли(обычно возвращает false, если обьект уже существует)"
+                }
+            ], "deprecated":false
+        }
+    }, 
     "events":{
         "OnOpen":{
             "description":"При открытии группы",

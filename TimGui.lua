@@ -437,6 +437,8 @@ Colors.SubtractButtonBackgroundInTextBoxColor = Color3.new(1,0,0.3)
 Colors.SubtractButtonTextInTextBoxColor = Color3.new(1,1,1)
 Colors.SequenceVisibleIndent = Color3.new(1,1,1)
 Colors.SequenceOpenArrowColor = Color3.new(1,1,1)
+Colors.SequenceObjectsBackgroundColor = Color3.fromRGB(50,50,100)
+Colors.SequenceObjectsTextColor = Color3.new(1,1,1)
 Colors.Default = Colors:GetPreset()
 -- #FIND_POINT GuiSize
 local GuiSize = Classes:CreatePreset()
@@ -468,6 +470,8 @@ GuiSize.ButtonsSizeInTTextBox = UDim2.new(0.1,0,1,0)
 GuiSize.SequenceOpenImageSize = UDim.new(0,25)
 GuiSize.SequenceIndent = UDim.new(0,3)
 GuiSize.SequenceVisibleIndent = UDim.new(0,2)
+GuiSize.SequenceObjectSize = UDim2.new(1,0,0,35)
+GuiSize.SequenceObjectGrabSize = UDim.new(1,0)
 GuiSize.Default = GuiSize:GetPreset()
 function TimGui:GetFrameGuiPosition(opened:boolean?)
     if opened==nil then opened = TimGui.Opened end
@@ -485,7 +489,7 @@ Assets.PresetName = "Default"
 Assets.Error = "rbxassetid://75662198735241"
 Assets.Arrow = "rbxassetid://16341277046"
 Assets.GroupOpenArrow = "rbxassetid://16341277046"
-Assets.SequenceOpenArrow = "rbxassetid://16341277046"
+Assets.SequenceOpenArrow = "rbxassetid://122258968574937"
 Assets.Loading = "rbxasset://textures/DarkThemeLoadingCircle.png"
 Assets.Default = Assets:GetPreset()
 -- #FIND_POINT GuiAnimations
@@ -1655,7 +1659,10 @@ end
 local SequenceOpenArrowBind = Classes:CreateBind()
 Binder.SequenceOpenArrowBind = SequenceOpenArrowBind
 Binder:SetReadOnly("SequenceOpenArrowBind")
-function GuiObjects:CreateSequence(Name:string,Title:string|{[string]:string}?,Parent:any?,func:(any)->()?,Values:{string})
+local SequenceCreateObject = Classes:CreateBind()
+Binder.SequenceCreateObject = SequenceCreateObject
+Binder:SetReadOnly("SequenceCreateObject")
+function GuiObjects:CreateSequence(Name:string,Title:string|{[string]:string}?,Parent:any?,func:(any)->()?,Buttons:{[string]:{[string]:string}|string})
     local Sequence = TGuiObjectClass(Name,Title,Parent)
     Sequence = CreateButtonForTGuiObject(Sequence)
     Sequence:AddClassName("TSequence")
@@ -1683,6 +1690,8 @@ function GuiObjects:CreateSequence(Name:string,Title:string|{[string]:string}?,P
     local SequenceFrame = Instance.new("Frame",Frame)
     SequenceFrame.BackgroundTransparency = 1
     SequenceFrame.Name = "SequenceFrame"
+    Sequence.SequenceFrame = SequenceFrame
+    Sequence:SetReadOnly("SequenceFrame")
     local VisibleIndent = Instance.new("Frame",Frame)
     VisibleIndent.Name = "Indent"
     Sequence.SpecialColors:GetColorChangedSignal("SequenceVisibleIndent"):Connect(function()
@@ -1702,19 +1711,16 @@ function GuiObjects:CreateSequence(Name:string,Title:string|{[string]:string}?,P
         logger:debug("TSequence: refreshTSequence",`Refreshing Indent for {Sequence.Name}[{Sequence.ClassName}]`)
         IndentBind:Run(Sequence,VisibleIndent,SequenceFrame)
     end IndentBind.OnBinded:Connect(refresh)
+    Sequence:GetPropertyChangedEvent("Size"):Connect(refresh)
+    refresh()
+    -- Open/Title ------------------------
     local SpecialOpenArrowBind = Classes:CreateBind()
     SpecialOpenArrowBind:Bind(function(...)
         return SequenceOpenArrowBind:Run(...)
     end) Sequence.SpecialOpenArrowBind = SpecialOpenArrowBind
     Sequence:SetReadOnly("SpecialOpenArrowBind")
-    Sequence:GetPropertyChangedEvent("Opened"):Connect(function()
-        Frame.Visible = Sequence.Opened
-        SpecialOpenArrowBind:Run(Sequence)
-        Sequence:RefreshPosition()
-    end) Frame.Visible = Sequence.Opened
     GuiSize:GetPropertyChangedEvent("SequenceVisibleIndent"):Connect(refresh)
     GuiSize:GetPropertyChangedEvent("SequenceIndent"):Connect(refresh)
-    -- Open/Title ------------------------
     local OpenImage = Instance.new("ImageLabel",Sequence.Button)
     OpenImage.Position = UDim2.new(1,0,0.5,0)
     OpenImage.AnchorPoint = Vector2.new(1,0.5)
@@ -1741,6 +1747,88 @@ function GuiObjects:CreateSequence(Name:string,Title:string|{[string]:string}?,P
         OpenImage.Size = UDim2.new(OpenImageSize,OpenImageSize)
     end refreshSize()
     GuiSize:GetPropertyChangedEvent("SequenceOpenImageSize"):Connect(refreshSize)
+    Sequence:GetPropertyChangedEvent("Opened"):Connect(function()
+        Frame.Visible = Sequence.Opened
+        SpecialOpenArrowBind:Run(Sequence)
+        Sequence:RefreshPosition()
+    end) Frame.Visible = Sequence.Opened
+    Sequence.SpecialButtonPositionBind:Bind(function(Seq,...)
+        if Seq.Opened then
+            return ButtonPositionBind:Run(Seq,...)+Seq.Size
+        end
+    end) Sequence.Activated:Connect(function()
+        Sequence.Opened = not Sequence.Opened
+    end) local SpecialCreateObject = Classes:CreateBind()
+    Sequence.SpecialCreateObject = SpecialCreateObject
+    Sequence:SetReadOnly("SpecialCreateObject")
+    SpecialCreateObject:Bind(function(...)
+        return SequenceCreateObject:Run(...)
+    end) local buttons:{[string]:{Position:number,
+            Button:{SetTitle:(string)->(),SetPosition:(number)->(),GetNextSize:()->(UDim2),Button:Frame,OnNewPosition:RBXScriptSignal}
+        }} = {}
+    local function getResult()
+        local res = {}
+        for k,v in buttons do
+            table.insert(res,v.Position,k)
+        end return res
+    end local function CreateButton(Name:string,Translator)
+        if not Translator then Translator=Classes:CreateTranslator("...") end
+        local pos = #getResult()+1
+        local button:{SetTitle:(string)->(),SetPosition:(number)->(),GetNextPos:()->(UDim2),Button:Frame,OnNewPosition:RBXScriptSignal}
+            = SpecialCreateObject:Run(Sequence,Name,pos)
+        Translator.TranslateValueChanged:Connect(function()
+            button.SetTitle(Translator:Translate())
+        end) button.SetTitle(Translator:Translate())
+        local data = {
+            Position=pos,
+            Button=button,
+            Translator=Translator
+        } data.Connection = button.OnNewPosition:Connect(function(NewPos:number)
+            Sequence:SetObjectPosition(Name,NewPos)
+        end) buttons[Name] = data
+        Sequence.Size = button.GetNextPos()
+        print(Sequence.Size)
+    end function Sequence:SetObjectPosition(Name:string,Position:number)
+        if type(Position)~="number" then logger:critical_error("New position is incorrect! Expected number") end
+        logger:debug("Sequence:SetObjectPosition","Set new position for "..tostring(Name))
+        local thisButton = buttons[Name]
+        if thisButton then
+            local oldPos = thisButton.Position
+            Position = math.clamp(Position,1,#getResult())
+            local magn = (oldPos-Position)
+            local mult = magn/math.abs(magn)
+            local from = math.min(oldPos,Position)
+            local to = math.max(oldPos,Position)
+            for _,v in buttons do
+                local change
+                if v==thisButton then
+                    change = true
+                    v.Position = Position
+                elseif (v.Position>from and v.Position<to)or (v.Position==Position) then
+                    change = true
+                    v.Position += mult
+                end if change then
+                    v.Button.SetPosition(v.Position)
+                end
+            end return true
+        else return false
+        end
+    end function Sequence:AddObject(Name:string,Title:{[string]:string}|string?)
+        if type(Name)~="string" then logger:critical_error("Sequence:AddObject","Name is incorrect. Expected string") end
+        if buttons[Name] then return false end
+        if type(Title)=="string" then
+            Title = Classes:CreateTranslator(Title)
+        elseif type(Title)=="table" then
+            if Title.__type~="TClass" then
+                local new = Classes:CreateTranslator(Name)
+                new:Load(Title) Title = new
+            elseif not Title:IsA("Translator") then
+                logger:critical_error("Sequence:AddObject","Title is incorrect")
+            end
+        else Title = Classes:CreateTranslator(Name)
+        end CreateButton(Name,Title)
+        return true
+    end
     return Sequence
 end
 -- #FIND_POINT Set Binds for Groups/Buttons
@@ -1829,8 +1917,6 @@ ButtonPositionBind:Bind(function(TGuiObject,pos)
     pos = setNewPosition(TGuiObject,pos)
     if TGuiObject:IsA("TGroup") and TGuiObject.Opened then
         pos += TGuiObject.GroupSize
-    elseif TGuiObject:IsA("TSequence") and TGuiObject.Opened then
-        pos += TGuiObject.Size
     end return pos
 end)
 GGPositionsBind:Bind(setNewPosition)
@@ -1905,6 +1991,82 @@ RefreshColorValueBind:Bind(function(Toggle,Animate:boolean)
     else Toggle.Button.TextColor3 = color
     end return true
 end)
+SequenceCreateObject:Bind(function(Seq,Name:string,Position:number)
+    if not Seq then error("Sequence is incorrect!") Seq = GuiObjects:CreateSequence() end
+    local buttonResult = {}
+    local positionChanged = Instance.new("BindableEvent")
+    local button = Instance.new("Frame",Seq.SequenceFrame)
+    local TextLabel = Instance.new("TextLabel",button)
+    TextLabel.Size = UDim2.new(1,0,1,0)
+    TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+    TextLabel.TextScaled = true
+    TextLabel.BackgroundTransparency = 1
+    local Grab = Instance.new("ImageLabel",button)
+    Grab.Position = UDim2.new(1,0,1,0)
+    Grab.AnchorPoint = Vector2.new(1,1)
+    --Grab.BackgroundTransparency = 1
+    local dragging = false
+    local dragDetector = Instance.new("UIDragDetector",Grab)
+    local notGrabPos = button.Position
+    dragDetector.DragStyle = Enum.UIDragDetectorDragStyle.Scriptable
+    local startInput
+    local ZChanger = 1
+    local function addZIndex(add:number)
+        button.ZIndex += add
+        for _,v:GuiBase2d in button:GetDescendants() do
+            if v:IsA("GuiBase2d") then
+                v.ZIndex += add
+            end
+        end
+    end
+    dragDetector.DragStart:Connect(function(input)
+        startInput = input
+        dragging = true
+        addZIndex(ZChanger)
+    end)
+    dragDetector.DragContinue:Connect(function(input)
+        local delta = input-startInput
+        local Y = UDim.new(0,math.clamp(notGrabPos.Y.Offset+delta.Y,0,Seq.SequenceFrame.AbsoluteSize.Y))
+        button.Position = UDim2.new(notGrabPos.X,Y)
+    end)
+    dragDetector.DragEnd:Connect(function()
+        dragging = false
+        local needPos = GuiSize.SequenceObjectSize.Y.Offset
+        positionChanged:Fire(math.ceil(button.Position.Y.Offset/needPos+0.5))
+        print(button.Position.Y.Offset/needPos+1)
+        button.Position = notGrabPos
+        addZIndex(-ZChanger)
+    end)
+    Seq.SpecialColors:GetColorChangedSignal("SequenceObjectsBackgroundColor"):Connect(function()
+        button.BackgroundColor3 = Seq.SpecialColors:GetColor("SequenceObjectsBackgroundColor")
+    end) button.BackgroundColor3 = Seq.SpecialColors:GetColor("SequenceObjectsBackgroundColor")
+    Seq.SpecialColors:GetColorChangedSignal("SequenceObjectsTextColor"):Connect(function()
+        TextLabel.TextColor3 = Seq.SpecialColors:GetColor("SequenceObjectsTextColor")
+    end) TextLabel.TextColor3 = Seq.SpecialColors:GetColor("SequenceObjectsTextColor")
+    local function refresh()
+        local SeqObjS = GuiSize.SequenceObjectSize
+        local Size = UDim2.new(SeqObjS.X,UDim.new(0,SeqObjS.Y.Offset+(SeqObjS.Y.Scale*ButtonsSFrame.AbsoluteSize.Y)))
+        button.Size = Size 
+        if not dragging then local pos = Position-1
+            button.Position = UDim2.new(0,0,Size.Y.Scale*pos,Size.Y.Offset*pos)
+            notGrabPos = button.Position 
+            dragDetector.DragUDim2 = UDim2.new(0,0,0,0)
+        end local SOGS = GuiSize.SequenceObjectGrabSize
+        local grabSize = UDim.new(0,SOGS.Offset+SOGS.Scale*button.AbsoluteSize.Y)
+        grabSize = UDim2.new(grabSize,grabSize)
+        Grab.Size = grabSize
+    end GuiSize:GetPropertyChangedEvent("SequenceObjectSize"):Connect(refresh)
+    refresh() buttonResult.Button = button
+    GuiSize:GetPropertyChangedEvent("SequenceObjectGrabSize"):Connect(refresh)
+    function buttonResult.SetPosition(Pos:number)
+        Position = Pos refresh()
+    end function buttonResult.SetTitle(Title:string)
+        TextLabel.Text = Title
+    end function buttonResult.GetNextPos()
+        return notGrabPos+button.Size ::UDim2
+    end buttonResult.OnNewPosition = positionChanged.Event
+    return buttonResult
+end)
 
 local s,Groups = pcall(function()
     local Groups = MakeGUIArchitectureClass()
@@ -1949,7 +2111,11 @@ end) if not s then
     } State:SetErrorStateAndClose()
     logger:critical_error("MAIN","Error to create Settings group: \n"..tostring(Settings))
 end
-GuiObjects:CreateSequence("Test","TEST",Settings)
+local seq = GuiObjects:CreateSequence("Test","TEST",Settings)
+seq:AddObject("Test")
+seq:AddObject("Test2")
+seq:AddObject("Test3")
+Settings:CreateButton("TEST2")
 State:ResetToDefault()
 --[[
 План:
