@@ -1,0 +1,54 @@
+{
+    "description":"Сохранение, можно записать в конфиг или глобально",
+    "type":"class",
+    "classes":["TClass","TScript"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "Name":{
+            "type":"string",
+            "description":"Имя сохранения",
+            "canChange":false,
+            "deprecated":false
+        }
+    }, 
+    "methods":{
+        "GetFromSave":{
+            "description":"Читает значения с (глобального) сохранения",
+            "args":[{
+                    "name":"key",
+                    "type":"string",
+                    "description":"Ключ",
+                    "required":true
+                }
+            ],
+            "return":[{
+                    "name":"result",
+                    "type":"any",
+                    "description":"Результат"
+                }
+            ], "deprecated":false
+        },"SetToSave":{
+            "description":"Записывает в (глобальное) сохранение",
+            "args":[{
+                    "name":"key",
+                    "type":"string",
+                    "description":"Ключ",
+                    "required":true
+                },{
+                    "name":"Value",
+                    "type":"string | number | table | boolean",
+                    "description":"Значение",
+                    "required":true
+                }
+            ],
+            "return":[{
+                    "name":"success",
+                    "type":"boolean",
+                    "description":"Успешно ли (если TimGui.Saves.IsSupported == false, то оно сбросится после перезахода)"
+                }
+            ], "deprecated":false
+        }
+    }, 
+    "events":{}
+}

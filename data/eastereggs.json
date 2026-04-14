@@ -1,0 +1,28 @@
+{
+    "HeaderTitles":[
+        {
+            "Id":"Bacon BOM-BOM🍐",
+            "Part1":{
+                "en":"🥓"
+            }, "Part2":{
+                "en":"💥"
+            }, "Chance":100
+        },{
+            "Id":"HACKER!!!!",
+            "Part1":{
+                "en":"HACKER!!!!"
+            }, "Part2":{
+                "en":"HACKER!!!!"
+            }, "Chance":100
+        },{
+            "Id":"Roblox 2026💔",
+            "Part1":{
+                "en":"🔒:",
+                "ru":"Chat is restricted"
+            }, "Part2":{
+                "en":"•••••",
+                "ru":"in your region"
+            }, "Chance":100
+        }
+    ]
+}

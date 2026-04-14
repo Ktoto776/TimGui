@@ -1,3 +1,10 @@
+-- Settings -----
+local SupportedLanguages = {
+    en="English",
+    ru="Русский [Russian]",
+    uk="Українська [Ukrainian]"
+}
+-- CODE
 local TweenService = game:GetService("TweenService")
 local TextService = game:GetService("TextService")
 local HttpService = game:GetService("HttpService")
@@ -40,6 +47,7 @@ local function GetClassMetatable(className:string,rawTable:{any},readOnly:{strin
             end
         end, __index=function(t,k)
             if k=="__type" then return className end
+            if k=="__have_timgui_metatable" then return className end
             return rawTable[k]
         end
     } if type(meta)=="table" then
@@ -66,14 +74,30 @@ function TimGui:Exit()
 end function TimGui:IsA(class:string)
     return class=="TimGui"
 end TimGui.SetupData = _G.Setup or {}
-TimGui.BaseDir = "TimGui/"
 TimGui.Opened = false
 _G.Setup = nil
 _G.TimGui = TimGui
 local onLanguageChanged = Instance.new("BindableEvent")
 TimGui.LanguageChanged = onLanguageChanged.Event
 table.insert(TimGuiReadOnly,"LanguageChanged")
-TimGui.LanguagePreferences = {"uk","en"}
+if type(TimGui.SetupData.LanguagePreferences)=="table" then
+    TimGui.LanguagePreferences = TimGui.SetupData.LanguagePreferences
+else TimGui.LanguagePreferences = {"en","ru"}
+end table.insert(TimGuiReadOnly,"LanguagePreferences")
+function TimGui:SetLanguagePreferences(Langs:{string})
+    if type(Langs)~="table" then error("LanguagePreference is incorrect! Expected array.") end
+    local LangsP = {}
+    for _,v in Langs do
+        if SupportedLanguages[v] then
+            table.insert(LangsP,v)
+        end
+    end for k,_ in SupportedLanguages do
+        if not table.find(LangsP,k) then
+            table.insert(LangsP,k)
+        end
+    end TimGuiRaw.LanguagePreferences = LangsP
+    onLanguageChanged:Fire(LangsP)
+end
 -- #FIND_POINT HttpGet
 local HttpGet = TimGuiRaw.SetupData.HttpGet
 TimGui.httpGet_BaseDir = TimGui.SetupData.linkToDir or "https://raw.githubusercontent.com/Ktoto776/TimGUI/main/"
@@ -1372,7 +1396,9 @@ function GuiObjects:CreateGroup(Name:string,Title:string|{[string]:string}?,Pare
         return GuiObjects:CreateText(Name,Title,Group)
     end function Group:CreateTextbox(Name:string?,Title:string|{[string]: string}?,func:(any)->())
         return GuiObjects:CreateTextbox(Name,Title,Group,func)
-    end 
+    end function Group:CreateSequence(Name:string?,Title:string|{[string]: string}?,func:(any,{string})->(),Buttons:{[string]: {[string]: string} | string})
+        return GuiObjects:CreateSequence(Name,Title,Group,func,Buttons)
+    end
     return Group
 end 
 -- #FIND_POINT TButton
@@ -1662,7 +1688,7 @@ Binder:SetReadOnly("SequenceOpenArrowBind")
 local SequenceCreateObject = Classes:CreateBind()
 Binder.SequenceCreateObject = SequenceCreateObject
 Binder:SetReadOnly("SequenceCreateObject")
-function GuiObjects:CreateSequence(Name:string,Title:string|{[string]:string}?,Parent:any?,func:(any)->()?,Buttons:{[string]:{[string]:string}|string})
+function GuiObjects:CreateSequence(Name:string,Title:string|{[string]:string}?,Parent:any?,func:(any,{string})->()?,Buttons:{[string]:{[string]:string}|string})
     local Sequence = TGuiObjectClass(Name,Title,Parent)
     Sequence = CreateButtonForTGuiObject(Sequence)
     Sequence:AddClassName("TSequence")
@@ -1761,7 +1787,14 @@ function GuiObjects:CreateSequence(Name:string,Title:string|{[string]:string}?,P
     end) local SpecialCreateObject = Classes:CreateBind()
     Sequence.SpecialCreateObject = SpecialCreateObject
     Sequence:SetReadOnly("SpecialCreateObject")
-    SpecialCreateObject:Bind(function(...)
+    local changedEvent = Instance.new("BindableEvent")
+    Sequence.SequenceChanged = changedEvent.Event
+    Sequence:SetReadOnly("SequenceChanged")
+    if type(func)=="function" then
+        changedEvent.Event:Connect(function(...)
+            func(Sequence,...)
+        end)
+    end SpecialCreateObject:Bind(function(...)
         return SequenceCreateObject:Run(...)
     end) local buttons:{[string]:{Position:number,
             Button:{SetTitle:(string)->(),SetPosition:(number)->(),GetNextSize:()->(UDim2),Button:Frame,OnNewPosition:RBXScriptSignal}
@@ -1787,7 +1820,6 @@ function GuiObjects:CreateSequence(Name:string,Title:string|{[string]:string}?,P
             Sequence:SetObjectPosition(Name,NewPos)
         end) buttons[Name] = data
         Sequence.Size = button.GetNextPos()
-        print(Sequence.Size)
     end function Sequence:SetObjectPosition(Name:string,Position:number)
         if type(Position)~="number" then logger:critical_error("New position is incorrect! Expected number") end
         logger:debug("Sequence:SetObjectPosition","Set new position for "..tostring(Name))
@@ -1810,7 +1842,8 @@ function GuiObjects:CreateSequence(Name:string,Title:string|{[string]:string}?,P
                 end if change then
                     v.Button.SetPosition(v.Position)
                 end
-            end return true
+            end changedEvent:Fire(getResult())
+            return true
         else return false
         end
     end function Sequence:AddObject(Name:string,Title:{[string]:string}|string?)
@@ -1828,8 +1861,11 @@ function GuiObjects:CreateSequence(Name:string,Title:string|{[string]:string}?,P
         else Title = Classes:CreateTranslator(Name)
         end CreateButton(Name,Title)
         return true
-    end
-    return Sequence
+    end if type(Buttons)=="table" then 
+        for k,v in Buttons do
+            Sequence:AddObject(k,v)
+        end 
+    end return Sequence
 end
 -- #FIND_POINT Set Binds for Groups/Buttons
 local oldPositions = {}
@@ -2033,7 +2069,6 @@ SequenceCreateObject:Bind(function(Seq,Name:string,Position:number)
         dragging = false
         local needPos = GuiSize.SequenceObjectSize.Y.Offset
         positionChanged:Fire(math.ceil(button.Position.Y.Offset/needPos+0.5))
-        print(button.Position.Y.Offset/needPos+1)
         button.Position = notGrabPos
         addZIndex(-ZChanger)
     end)
@@ -2067,6 +2102,114 @@ SequenceCreateObject:Bind(function(Seq,Name:string,Position:number)
     end buttonResult.OnNewPosition = positionChanged.Event
     return buttonResult
 end)
+-- #FIND_POINT Saves --------------------
+State.Saying:Load{ -- #LANG_REQUIRED
+    ru="Загрузка ядра: Загружаю сохранения/конфигурации",
+    en="Loading core: Loading saves/configs",
+    uk="Завантаження ядра: Завантажую збереження/конфігурації"
+}
+local Saves = Classes:CreateTClass()
+Saves:AddClassName("Saves")
+TimGui.Saves = Saves
+table.insert(TimGuiReadOnly,"Saves")
+Saves.BaseDir = "TGuiData/"
+if type(TimGui.SetupData.SavesBaseDir)=="string" then
+    Saves.BaseDir = TimGui.SetupData.SavesBaseDir
+end if string.sub(Saves.BaseDir,string.len(Saves.BaseDir))~="/" then
+    Saves.BaseDir = Saves.BaseDir.."/"
+end Saves:SetReadOnly("BaseDir")
+local ScriptDataPath = Saves.BaseDir.."ScriptData/"
+local GlobalSavesPath = Saves.BaseDir.."Saves/"
+local ConfigsPath = Saves.BaseDir.."Configs/"
+local SavesIsSupported,err = pcall(function()
+    logger:info("Testing saves")
+    makefolder(Saves.BaseDir)
+	makefolder(GlobalSavesPath)
+	makefolder(ConfigsPath)
+    makefolder(ScriptDataPath)
+	writefile(Saves.BaseDir.."Test","If you reading this, it means saves are working!")
+	logger:info("Saves test",readfile(Saves.BaseDir.."Test"))
+    logger:debug("Saves test","Is file:"..tostring(isfile(Saves.BaseDir.."Test")))
+	print("FILES:\n",table.unpack(listfiles(Saves.BaseDir)))
+	delfile(Saves.BaseDir.."Test")
+end) Saves.IsSupported = SavesIsSupported
+Saves:SetReadOnly("IsSupported")
+if not SavesIsSupported then
+    logger:warn("Error on test saves",err)
+else logger:info("Saves working!")
+end local function sanitizeFilename(name:string)
+    if type(name)~="string" then return end
+    local sanitized = name:gsub('[\\/:*?"<>|]', "-")
+    sanitized = sanitized:gsub("^%.+", ""):gsub("%.+$", "")
+    sanitized = sanitized:match("^%s*(.-)%s*$")
+    if sanitized=="" then
+        return
+    end return sanitized
+end local SavesInstances = {}
+function Saves:GetSave(Name:string)
+    local Name = sanitizeFilename(Name)
+    if Name then
+        if SavesInstances[Name] then return SavesInstances[Name] end
+        local save = Classes:CreateTClass()
+        save:AddClassName("Save")
+        local path = Saves.BaseDir..Name
+        local data = {}
+        if SavesIsSupported and isfile(path) then
+            local s,r = pcall(function()
+                return HttpService:JSONDecode(readfile(path))
+            end) if s then
+                data = r
+            else logger:error("Saves:GetGlobalSave","Error to get global save: "..tostring(r).."\n Save path: "..path)
+            end
+        end function save:GetFromSave(key:string)
+            return data[key]
+        end function save:SetToSave(key:string,value)
+            if type(value)=="table" and value.__have_timgui_metatable then return end
+            data[key] = value
+            if SavesIsSupported then
+                writefile(path,HttpService:JSONEncode(data))
+            end
+        end save.Name = Name
+        save:SetReadOnly("Name")
+        SavesInstances[Name] = save
+        return save
+    end
+end
+-- #FIND_POINT Scripts ------------------
+local TScripts = {}
+local CreatedTScriptsSanitize = {}
+function TimGui:GetTScript(ScriptName:string,allowLoadTwice:boolean?)
+    local SanName = sanitizeFilename(ScriptName)
+    if CreatedTScriptsSanitize[SanName] then error(`Script {ScriptName} already created`) end
+    local TScript = Classes:CreateTClass()
+    TScript:AddClassName("TScript")
+    TScript.Name = ScriptName
+    TScript:SetReadOnly("Name")
+    TScripts[ScriptName] = TScript
+    TScript.Logger = Loggers:New(ScriptName)
+    TScript:SetReadOnly("Logger")
+    local scriptGlobalSave = {}
+    local scriptGlobalPath = ScriptDataPath..SanName
+    if SavesIsSupported and isfile(scriptGlobalPath) then
+        local s,res = pcall(function()
+            return HttpService:JSONDecode(readfile(scriptGlobalPath))
+        end) if s then
+            scriptGlobalSave = res
+        else logger:error("Load script save","Error to load script save: "..tostring(res))
+        end
+    end function TScript:GetFromSave(key:string)
+        return scriptGlobalSave[key]
+    end function TScript:SetToSave(key:string,value)
+        if type(value)=="table" and value.__have_timgui_metatable then return end
+        scriptGlobalSave[key] = value
+        if SavesIsSupported then
+            writefile(scriptGlobalPath,HttpService:JSONEncode(scriptGlobalSave))
+        end
+    end
+    CreatedTScriptsSanitize[SanName] = not allowLoadTwice
+    TScripts[ScriptName] = TScript
+    return TScript
+end
 
 local s,Groups = pcall(function()
     local Groups = MakeGUIArchitectureClass()
@@ -2117,6 +2260,61 @@ seq:AddObject("Test2")
 seq:AddObject("Test3")
 Settings:CreateButton("TEST2")
 State:ResetToDefault()
+local refreshingLang = false
+local refreshingButtonPos = true
+local Languages = Settings:CreateSequence("LanguagePreferences","Language (Язык/Мова)",function(_,langs)
+    if not refreshingButtonPos then
+        refreshingLang = true
+        TimGui:SetLanguagePreferences(langs)
+    end
+end,SupportedLanguages)
+for k,v in TimGui.LanguagePreferences do
+    Languages:SetObjectPosition(v,k)
+end
+task.wait()
+refreshingButtonPos = false
+onLanguageChanged.Event:Connect(function()
+    if not refreshingLang then
+        refreshingButtonPos = true
+        for k,v in TimGui.LanguagePreferences do
+            Languages:SetObjectPosition(v,k)
+        end refreshingButtonPos = false
+    else refreshingLang = false
+    end
+end)
+
+-- TimGui For devs --
+local TimGui:{
+    Assets: table,
+    BaseDir: string,
+    Binder: table,
+    Classes: table,
+    Colors: table,
+    Exit: (self:any?)->(),
+    GetFrameGuiPosition: (self:any?,Opened:boolean)->(UDim2),
+    GlobalOpenedGroup: table,
+    GlobalOpenedGroupChanged: RBXScriptSignal,
+    Groups: table,
+    GuiAnimations: table,
+    GuiObjects: table,
+    GuiSize: table,
+    Header: table,
+    HttpGet: (self:any?,URL:string)->(string?),
+    IsA: (self:any?,className:string)->(boolean),
+    LanguageChanged: RBXScriptSignal,
+    LanguagePreferences: table,
+    Logger: table,
+    OnExit: RBXScriptSignal,
+    OnOpened: RBXScriptSignal,
+    Opened: boolean,
+    ScreenGui: ScreenGui,
+    SetLanguagePreferences: (self:any?,LanguagePreferences:{string})->(),
+    Setup: any,
+    SetupData:  table ,
+    State: table,
+    httpGet_BaseDir: string,
+    httpGet_BaseDirIsLocal: boolean,
+}=_G.TimGui
 --[[
 План:
     Сделать старые функции:
@@ -2132,13 +2330,13 @@ State:ResetToDefault()
         Как Dev Инструмент смотреть иерархию, тоесть проводник, и показывать ошибки(например когда кнопка в глобальных группах и из-за этого не отображается)
         TextBoxPrompt, промпт где спросить юзера написать текста
         NumberPrompt тоже что и выше, только с цифрами
-        Сделать Number TGuiObject
+        Сделать NumberRange TGuiObject
         Сделать Color3 TGuiObject
         Чтобы промты или сами читы можно было двигать
         Систему обновлений(уведомит что нового)
         Систему дополнений, и конфиги с сайта
         Интеграция сайта прям в читы, например скачивание дополнений/конфигов на прямую
-        Попытаться интегрировать ДС канал 
+        Попытаться интегрировать ДС канал
     Сделать Players:
         И тут получить игроков с пощадой
         ПОлучить без пощады

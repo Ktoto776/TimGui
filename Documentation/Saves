@@ -1,0 +1,67 @@
+{
+    "description":"Класс для сохранений",
+    "type":"class",
+    "classes":["TClass","Saves"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "BaseDir":{
+            "type":"string",
+            "description":"Локальная директория в которой находятся файлы TGui, используемые для сохранений",
+            "canChange":false,
+            "deprecated":false
+        },"IsSupported":{
+            "type":"string",
+            "description":"Поддерживаются ли сохранения",
+            "canChange":false,
+            "deprecated":false
+        }
+    }, "methods":{
+        "Bind":{
+            "description":"Вставляет функцию в список",
+            "args":[{
+                    "name":"func",
+                    "type":"(...)->(boolean)",
+                    "description":"Функция",
+                    "required":true
+                }
+            ],
+            "return":[], 
+            "deprecated":false
+        },
+        "Run":{
+            "description":"Запускает функции с теме же параметрами с чем и запускался Run(...)",
+            "args":[{
+                    "name":"...",
+                    "type":"any...",
+                    "description":"Всё что угодно, может быть написано в классе Binder",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"any",
+                    "description":"nil - если не одна функция не была запущена успешно."
+                }
+            ], "deprecated":false
+        }
+    }, 
+    "events":{
+        "OnRun":{
+            "description":"Запускается при Bind:Run",
+            "type":"TEvent",
+            "args":[{
+                    "name":"...",
+                    "type":"any...",
+                    "description":"Всё что угодно, может быть написано в классе Binder"
+                }
+            ],
+            "deprecated":false
+        },"OnBinded":{
+            "description":"Запускается при Bind:Bind",
+            "type":"RBXScriptEvent",
+            "args":[],
+            "deprecated":false
+        }
+    }
+}

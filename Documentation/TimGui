@@ -5,7 +5,13 @@
     "writeSameMode":true,
     "deprecated":false,
     "properties":{
-        "Groups":{
+        "Saves":{
+            "type":"class",
+            "class":"Saves",
+            "description":"Сохранения, защищённые сохранения, конфигурации и др.",
+            "canChange":false,
+            "deprecated":false
+        },"Groups":{
             "type":"class",
             "class":"GUIArchitecture",
             "description":"БАЗА. Группы, в которые ложить можно кнопки итд.",
@@ -120,12 +126,6 @@
             "canChange":false,
             "deprecated":false
         },
-        "BaseDir":{
-            "type":"string",
-            "description":"Локальная директория в которой находятся файлы TGui, используемые для сохранений",
-            "canChange":false,
-            "deprecated":false
-        },
         "httpGet_BaseDir":{
             "type":"string",
             "description":"Директория в которой находятся файлы TGui(Ссылка или локально, можно определить через httpGet_BaseDirIsLocal)",
@@ -189,6 +189,27 @@
                     "name":"response",
                     "type":"string | nil",
                     "description":"Полученный результат"
+                }
+            ], "deprecated":false
+        },"GetTScript":{
+            "description":"Создаёт TScript или получает если можно",
+            "args":[{
+                    "name":"scriptName",
+                    "type":"string",
+                    "description":"Имя скрипта, должно быть уникальным, иначе выдаст ошибку(если)",
+                    "required":true
+                },{
+                    "name":"allowToLoadTwice",
+                    "type":"boolean",
+                    "description":"Позволяет загрузить скрипт повторно",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"class",
+                    "class":"TScript",
+                    "description":"Данные скрипта"
                 }
             ], "deprecated":false
         },

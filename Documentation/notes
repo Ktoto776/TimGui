@@ -11,3 +11,15 @@ classes:[string,...]
 
 Если нету writeSameMode:
 То оно true
+
+Пасхалки:
+    Шанс: самый не редкий - 100
+    Можно установить Disabled=true у пасхалки, чтобы вырубить
+
+Глобалы которые использует TimGui:
+    makefolder(path:string) - Saves
+    writefile(path:string,data:string) - Saves
+    readfile(path:string) - Saves
+    isfile(path:string) - Saves
+    listfiles(path:string) - Saves
+    delfile(path:string) - Saves

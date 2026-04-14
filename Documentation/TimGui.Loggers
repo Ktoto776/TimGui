@@ -39,7 +39,8 @@
             ],
             "return":[{
                     "name":"logger",
-                    "type":"Class: TGuiLogger",
+                    "type":"class",
+                    "class":"TGuiLogger",
                     "description":"Логгер"
                 }
             ], "deprecated":false

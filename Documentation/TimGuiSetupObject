@@ -7,6 +7,8 @@
         "FirstHeaderName":"Tim --[may be a table, for example {en=\"tim\",...}]",
         "SecondHeaderName":"Gui --[may be a table]",
         "SeparatorSize":3,
-        "coreDebugEnabled":false
+        "coreDebugEnabled":false,
+        "LanguagePreferences":["en","ru","uk"],
+        "SavesBaseDir":"TimGui/"
     }
 }

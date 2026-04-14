@@ -1,0 +1,60 @@
+{
+    "description":"Скрипт, позволяет обмениваться Эвентами с другими пользователями TGui, сохранять значения. Можно получить через TimGui:GetTScript(scriptName)",
+    "type":"class",
+    "classes":["TClass","TScript"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "Name":{
+            "type":"string",
+            "description":"Имя скрипта",
+            "canChange":false,
+            "deprecated":false
+        },"Logger":{
+            "type":"class",
+            "class":"TGuiLogger",
+            "description":"Имя скрипта",
+            "canChange":false,
+            "deprecated":false
+        }
+    }, 
+    "methods":{
+        "GetFromSave":{
+            "description":"Читает значения с (глобального) сохранения",
+            "args":[{
+                    "name":"key",
+                    "type":"string",
+                    "description":"Ключ",
+                    "required":true
+                }
+            ],
+            "return":[{
+                    "name":"result",
+                    "type":"any",
+                    "description":"Результат"
+                }
+            ], "deprecated":false
+        },"SetToSave":{
+            "description":"Записывает в (глобальное) сохранение",
+            "args":[{
+                    "name":"key",
+                    "type":"string",
+                    "description":"Ключ",
+                    "required":true
+                },{
+                    "name":"Value",
+                    "type":"string | number | table | boolean",
+                    "description":"Значение",
+                    "required":true
+                }
+            ],
+            "return":[{
+                    "name":"success",
+                    "type":"boolean",
+                    "description":"Успешно ли (если TimGui.Saves.IsSupported == false, то оно сбросится после перезахода)"
+                }
+            ], "deprecated":false
+        }
+    }, 
+    "events":{}
+}

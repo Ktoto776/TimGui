@@ -101,6 +101,17 @@
             "type":"RBXScriptEvent",
             "args":[],
             "deprecated":false
+        },"SequenceChanged":{
+            "description":"При закрытии группы",
+            "type":"RBXScriptEvent",
+            "args":[
+                {
+                    "name":"data",
+                    "type":"{string,string,...}",
+                    "description":"Таблица с именами по порядку"
+                }
+            ],
+            "deprecated":false
         }
     }
 }
