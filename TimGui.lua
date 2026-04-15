@@ -463,6 +463,12 @@ Colors.SequenceVisibleIndent = Color3.new(1,1,1)
 Colors.SequenceOpenArrowColor = Color3.new(1,1,1)
 Colors.SequenceObjectsBackgroundColor = Color3.fromRGB(50,50,100)
 Colors.SequenceObjectsTextColor = Color3.new(1,1,1)
+--Windows --------------------------
+Colors.TWindowBackgroundColor = Color3.new(0.15,0.15,0.3)
+Colors.TWindowHeaderBackgroundColor = Color3.new(0.15,0.15,0.25)
+Colors.TWindowCloseBackgroundColor = Color3.new(0.8,0.1,0.1)
+Colors.TWindowCloseColor = Color3.new(1,1,1)
+Colors.TWindowHeaderTextColor = Color3.new(1,1,1)
 Colors.Default = Colors:GetPreset()
 -- #FIND_POINT GuiSize
 local GuiSize = Classes:CreatePreset()
@@ -496,6 +502,10 @@ GuiSize.SequenceIndent = UDim.new(0,3)
 GuiSize.SequenceVisibleIndent = UDim.new(0,2)
 GuiSize.SequenceObjectSize = UDim2.new(1,0,0,35)
 GuiSize.SequenceObjectGrabSize = UDim.new(1,0)
+-- Window -------------------
+GuiSize.TWindowHeaderSize = UDim.new(0,32)
+GuiSize.TWindowHeaderCornerRadius = UDim.new(0,12)
+GuiSize.TWindowCornerRadius = UDim.new(0,12)
 GuiSize.Default = GuiSize:GetPreset()
 function TimGui:GetFrameGuiPosition(opened:boolean?)
     if opened==nil then opened = TimGui.Opened end
@@ -514,6 +524,7 @@ Assets.Error = "rbxassetid://75662198735241"
 Assets.Arrow = "rbxassetid://16341277046"
 Assets.GroupOpenArrow = "rbxassetid://16341277046"
 Assets.SequenceOpenArrow = "rbxassetid://122258968574937"
+Assets.CloseTWindow = "rbxassetid://107936050082953"
 Assets.Loading = "rbxasset://textures/DarkThemeLoadingCircle.png"
 Assets.Default = Assets:GetPreset()
 -- #FIND_POINT GuiAnimations
@@ -974,6 +985,21 @@ local function MakeGUIArchitectureClass(raw:{any?}?)
         end
     end)
     return GUIArchitecture
+end function Classes:CreateSpecialColors()
+    local SpecialColors = Classes:CreatePreset(true)
+    SpecialColors:AddClassName("Colors")
+    SpecialColors:AddClassName("SpecialColors")
+    function SpecialColors:GetColor(name:string)
+        if SpecialColors[name] then return SpecialColors[name] end
+        return Colors[name]
+    end function SpecialColors:GetColorChangedSignal(name:string)
+        local event = Instance.new("BindableEvent")
+        Colors:GetPropertyChangedEvent(name):Connect(function()
+            event:Fire()
+        end) SpecialColors:GetPropertyChangedEvent(name):Connect(function()
+            event:Fire()
+        end) return event.Event
+    end return SpecialColors
 end
 local LastTGuiObjectId = 0
 local function TGuiObjectClass(Name:string,Title:string|{string}?,Parent:any?,Object:any?)
@@ -1020,20 +1046,8 @@ local function TGuiObjectClass(Name:string,Title:string|{string}?,Parent:any?,Ob
         Object:SetReadOnly("Parent")
         destroyingEvent:Fire()
     end -- TGuiObject Special colors
-    local SpecialColors = Classes:CreatePreset(true)
-    SpecialColors:AddClassName("Colors")
-    SpecialColors:AddClassName("SpecialColors")
-    function SpecialColors:GetColor(name:string)
-        if SpecialColors[name] then return SpecialColors[name] end
-        return Colors[name]
-    end function SpecialColors:GetColorChangedSignal(name:string)
-        local event = Instance.new("BindableEvent")
-        Colors:GetPropertyChangedEvent(name):Connect(function()
-            event:Fire()
-        end) SpecialColors:GetPropertyChangedEvent(name):Connect(function()
-            event:Fire()
-        end) return event.Event
-    end Object.SpecialColors = SpecialColors
+    local SpecialColors = Classes:CreateSpecialColors()
+    Object.SpecialColors = SpecialColors
     Object:SetReadOnly("SpecialColors")
     -- TGuiObject UI: Frame + UICorner
     local Frame = Instance.new("Frame")
@@ -2175,12 +2189,186 @@ function Saves:GetSave(Name:string)
         return save
     end
 end
+-- #FIND_POINT CLASS TWindow ------------------
+local WindowSizeRefresh = Classes:CreateBind()
+Binder.TWindowSizeRefresh = WindowSizeRefresh
+Binder:SetReadOnly("TWindowSizeRefresh")
+local WindowsFolder = Instance.new("Folder",STGui)
+WindowsFolder.Name = "Windows"
+function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?)
+    if type(Name)~="string" then logger:critical_error("Classes:CreateTWindow","Name is incorrect. Expected string") end
+    if type(Title)~="table" then
+        Title = Classes:CreateTranslator(Title or Name)
+    else if Title.__type~="TClass" then
+            local oldTitle = Title
+            Title = Classes:CreateTranslator(Name)
+            Title:Load(oldTitle)
+        elseif not Title:IsA("Translator") then
+            Title = Classes:CreateTranslator(Name)
+        end
+    end logger:debug("Classes:CreateTWindow","Creating window: "..Name)
+    local Window = Classes:CreateTClass()
+    Window:AddClassName("TWindow")
+    Window.Title = Title
+    Window:SetReadOnly("Title")
+    Window.Name = Name
+    Window:SetReadOnly("Name")
+    Window.Opened = true
+    local SpecialColors = Classes:CreateSpecialColors()
+    Window.SpecialColors = SpecialColors
+    Window:SetReadOnly("SpecialColors")
+    local WindowFrame = Instance.new("Frame",TimGui.ScreenGui)
+    WindowFrame.Name = Name
+    WindowFrame.AnchorPoint = Vector2.new(0.5,0.5)
+    WindowFrame.Position = UDim2.new(0.5,0,0.5,0)
+    WindowFrame.BackgroundTransparency = 1
+    Window.WindowFrame = WindowFrame
+    Window:SetReadOnly("WindowFrame")
+    local HeaderFrame = Instance.new("Frame",WindowFrame)
+    HeaderFrame.Name = "Header"
+    Window.HeaderFrame = HeaderFrame
+    Window:SetReadOnly("HeaderFrame")
+    local HeaderUICorner = Instance.new("UICorner",HeaderFrame)
+    GuiSize:GetPropertyChangedEvent("TWindowHeaderCornerRadius"):Connect(function()
+        HeaderUICorner.CornerRadius = GuiSize.TWindowHeaderCornerRadius
+    end) HeaderUICorner.CornerRadius = GuiSize.TWindowHeaderCornerRadius
+    Window.HeaderUICorner = HeaderUICorner
+    Window:SetReadOnly("HeaderUICorner")
+    local HeaderDownFrame = Instance.new("Frame",HeaderFrame)
+    HeaderDownFrame.Name = "Down"
+    HeaderDownFrame.Position = UDim2.new(0,0,0.5,0)
+    HeaderDownFrame.Size = UDim2.new(1,0,0.5,0)
+    HeaderDownFrame.BorderSizePixel = 0
+    Window.HeaderDownFrame = HeaderDownFrame
+    Window:SetReadOnly("HeaderDownFrame")
+    SpecialColors:GetColorChangedSignal("TWindowHeaderBackgroundColor"):Connect(function()
+        HeaderFrame.BackgroundColor3 = SpecialColors:GetColor("TWindowHeaderBackgroundColor")
+        HeaderDownFrame.BackgroundColor3 = SpecialColors:GetColor("TWindowHeaderBackgroundColor")
+    end) HeaderFrame.BackgroundColor3 = SpecialColors:GetColor("TWindowHeaderBackgroundColor")
+    HeaderDownFrame.BackgroundColor3 = SpecialColors:GetColor("TWindowHeaderBackgroundColor")
+    local CloseButton = Instance.new("ImageButton",HeaderFrame)
+    CloseButton.Name = "Close"
+    CloseButton.AnchorPoint = Vector2.new(1,0)
+    CloseButton.Position = UDim2.new(1,0,0,0)
+    CloseButton.Activated:Connect(function()
+        Window.Opened = false
+    end)
+    Assets:GetPropertyChangedEvent("CloseTWindow"):Connect(function()
+        CloseButton.Image = Assets.CloseTWindow
+    end) CloseButton.Image = Assets.CloseTWindow
+    CloseButton.MouseEnter:Connect(function()
+        CloseButton.BackgroundTransparency = 0
+    end) CloseButton.MouseLeave:Connect(function()
+        CloseButton.BackgroundTransparency = 1
+    end) CloseButton.BackgroundTransparency = 1
+    SpecialColors:GetColorChangedSignal("TWindowCloseBackgroundColor"):Connect(function()
+        CloseButton.BackgroundColor3 = SpecialColors:GetColor("TWindowCloseBackgroundColor")
+    end) CloseButton.BackgroundColor3 = SpecialColors:GetColor("TWindowCloseBackgroundColor")
+    SpecialColors:GetColorChangedSignal("TWindowCloseColor"):Connect(function()
+        CloseButton.ImageColor3 = SpecialColors:GetColor("TWindowCloseColor")
+    end) CloseButton.ImageColor3 = SpecialColors:GetColor("TWindowCloseColor")
+    local CloseUICorner = Instance.new("UICorner",CloseButton)
+    CloseUICorner.CornerRadius = GuiSize.TWindowCornerRadius
+    Window.CloseButton = CloseButton
+    Window:SetReadOnly("CloseButton")
+    local Header = Instance.new("Frame",HeaderFrame)
+    Header.BackgroundTransparency = 1
+    Window.Header = Header
+    Window:SetReadOnly("Header")
+    local HeaderText = Instance.new("TextLabel",Header)
+    HeaderText.TextXAlignment = Enum.TextXAlignment.Left
+    HeaderText.BackgroundTransparency = 1
+    HeaderText.Size = UDim2.new(1,0,1,0)
+    HeaderText.TextScaled = true
+    Title.TranslateValueChanged:Connect(function()
+        HeaderText.Text = Title:Translate()
+    end) HeaderText.Text = Title:Translate()
+    SpecialColors:GetColorChangedSignal("TWindowHeaderTextColor"):Connect(function()
+        HeaderText.TextColor3 = SpecialColors:GetColor("TWindowHeaderTextColor")
+    end) HeaderText.TextColor3 = SpecialColors:GetColor("TWindowHeaderTextColor")
+    Window.HeaderText = HeaderText
+    Window:SetReadOnly("HeaderText")
+    local BackgroundFrame = Instance.new("Frame",WindowFrame)
+    BackgroundFrame.Name = "Background"
+    BackgroundFrame.AnchorPoint = Vector2.new(0,1)
+    BackgroundFrame.Position = UDim2.new(0,0,1,0)
+    Window.BackgroundFrame = BackgroundFrame
+    Window:SetReadOnly("BackgroundFrame")
+    local BackgroundUICorner = Instance.new("UICorner",BackgroundFrame)
+    GuiSize:GetPropertyChangedEvent("TWindowCornerRadius"):Connect(function()
+        BackgroundUICorner.CornerRadius = GuiSize.TWindowCornerRadius
+        CloseUICorner.CornerRadius = GuiSize.TWindowCornerRadius
+    end) BackgroundUICorner.CornerRadius = GuiSize.TWindowCornerRadius
+    Window.BackgroundUICorner = BackgroundUICorner
+    Window:SetReadOnly("BackgroundUICorner")
+    local BackgroundUpFrame = Instance.new("Frame",BackgroundFrame)
+    BackgroundUpFrame.Name = "Up"
+    BackgroundUpFrame.BorderSizePixel = 0
+    BackgroundUpFrame.Size = UDim2.new(1,0,0.5,0)
+    Window.BackgroundUpFrame = BackgroundUpFrame
+    Window:SetReadOnly("BackgroundUpFrame")
+    SpecialColors:GetColorChangedSignal("TWindowBackgroundColor"):Connect(function()
+        BackgroundFrame.BackgroundColor3 = SpecialColors:GetColor("TWindowBackgroundColor")
+        BackgroundUpFrame.BackgroundColor3 = SpecialColors:GetColor("TWindowBackgroundColor")
+    end) BackgroundFrame.BackgroundColor3 = SpecialColors:GetColor("TWindowBackgroundColor")
+    BackgroundUpFrame.BackgroundColor3 = SpecialColors:GetColor("TWindowBackgroundColor")
+    local Frame = Instance.new("Frame",BackgroundFrame)
+    Frame.BackgroundTransparency = 1
+    Frame.Size = UDim2.new(1,0,1,0)
+    Window.Frame = Frame
+    Window:SetReadOnly("Frame")
+    local SpecialWindowSizeRefresh = Classes:CreateBind()
+    SpecialWindowSizeRefresh:Bind(function(...)
+        return WindowSizeRefresh:Run(...)
+    end) Window.SpecialTWindowSizeRefresh = SpecialWindowSizeRefresh
+    Window:SetReadOnly("SpecialTWindowSizeRefresh")
+    Window.Size = UDim2.new(0,250,0,250)
+    Window.HeaderSize = GuiSize.TWindowHeaderSize
+    local function RefreshSize()
+        SpecialWindowSizeRefresh:Run(Window)
+    end RefreshSize()
+    SpecialWindowSizeRefresh.OnBinded:Connect(RefreshSize)
+    WindowSizeRefresh.OnBinded:Connect(RefreshSize)
+    Window:GetPropertyChangedEvent("Size"):Connect(RefreshSize)
+    Window:GetPropertyChangedEvent("HeaderSize"):Connect(RefreshSize)
+    local onOpened = Instance.new("BindableEvent")
+    local onClosed = Instance.new("BindableEvent")
+    Window.OnOpened = onOpened.Event
+    Window.OnClosed = onClosed.Event
+    Window:SetReadOnly("OnOpened")
+    Window:SetReadOnly("OnClosed")
+    function Window:Move(Position:UDim2,AnchorPoint:Vector2)
+        if typeof(AnchorPoint)~="Vector2" then AnchorPoint=Vector2.new(0.5,0.5) end
+        local anchor = WindowFrame.AnchorPoint-AnchorPoint
+        local Size = WindowFrame.Size
+        local pos = Position+UDim2.new(Size.X.Scale*anchor.X,Size.X.Offset*anchor.X,Size.Y.Scale*anchor.Y,Size.Y.Offset*anchor.Y)
+        WindowFrame.Position = pos
+    end Window:GetPropertyChangedEvent("Opened"):Connect(function()
+        WindowFrame.Visible = Window.Opened
+        if Window.Opened then
+            onOpened:Fire()
+        else onClosed:Fire()
+        end
+    end)
+    return Window
+end WindowSizeRefresh:Bind(function(TWindow)
+    if not TWindow then logger:critical_error("WindowSizeRefresh","Window is incorrect")TWindow=Classes:CreateTWindow() end
+    TWindow.WindowFrame.Size = TWindow.Size+UDim2.new(UDim.new(0,0),TWindow.HeaderSize)
+    TWindow.HeaderFrame.Size = UDim2.new(UDim.new(1,0),TWindow.HeaderSize)
+    TWindow.BackgroundFrame.Size = TWindow.Size
+    local HeaderYSize = TWindow.HeaderFrame.AbsoluteSize.Y
+    TWindow.CloseButton.Size = UDim2.new(0,HeaderYSize,1,0)
+    TWindow.Header.Size = UDim2.new(UDim.new(1,-HeaderYSize),UDim.new(1,0))
+    return true
+end)
+local ConfigsW = Classes:CreateTWindow("Cfg")
 -- #FIND_POINT Scripts ------------------
 local TScripts = {}
 local CreatedTScriptsSanitize = {}
 function TimGui:GetTScript(ScriptName:string,allowLoadTwice:boolean?)
     local SanName = sanitizeFilename(ScriptName)
     if CreatedTScriptsSanitize[SanName] then error(`Script {ScriptName} already created`) end
+    if TScripts[ScriptName] then return TScripts[ScriptName] end
     local TScript = Classes:CreateTClass()
     TScript:AddClassName("TScript")
     TScript.Name = ScriptName
@@ -2320,7 +2508,6 @@ local TimGui:{
     Сделать старые функции:
         Нормальные плавающие кнопки на бабафонах
         Обширный Setup, со своей цветовой политрой размерами и тд
-        языки, теперь с возможностью на другой язык
         choose(было askYN),свои кнопки(на Translator если не дали то Да или Нет) можно добавить :Run() или :Ask() или :Choose()
             и классы чтоб можно было менять уже запущенный
         notify(было print), также на Translator и с классами

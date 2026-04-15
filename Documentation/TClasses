@@ -116,6 +116,33 @@
                     "description":"Класс Translator"
                 }
             ],"deprecated":false
+        },"CreateWindow":{ 
+            "description":"Создаёт пустое окно",
+            "args":[
+                {
+                    "name":"Title",
+                    "type":"string | Translator | table",
+                    "description":"Заголовок окна",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"class",
+                    "class":"TWindow",
+                    "description":"Класс TWindow"
+                }
+            ],"deprecated":false
+        },"CreateSpecialColors":{ 
+            "description":"Создаёт класс для специальных цветов",
+            "args":[],
+            "return":[{
+                    "name":"response",
+                    "type":"class",
+                    "class":"SpecialColors",
+                    "description":"Класс для специальных цветов"
+                }
+            ],"deprecated":false
         }
     },
     "events":{}

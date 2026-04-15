@@ -70,6 +70,31 @@
             "description":"Цвет текста для Обьектов без фона, например TText",
             "canChange":true,
             "deprecated":false
+        },"TWindowBackgroundColor":{
+            "type":"Color3",
+            "description":"Цвет фона у TWindow",
+            "canChange":true,
+            "deprecated":false
+        },"TWindowHeaderBackgroundColor":{
+            "type":"Color3",
+            "description":"Цвет фона у Header в TWindow",
+            "canChange":true,
+            "deprecated":false
+        },"TWindowCloseColor":{
+            "type":"Color3",
+            "description":"Цвет картинки закрытия окна TWindow",
+            "canChange":true,
+            "deprecated":false
+        },"TWindowBackgroundCloseColor":{
+            "type":"Color3",
+            "description":"Цвет фона закрытия окна TWindow(появляется при наводке)",
+            "canChange":true,
+            "deprecated":false
+        },"TWindowHeaderTextColor":{
+            "type":"Color3",
+            "description":"Цвет текста в заголовке",
+            "canChange":true,
+            "deprecated":false
         }
     }, "methods":{}, 
     "events":{}

@@ -95,6 +95,16 @@
             "description":"Размер кнопки для перемещения дли обьекта TSequence. Scale - Y всего frame",
             "canChange":true,
             "deprecated":false
+        },"TWindowCornerRadius":{
+            "type":"UDim",
+            "description":"Скругление верхних углов(заголовка) TWindow",
+            "canChange":true,
+            "deprecated":false
+        },"TWindowHeaderCornerRadius":{
+            "type":"UDim",
+            "description":"Скругление нижних углов(фона) TWindow",
+            "canChange":true,
+            "deprecated":false
         }
     }, "methods":{}, 
     "events":{}

@@ -1,0 +1,112 @@
+{
+    "description":"Класс для создания окн, по умолчанию пустое окно",
+    "type":"class",
+    "classes":["TClass","TWindow"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "Name":{
+            "type":"string",
+            "description":"Имя окна",
+            "canChange":false,
+            "deprecated":false
+        },"Title":{
+            "type":"class",
+            "class":"Translator",
+            "description":"Заголовок окна",
+            "canChange":false,
+            "deprecated":false
+        },"SpecialColors":{
+            "type":"class",
+            "class":"SpecialColors",
+            "description":"Специальные цвета",
+            "canChange":false,
+            "deprecated":false
+        },"HeaderFrame":{
+            "type":"Instance: Frame",
+            "description":"Frame Заголовка окна",
+            "canChange":false,
+            "deprecated":false
+        },"Size":{
+            "type":"UDim2",
+            "description":"Размер окна(только .Frame)",
+            "canChange":true,
+            "deprecated":false
+        },"HeaderSize":{
+            "type":"UDim2",
+            "description":"Y Размер заголовка",
+            "canChange":true,
+            "deprecated":false
+        },"HeaderUICorner":{
+            "type":"Instance: UICorner",
+            "description":"UiCorner для Заголовка окна",
+            "canChange":false,
+            "deprecated":false
+        },"HeaderDownFrame":{
+            "type":"Instance: Frame",
+            "description":"Нижняя часть заголовка(чтоб нижнии углы не были скруглены)",
+            "canChange":false,
+            "deprecated":false
+        },"BackgroundFrame":{
+            "type":"Instance: Frame",
+            "description":"Задний фон окна",
+            "canChange":false,
+            "deprecated":false
+        },"BackgroundUICorner":{
+            "type":"Instance: UICorner",
+            "description":"UICorner для скругления нижних углов",
+            "canChange":false,
+            "deprecated":false
+        },"BackgroundUpFrame":{
+            "type":"Instance: Frame",
+            "description":"Верхняя часть фона(чтоб верхние углы не были скруглены)",
+            "canChange":false,
+            "deprecated":false
+        },"Header":{
+            "type":"Instance: Frame",
+            "description":"Свободная часть заголовка, которая обычно занята Названием",
+            "canChange":false,
+            "deprecated":false
+        },"HeaderText":{
+            "type":"Instance: TextLabel",
+            "description":"Название в заголовке. По умолчанию полность закрывает .Header",
+            "canChange":false,
+            "deprecated":false
+        },"Frame":{
+            "type":"Instance: Frame",
+            "description":"Свободная и основная часть окна",
+            "canChange":false,
+            "deprecated":false
+        }
+    }, "methods":{
+        "Move":{
+            "description":"Возвращает наличия свойства только для чтения",
+            "args":[{
+                    "name":"Position",
+                    "type":"UDim2",
+                    "description":"Позиция",
+                    "required":true
+                },{
+                    "name":"AnchorPoint",
+                    "type":"Vector2",
+                    "description":"Точка крепления(По умолчанию Vector2.new(0.5,0.5))",
+                    "required":false
+                }
+            ],"return":[], 
+            "deprecated":false
+        }
+    }, 
+    "events":{
+        "OnOpened":{
+            "description":"Запускается если окно открыто(.Opened=true)",
+            "type":"RBXScriptEvent",
+            "deprecated":false,
+            "args":[]
+        },"OnClose":{
+            "description":"Запускается если окно закрыто(.Opened=false)",
+            "type":"RBXScriptEvent",
+            "deprecated":false,
+            "args":[]
+        }
+    }
+}

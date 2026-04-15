@@ -1,7 +1,7 @@
 {
     "description":"Сохранение, можно записать в конфиг или глобально",
     "type":"class",
-    "classes":["TClass","TScript"],
+    "classes":["TClass","Save"],
     "writeSameMode":true,
     "deprecated":false,
     "properties":{
