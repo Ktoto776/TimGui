@@ -77,6 +77,32 @@
             "description":"Свободная и основная часть окна",
             "canChange":false,
             "deprecated":false
+        },"DragDetector":{
+            "type":"Instance: DragDetector",
+            "description":"DragDetector для перемещения окна",
+            "canChange":false,
+            "deprecated":false
+        },"DefaultDragEventsEnabled":{
+            "type":"boolean",
+            "description":"Включён ли обычные эвенты перемещения для DragDetector",
+            "canChange":false,
+            "deprecated":false
+        },"SpecialHideArrowAnimation":{
+            "type":"class",
+            "class":"Bind",
+            "description":"Специальный бинд для обновления размеров окна. Работает как в Binder.HideArrowAnimation",
+            "canChange":false,
+            "deprecated":false
+        },"CloseButton":{
+            "type":"Instance: ImageButton",
+            "description":"ImageButton для закрытия окна",
+            "canChange":false,
+            "deprecated":false
+        },"HideButton":{
+            "type":"Instance: ImageButton",
+            "description":"ImageButton для сворачивания окна",
+            "canChange":false,
+            "deprecated":false
         }
     }, "methods":{
         "Move":{

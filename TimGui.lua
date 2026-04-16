@@ -468,7 +468,11 @@ Colors.TWindowBackgroundColor = Color3.new(0.15,0.15,0.3)
 Colors.TWindowHeaderBackgroundColor = Color3.new(0.15,0.15,0.25)
 Colors.TWindowCloseBackgroundColor = Color3.new(0.8,0.1,0.1)
 Colors.TWindowCloseColor = Color3.new(1,1,1)
+Colors.TWindowHideBackgroundColor = Color3.new(0.1,0.1,0.8)
+Colors.TWindowHideColor = Color3.new(1,1,1)
 Colors.TWindowHeaderTextColor = Color3.new(1,1,1)
+--Configs --------------------------
+Colors.ConfigsSeparationColor = Color3.new(0,0,0)
 Colors.Default = Colors:GetPreset()
 -- #FIND_POINT GuiSize
 local GuiSize = Classes:CreatePreset()
@@ -506,6 +510,11 @@ GuiSize.SequenceObjectGrabSize = UDim.new(1,0)
 GuiSize.TWindowHeaderSize = UDim.new(0,32)
 GuiSize.TWindowHeaderCornerRadius = UDim.new(0,12)
 GuiSize.TWindowCornerRadius = UDim.new(0,12)
+-- ConfigWindow -------------
+GuiSize.ConfigsSeparatorSize = UDim.new(0,1)
+GuiSize.ConfigsWindowConfigsSize = UDim.new(0,25)
+GuiSize.ConfigsWindowConfigsFrameSize = UDim.new(0.3,0)
+GuiSize.ConfigsWindowSize = UDim2.new(0.25,100,0.3,200)
 GuiSize.Default = GuiSize:GetPreset()
 function TimGui:GetFrameGuiPosition(opened:boolean?)
     if opened==nil then opened = TimGui.Opened end
@@ -524,6 +533,7 @@ Assets.Error = "rbxassetid://75662198735241"
 Assets.Arrow = "rbxassetid://16341277046"
 Assets.GroupOpenArrow = "rbxassetid://16341277046"
 Assets.SequenceOpenArrow = "rbxassetid://122258968574937"
+Assets.HideTWindow = "rbxassetid://122258968574937"
 Assets.CloseTWindow = "rbxassetid://107936050082953"
 Assets.Loading = "rbxasset://textures/DarkThemeLoadingCircle.png"
 Assets.Default = Assets:GetPreset()
@@ -573,6 +583,7 @@ local GuiInstances = Classes:CreateTClass()
 GuiInstances:AddClassName("GuiInstances")
 local STGui = Instance.new("ScreenGui")
 STGui.ResetOnSpawn = false
+STGui.DisplayOrder = 1
 local STGuiParentIsCoreGUI = pcall(function()
     STGui.Parent = game.CoreGui
 end) if not STGuiParentIsCoreGUI then
@@ -2193,6 +2204,9 @@ end
 local WindowSizeRefresh = Classes:CreateBind()
 Binder.TWindowSizeRefresh = WindowSizeRefresh
 Binder:SetReadOnly("TWindowSizeRefresh")
+local HideArrowAnimation = Classes:CreateBind()
+Binder.TWindowHideArrowAnimation = HideArrowAnimation
+Binder:SetReadOnly("TWindowHideArrowAnimation")
 local WindowsFolder = Instance.new("Folder",STGui)
 WindowsFolder.Name = "Windows"
 function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?)
@@ -2214,6 +2228,7 @@ function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?)
     Window.Name = Name
     Window:SetReadOnly("Name")
     Window.Opened = true
+    Window.Hidden = false
     local SpecialColors = Classes:CreateSpecialColors()
     Window.SpecialColors = SpecialColors
     Window:SetReadOnly("SpecialColors")
@@ -2271,6 +2286,37 @@ function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?)
     CloseUICorner.CornerRadius = GuiSize.TWindowCornerRadius
     Window.CloseButton = CloseButton
     Window:SetReadOnly("CloseButton")
+    local SpecialHideArrowAnimation = Classes:CreateBind()
+    SpecialHideArrowAnimation:Bind(function(...)
+        return HideArrowAnimation:Run(...)
+    end) Window.SpecialHideArrowAnimation = SpecialHideArrowAnimation
+    Window:SetReadOnly("SpecialHideArrowAnimation")
+    local HideButton = Instance.new("ImageButton",HeaderFrame)
+    HideButton.Name = "Hide"
+    HideButton.AnchorPoint = Vector2.new(1,0)
+    HideButton.Position = UDim2.new(1,0,0,0)
+    HideButton.Rotation = 180
+    HideButton.Activated:Connect(function()
+        Window.Hidden = not Window.Hidden
+    end)
+    Assets:GetPropertyChangedEvent("HideTWindow"):Connect(function()
+        HideButton.Image = Assets.HideTWindow
+    end) HideButton.Image = Assets.HideTWindow
+    HideButton.MouseEnter:Connect(function()
+        HideButton.BackgroundTransparency = 0
+    end) HideButton.MouseLeave:Connect(function()
+        HideButton.BackgroundTransparency = 1
+    end) HideButton.BackgroundTransparency = 1
+    SpecialColors:GetColorChangedSignal("TWindowHideBackgroundColor"):Connect(function()
+        HideButton.BackgroundColor3 = SpecialColors:GetColor("TWindowHideBackgroundColor")
+    end) HideButton.BackgroundColor3 = SpecialColors:GetColor("TWindowHideBackgroundColor")
+    SpecialColors:GetColorChangedSignal("TWindowHideColor"):Connect(function()
+        HideButton.ImageColor3 = SpecialColors:GetColor("TWindowHideColor")
+    end) HideButton.ImageColor3 = SpecialColors:GetColor("TWindowHideColor")
+    local HideUICorner = Instance.new("UICorner",HideButton)
+    HideUICorner.CornerRadius = GuiSize.TWindowCornerRadius
+    Window.HideButton = HideButton
+    Window:SetReadOnly("HideButton")
     local Header = Instance.new("Frame",HeaderFrame)
     Header.BackgroundTransparency = 1
     Window.Header = Header
@@ -2298,6 +2344,7 @@ function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?)
     GuiSize:GetPropertyChangedEvent("TWindowCornerRadius"):Connect(function()
         BackgroundUICorner.CornerRadius = GuiSize.TWindowCornerRadius
         CloseUICorner.CornerRadius = GuiSize.TWindowCornerRadius
+        HideUICorner.CornerRadius = GuiSize.TWindowCornerRadius
     end) BackgroundUICorner.CornerRadius = GuiSize.TWindowCornerRadius
     Window.BackgroundUICorner = BackgroundUICorner
     Window:SetReadOnly("BackgroundUICorner")
@@ -2349,19 +2396,96 @@ function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?)
             onOpened:Fire()
         else onClosed:Fire()
         end
-    end)
+    end) Window:GetPropertyChangedEvent("Hidden"):Connect(function()
+        BackgroundFrame.Visible = not Window.Hidden
+        HeaderDownFrame.Visible = not Window.Hidden
+        Window.SpecialHideArrowAnimation:Run(Window)
+    end) local dragDetector = Instance.new("UIDragDetector",HeaderFrame)
+    dragDetector.DragStyle = Enum.UIDragDetectorDragStyle.Scriptable
+    local function addZIndex(add:number)
+        WindowFrame.ZIndex += add
+        for _,v:GuiBase2d in WindowFrame:GetDescendants() do
+            if v:IsA("GuiBase2d") then
+                v.ZIndex += add
+            end
+        end
+    end local lastInput
+    Window.DefaultDragEventsEnabled = true
+    dragDetector.DragStart:Connect(function(input)
+        if Window.DefaultDragEventsEnabled then
+            lastInput = input
+            addZIndex(1)
+        end
+    end) dragDetector.DragContinue:Connect(function(input)
+        if Window.DefaultDragEventsEnabled then
+            local delta = (input-lastInput)/game.Workspace.CurrentCamera.ViewportSize
+            WindowFrame.Position += UDim2.fromScale(delta.X,delta.Y)
+            lastInput = input
+        end
+    end) Window.DragDetector = dragDetector
+    Window:SetReadOnly("DragDetector")
     return Window
 end WindowSizeRefresh:Bind(function(TWindow)
     if not TWindow then logger:critical_error("WindowSizeRefresh","Window is incorrect")TWindow=Classes:CreateTWindow() end
     TWindow.WindowFrame.Size = TWindow.Size+UDim2.new(UDim.new(0,0),TWindow.HeaderSize)
     TWindow.HeaderFrame.Size = UDim2.new(UDim.new(1,0),TWindow.HeaderSize)
-    TWindow.BackgroundFrame.Size = TWindow.Size
+    TWindow.BackgroundFrame.Size = UDim2.new(UDim.new(1,0),UDim.new(1,0)-TWindow.HeaderSize)
     local HeaderYSize = TWindow.HeaderFrame.AbsoluteSize.Y
     TWindow.CloseButton.Size = UDim2.new(0,HeaderYSize,1,0)
-    TWindow.Header.Size = UDim2.new(UDim.new(1,-HeaderYSize),UDim.new(1,0))
+    TWindow.HideButton.Size = UDim2.new(0,HeaderYSize,1,0)
+    TWindow.HideButton.Position = UDim2.new(UDim.new(1,-HeaderYSize-5),UDim.new(0,0))
+    TWindow.Header.Size = UDim2.new(UDim.new(1,-HeaderYSize*2-5),UDim.new(1,0))
     return true
+end) GuiAnimations.TWindowHideArrowTI = GuiAnimations.ArrowRotateTI
+GuiAnimations.EnableArrowTWindowAnimation = true
+local LastTWArrowTweens = {}
+HideArrowAnimation:Bind(function(Win:table)
+    if not Win then logger:critical_error("Error TWindow is incorrect") Win = Classes:CreateTWindow() end
+    local rotation
+    local Arrow = Win.HideButton
+    if not Win.Hidden then
+        rotation = 180
+    else rotation = 360
+    end local LastArrowTween = LastTWArrowTweens[Win]
+    if GuiAnimations.EnableArrowTWindowAnimation then
+        Arrow.Rotation = rotation-180
+        if LastArrowTween then LastArrowTween:Cancel() end
+        LastArrowTween = TweenService:Create(Arrow,GuiAnimations.TWindowHideArrowTI,{Rotation=rotation})
+        LastArrowTween:Play()
+        LastArrowTween.Completed:Once(function()
+            LastTWArrowTweens[Win] = nil
+        end) LastTWArrowTweens[Win] = LastArrowTween
+    else Arrow.Rotation = rotation
+    end return true
 end)
-local ConfigsW = Classes:CreateTWindow("Cfg")
+-- #FIND_POINT Configs ------------------
+local ConfigsWindow = Classes:CreateTWindow("Configs",{ --LANG_REQUIRED
+    ru="Конфигурации TEST",
+    en="Configurations TEST",
+    uk="Конфігурації TEST"
+})
+local ConfigsFrame = Instance.new("Frame",ConfigsWindow.Frame)
+ConfigsFrame.BackgroundTransparency = 1
+local ConfigsScF = Instance.new("ScrollingFrame",ConfigsFrame)
+ConfigsScF.BackgroundTransparency = 1
+ConfigsScF.ScrollBarThickness = 6
+local ConfigsSelectedFrame = Instance.new("Frame",ConfigsWindow.Frame)
+ConfigsSelectedFrame.Position = UDim2.new(1,0,0,0)
+ConfigsSelectedFrame.AnchorPoint = Vector2.new(1,0)
+ConfigsSelectedFrame.BackgroundTransparency = 0.75
+local ConfigsSeparationFrame = Instance.new("Frame",ConfigsWindow.Frame)
+ConfigsSeparationFrame.AnchorPoint = Vector2.new(0.5,0)
+ConfigsSeparationFrame.Size = UDim2.new(GuiSize.ConfigsSeparatorSize,UDim.new(1,0))
+ConfigsWindow.SpecialColors:GetColorChangedSignal("ConfigsSeparationColor"):Connect(function()
+    ConfigsSeparationFrame.BackgroundColor3 = ConfigsWindow.SpecialColors:GetColor("ConfigsSeparationColor")
+end) ConfigsSeparationFrame.BackgroundColor3 = ConfigsWindow.SpecialColors:GetColor("ConfigsSeparationColor")
+local function CfgWindowRefresh()
+    ConfigsScF.Size = UDim2.new(UDim.new(1,0),UDim.new(1,0)-GuiSize.ConfigsWindowConfigsSize)
+    ConfigsFrame.Size = UDim2.new(GuiSize.ConfigsWindowConfigsFrameSize,UDim.new(1,0))
+    ConfigsSeparationFrame.Position = UDim2.new(GuiSize.ConfigsWindowConfigsFrameSize,UDim.new(0,0))
+    ConfigsSelectedFrame.Size = UDim2.new(UDim.new(1,0)-GuiSize.ConfigsWindowConfigsFrameSize,UDim.new(1,0))
+    ConfigsWindow.Size = GuiSize.ConfigsWindowSize
+end CfgWindowRefresh()
 -- #FIND_POINT Scripts ------------------
 local TScripts = {}
 local CreatedTScriptsSanitize = {}

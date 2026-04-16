@@ -105,6 +105,21 @@
             "description":"Скругление нижних углов(фона) TWindow",
             "canChange":true,
             "deprecated":false
+        },"ConfigsWindowConfigsSize":{
+            "type":"UDim",
+            "description":"Y Размер кнопки конфигурации",
+            "canChange":true,
+            "deprecated":false
+        },"ConfigsWindowConfigsFrameSize":{
+            "type":"UDim",
+            "description":"X Размер левой части окна, там где находится список конфигураций",
+            "canChange":true,
+            "deprecated":false
+        },"ConfigsSeparatorSize":{
+            "type":"UDim",
+            "description":"X Размер разделения окна конфигураций(между списком конфигов и выбранным конфигом)",
+            "canChange":true,
+            "deprecated":false
         }
     }, "methods":{}, 
     "events":{}

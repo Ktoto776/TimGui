@@ -45,6 +45,16 @@
             "description":"TweenInfo анимации стрелочки групп",
             "canChange":true,
             "deprecated":false
+        }, "TWindowHideArrowTI":{
+            "type":"TweenInfo",
+            "description":"TweenInfo анимации стрелочки окна TWindow",
+            "canChange":true,
+            "deprecated":false
+        }, "EnableArrowTWindowAnimation":{
+            "type":"boolean",
+            "description":"Включена ли анимация прятанья окна",
+            "canChange":true,
+            "deprecated":false
         }
     }, "methods":{
         "ArrowRotateAnimation":{

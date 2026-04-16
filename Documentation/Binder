@@ -83,6 +83,12 @@
             "description":"Бинд для обновления размера окна. Не забудь про TWindow.Size,TWindow.HeaderSize. Параметры: TWindow:TWindow.",
             "canChange":false,
             "deprecated":false
+        },"TWindowHideArrowAnimation":{
+            "type":"class",
+            "class":"Bind",
+            "description":"Анимация стрелочки для открытия/закрытия TWindow. Параметры: TWindow:TWindow.",
+            "canChange":false,
+            "deprecated":false
         }
     }, "methods":{
         "New":{
