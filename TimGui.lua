@@ -3,7 +3,18 @@ local SupportedLanguages = {
     en="English",
     ru="Русский [Russian]",
     uk="Українська [Ukrainian]"
-}
+} -- Configs -------------
+local DefaultConfig = {
+    Settings={
+        AutoSaveKeybinds=true,
+        AutoSaveValues=true
+    },
+    Objects={},
+    Saves={},
+    ScriptSaves={}
+} local config = table.clone(DefaultConfig)
+local onConfigChanged = Instance.new("BindableEvent")
+local onLoadConfigEvent = Instance.new("BindableEvent")
 -- CODE
 local TweenService = game:GetService("TweenService")
 local TextService = game:GetService("TextService")
@@ -471,8 +482,11 @@ Colors.TWindowCloseColor = Color3.new(1,1,1)
 Colors.TWindowHideBackgroundColor = Color3.new(0.1,0.1,0.8)
 Colors.TWindowHideColor = Color3.new(1,1,1)
 Colors.TWindowHeaderTextColor = Color3.new(1,1,1)
+--OnWindow -------------------------
+Colors.OnTWindowTextColor = Color3.new(1,1,1)
 --Configs --------------------------
 Colors.ConfigsSeparationColor = Color3.new(0,0,0)
+Colors.ConfigButtonSelectedBackground = Color3.fromRGB(50,75,100)
 Colors.Default = Colors:GetPreset()
 -- #FIND_POINT GuiSize
 local GuiSize = Classes:CreatePreset()
@@ -512,9 +526,11 @@ GuiSize.TWindowHeaderCornerRadius = UDim.new(0,12)
 GuiSize.TWindowCornerRadius = UDim.new(0,12)
 -- ConfigWindow -------------
 GuiSize.ConfigsSeparatorSize = UDim.new(0,1)
-GuiSize.ConfigsWindowConfigsSize = UDim.new(0,25)
+GuiSize.ConfigsWindowConfigsSize = UDim.new(0,30)
 GuiSize.ConfigsWindowConfigsFrameSize = UDim.new(0.3,0)
 GuiSize.ConfigsWindowSize = UDim2.new(0.25,100,0.3,200)
+GuiSize.ConfigsCfgCornerRadius = UDim.new(0.5,0)
+GuiSize.ConfigsTitleSize = UDim2.new(1,0,0.1,0)
 GuiSize.Default = GuiSize:GetPreset()
 function TimGui:GetFrameGuiPosition(opened:boolean?)
     if opened==nil then opened = TimGui.Opened end
@@ -1460,6 +1476,12 @@ function GuiObjects:CreateToggle(Name:string,Title:string|{[string]:string}?,Par
     Button.Type = "Toggle"
     Button:SetReadOnly("Type")
     Button.Value = false
+    Button.DefaultValue = false
+    task.spawn(function()
+        task.wait() if not Button:GetReadOnly("DefaultValue") then
+            Button.DefaultValue = Button.Value
+        end
+    end)
     local ChangedEvent = Instance.new("BindableEvent")
     local EnabledEvent = Instance.new("BindableEvent")
     local DisabledEvent = Instance.new("BindableEvent")
@@ -1598,13 +1620,19 @@ function GuiObjects:CreateTextbox(Name:string,Title:string|{[string]:string}?,Pa
     if type(Name)~="string" then logger:critical_error("CreateTextbox","Name is incorrect") end
     if type(Title)=="function" then func=Title Title=nil end
     if type(Parent)=="function" then func=Parent Parent=nil end
-    local Textbox = TGuiObjectClass(Name,Title,Parent,Classes:CreateTClass(nil,nil,{"Value"}))
+    local Textbox = TGuiObjectClass(Name,Title,Parent,Classes:CreateTClass(nil,nil,{"Value","DefaultValue"}))
     Textbox:AddClassName("TTextBox")
     Textbox.Type = "TextBox"
     Textbox:SetReadOnly("Type")
     Textbox = MakeTextObject(Textbox)
     Textbox = MakeTextBoxObject(Textbox)
     Textbox.Value = ""
+    Textbox.DefaultValue = ""
+    task.spawn(function()
+        task.wait() if not Textbox:GetReadOnly("DefaultValue") then
+            Textbox.DefaultValue = Textbox.Value
+        end
+    end)
     Textbox.InputType = "string"
     Textbox:GetPropertyChangedEvent("InputType"):Connect(function()
         if InputTypes[Textbox.InputType] then
@@ -2137,7 +2165,7 @@ local Saves = Classes:CreateTClass()
 Saves:AddClassName("Saves")
 TimGui.Saves = Saves
 table.insert(TimGuiReadOnly,"Saves")
-Saves.BaseDir = "TGuiData/"
+Saves.BaseDir = "TimGuiV3/"
 if type(TimGui.SetupData.SavesBaseDir)=="string" then
     Saves.BaseDir = TimGui.SetupData.SavesBaseDir
 end if string.sub(Saves.BaseDir,string.len(Saves.BaseDir))~="/" then
@@ -2164,7 +2192,7 @@ if not SavesIsSupported then
 else logger:info("Saves working!")
 end local function sanitizeFilename(name:string)
     if type(name)~="string" then return end
-    local sanitized = name:gsub('[\\/:*?"<>|]', "-")
+    local sanitized = name:gsub('[\\/:*?"<>|]', " "):gsub("  "," ")
     sanitized = sanitized:gsub("^%.+", ""):gsub("%.+$", "")
     sanitized = sanitized:match("^%s*(.-)%s*$")
     if sanitized=="" then
@@ -2177,7 +2205,7 @@ function Saves:GetSave(Name:string)
         if SavesInstances[Name] then return SavesInstances[Name] end
         local save = Classes:CreateTClass()
         save:AddClassName("Save")
-        local path = Saves.BaseDir..Name
+        local path = GlobalSavesPath..Name
         local data = {}
         if SavesIsSupported and isfile(path) then
             local s,r = pcall(function()
@@ -2196,10 +2224,105 @@ function Saves:GetSave(Name:string)
             end
         end save.Name = Name
         save:SetReadOnly("Name")
-        SavesInstances[Name] = save
+        local cfgData = config.Saves[Name]or {}
+        onLoadConfigEvent.Event:Connect(function()
+            cfgData = config.Saves[Name]or {}
+        end) function save:GetFromConfig(key:string)
+            return cfgData[key]
+        end function save:SetToConfig(key:string,value)
+            if type(value)=="table" and value.__have_timgui_metatable then return end
+            cfgData[key] = value
+            local cleared = true for _ in cfgData do cleared = false end
+            if cleared then
+                config.Saves[Name]=nil
+            else config.Saves[Name]=cfgData
+            end onConfigChanged:Fire()
+        end SavesInstances[Name] = save
         return save
     end
+end local SettingsSave = Saves:GetSave("TGuiSettings")
+-- #FIND_POINT Configs -------------------------
+local Configs = Classes:CreateTClass()
+Configs:AddClassName("Configs")
+TimGui.Configs = Configs
+table.insert(TimGuiReadOnly,"Configs")
+local ControlCfg = Classes:CreateTClass()
+ControlCfg:AddClassName("ControlCfg")
+local loadedConfig
+function Configs:GetLoadedName()
+    return loadedConfig
+end Configs.OnLoaded = onLoadConfigEvent.Event
+Configs:SetReadOnly("OnLoaded")
+Configs.OnConfigDataChanged = onConfigChanged.Event
+Configs:SetReadOnly("OnConfigDataChanged")
+onConfigChanged.Event:Connect(function()
+    if SavesIsSupported then
+        writefile(ConfigsPath..loadedConfig,HttpService:JSONEncode(config))
+    end
+end)
+function ControlCfg:GetConfigData(Name:string)
+    Name = sanitizeFilename(Name)
+    if Name and SavesIsSupported then
+        local path = ConfigsPath..Name
+        if isfile(path) then
+            local s,cfg = pcall(function()
+                return HttpService:JSONDecode(readfile(path))
+            end)
+            if s then
+                local function loadNonError(data,def)
+                    for k,v in table.clone(def) do
+                        if type(data[k])~=type(v) then
+                            data[k] = v
+                        elseif type(v)=="table" then
+                            loadNonError(data[k],v)
+                        end
+                    end return data
+                end return loadNonError(cfg,DefaultConfig)
+            else logger:error("GetConfigData","Error to load "..Name..":\n"..tostring(cfg))
+            end
+        end
+    end
+end local CFGList = {}
+if SavesIsSupported then
+    for k,v:string in listfiles(ConfigsPath) do
+        local vv = v:gsub("\\","/"):split("/")
+        CFGList[k] = vv[#vv]
+    end
+end function ControlCfg:GetList()
+    return table.clone(CFGList)
+end logger:info("ConfigList",ControlCfg:GetList())
+function ControlCfg:Load(Name:string)
+    if Name==nil then
+        loadedConfig = Name
+        config = table.clone(DefaultConfig)
+        SettingsSave:SetToSave("LoadedConfig",nil)
+        onLoadConfigEvent:Fire(Name)
+        logger:info("ControlCfg:Load","Loading default config")
+        return
+    end Name = sanitizeFilename(Name)
+    if Name then
+        if SavesIsSupported then
+            loadedConfig = Name
+            logger:info("ControlCfg:Load","Loading '"..Name.."'")
+            config = ControlCfg:GetConfigData(Name) or table.clone(DefaultConfig)
+            SettingsSave:SetToSave("LoadedConfig",Name)
+            onLoadConfigEvent:Fire(Name)
+        end return true
+    end
+end function ControlCfg:Create(Name:string)
+    if SavesIsSupported then
+        local path = ConfigsPath..sanitizeFilename(Name)
+        if path and not isfile(path) then
+            local s,err = pcall(function()
+                writefile(path,"{}")
+            end) if not s then
+                logger:error("ControlCfg:Create","Error to create cfg:\n"..tostring(err))
+            else table.insert(CFGList,Name)
+            end return s
+        end return false
+    end
 end
+ControlCfg:Load(SettingsSave:GetFromSave("LoadedConfig"))
 -- #FIND_POINT CLASS TWindow ------------------
 local WindowSizeRefresh = Classes:CreateBind()
 Binder.TWindowSizeRefresh = WindowSizeRefresh
@@ -2209,6 +2332,14 @@ Binder.TWindowHideArrowAnimation = HideArrowAnimation
 Binder:SetReadOnly("TWindowHideArrowAnimation")
 local WindowsFolder = Instance.new("Folder",STGui)
 WindowsFolder.Name = "Windows"
+local function addZIndexToFrame(Frame:Frame,add:number)
+    Frame.ZIndex += add
+    for _,v:GuiBase2d in Frame:GetDescendants() do
+        if v:IsA("GuiBase2d") then
+            v.ZIndex += add
+        end
+    end
+end local lastWFocusFrame
 function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?)
     if type(Name)~="string" then logger:critical_error("Classes:CreateTWindow","Name is incorrect. Expected string") end
     if type(Title)~="table" then
@@ -2232,7 +2363,7 @@ function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?)
     local SpecialColors = Classes:CreateSpecialColors()
     Window.SpecialColors = SpecialColors
     Window:SetReadOnly("SpecialColors")
-    local WindowFrame = Instance.new("Frame",TimGui.ScreenGui)
+    local WindowFrame = Instance.new("Frame",WindowsFolder)
     WindowFrame.Name = Name
     WindowFrame.AnchorPoint = Vector2.new(0.5,0.5)
     WindowFrame.Position = UDim2.new(0.5,0,0.5,0)
@@ -2384,12 +2515,15 @@ function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?)
     Window.OnClosed = onClosed.Event
     Window:SetReadOnly("OnOpened")
     Window:SetReadOnly("OnClosed")
+    local OnMoved = Instance.new("BindableEvent")
+    Window.OnMoved = OnMoved.Event
+    Window:SetReadOnly("OnMoved")
     function Window:Move(Position:UDim2,AnchorPoint:Vector2)
         if typeof(AnchorPoint)~="Vector2" then AnchorPoint=Vector2.new(0.5,0.5) end
         local anchor = WindowFrame.AnchorPoint-AnchorPoint
         local Size = WindowFrame.Size
         local pos = Position+UDim2.new(Size.X.Scale*anchor.X,Size.X.Offset*anchor.X,Size.Y.Scale*anchor.Y,Size.Y.Offset*anchor.Y)
-        WindowFrame.Position = pos
+        WindowFrame.Position = pos OnMoved:Fire()
     end Window:GetPropertyChangedEvent("Opened"):Connect(function()
         WindowFrame.Visible = Window.Opened
         if Window.Opened then
@@ -2402,26 +2536,23 @@ function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?)
         Window.SpecialHideArrowAnimation:Run(Window)
     end) local dragDetector = Instance.new("UIDragDetector",HeaderFrame)
     dragDetector.DragStyle = Enum.UIDragDetectorDragStyle.Scriptable
-    local function addZIndex(add:number)
-        WindowFrame.ZIndex += add
-        for _,v:GuiBase2d in WindowFrame:GetDescendants() do
-            if v:IsA("GuiBase2d") then
-                v.ZIndex += add
-            end
-        end
-    end local lastInput
+    local lastInput
     Window.DefaultDragEventsEnabled = true
     dragDetector.DragStart:Connect(function(input)
         if Window.DefaultDragEventsEnabled then
             lastInput = input
-            addZIndex(1)
-        end
+        end addZIndexToFrame(WindowFrame,1)
+        if lastWFocusFrame then
+            addZIndexToFrame(lastWFocusFrame,-1)
+        end lastWFocusFrame = WindowFrame
     end) dragDetector.DragContinue:Connect(function(input)
-        if Window.DefaultDragEventsEnabled then
+        if Window.DefaultDragEventsEnabled and lastInput then
             local delta = (input-lastInput)/game.Workspace.CurrentCamera.ViewportSize
             WindowFrame.Position += UDim2.fromScale(delta.X,delta.Y)
             lastInput = input
         end
+    end) dragDetector.DragEnd:Connect(function()
+        lastInput = nil OnMoved:Fire()
     end) Window.DragDetector = dragDetector
     Window:SetReadOnly("DragDetector")
     return Window
@@ -2458,21 +2589,28 @@ HideArrowAnimation:Bind(function(Win:table)
     else Arrow.Rotation = rotation
     end return true
 end)
--- #FIND_POINT Configs ------------------
+-- #FIND_POINT Configs Window ------------------
 local ConfigsWindow = Classes:CreateTWindow("Configs",{ --LANG_REQUIRED
     ru="Конфигурации TEST",
     en="Configurations TEST",
     uk="Конфігурації TEST"
-})
+}) Configs.Window = ConfigsWindow
 local ConfigsFrame = Instance.new("Frame",ConfigsWindow.Frame)
+ConfigsFrame.Name = "Configs"
 ConfigsFrame.BackgroundTransparency = 1
 local ConfigsScF = Instance.new("ScrollingFrame",ConfigsFrame)
 ConfigsScF.BackgroundTransparency = 1
 ConfigsScF.ScrollBarThickness = 6
+ConfigsScF.CanvasSize = UDim2.new(0,0,0,0)
+ConfigsScF.AutomaticCanvasSize = Enum.AutomaticSize.Y
+local ConfigsButtons = Instance.new("Frame",ConfigsFrame)
+ConfigsButtons.BackgroundTransparency = 1
+ConfigsButtons.AnchorPoint = Vector2.new(0,1)
+ConfigsButtons.Position = UDim2.new(0,0,1,0)
 local ConfigsSelectedFrame = Instance.new("Frame",ConfigsWindow.Frame)
 ConfigsSelectedFrame.Position = UDim2.new(1,0,0,0)
 ConfigsSelectedFrame.AnchorPoint = Vector2.new(1,0)
-ConfigsSelectedFrame.BackgroundTransparency = 0.75
+ConfigsSelectedFrame.BackgroundTransparency = 1
 local ConfigsSeparationFrame = Instance.new("Frame",ConfigsWindow.Frame)
 ConfigsSeparationFrame.AnchorPoint = Vector2.new(0.5,0)
 ConfigsSeparationFrame.Size = UDim2.new(GuiSize.ConfigsSeparatorSize,UDim.new(1,0))
@@ -2481,11 +2619,169 @@ ConfigsWindow.SpecialColors:GetColorChangedSignal("ConfigsSeparationColor"):Conn
 end) ConfigsSeparationFrame.BackgroundColor3 = ConfigsWindow.SpecialColors:GetColor("ConfigsSeparationColor")
 local function CfgWindowRefresh()
     ConfigsScF.Size = UDim2.new(UDim.new(1,0),UDim.new(1,0)-GuiSize.ConfigsWindowConfigsSize)
-    ConfigsFrame.Size = UDim2.new(GuiSize.ConfigsWindowConfigsFrameSize,UDim.new(1,0))
+    ConfigsButtons.Size = UDim2.new(UDim.new(1,0),GuiSize.ConfigsWindowConfigsSize)
+    for k,v:ImageButton in ConfigsButtons:GetChildren() do
+        if v:IsA("ImageButton") then
+            v.Size = UDim2.new(UDim.new(0,ConfigsButtons.AbsoluteSize.Y),GuiSize.ConfigsWindowConfigsSize)
+            v.Position = UDim2.new(0,(ConfigsButtons.AbsoluteSize.Y+3)*(k-1),0,0)
+        end
+    end ConfigsFrame.Size = UDim2.new(GuiSize.ConfigsWindowConfigsFrameSize,UDim.new(1,0))
     ConfigsSeparationFrame.Position = UDim2.new(GuiSize.ConfigsWindowConfigsFrameSize,UDim.new(0,0))
     ConfigsSelectedFrame.Size = UDim2.new(UDim.new(1,0)-GuiSize.ConfigsWindowConfigsFrameSize,UDim.new(1,0))
     ConfigsWindow.Size = GuiSize.ConfigsWindowSize
 end CfgWindowRefresh()
+GuiSize:GetPropertyChangedEvent("ConfigsWindowConfigsSize"):Connect(CfgWindowRefresh)
+GuiSize:GetPropertyChangedEvent("ConfigsWindowConfigsFrameSize"):Connect(CfgWindowRefresh)
+GuiSize:GetPropertyChangedEvent("ConfigsWindowSize"):Connect(CfgWindowRefresh)
+local cfglistrefreshing = false
+Instance.new("UIListLayout",ConfigsScF)
+local function ConfigsListRefresh()
+    if cfglistrefreshing then return end
+    cfglistrefreshing = true
+    RunService.PreRender:Wait()
+    --ConfigsScF:ClearAllChildren()
+    for k,v in ConfigsScF:GetChildren() do
+        if v:IsA("TextButton") then
+            v:Destroy()
+        end
+    end
+    for _,name:string in ControlCfg:GetList() do
+        local Button = Instance.new("TextButton",ConfigsScF)
+        local Corner = Instance.new("UICorner",Button)
+        Corner.CornerRadius = GuiSize.ConfigsCfgCornerRadius
+        Button.Name = name
+        Button.Size = UDim2.new(UDim.new(1,0),GuiSize.ConfigsWindowConfigsSize)
+        Button.TextTransparency = 1
+        local Text = Instance.new("TextLabel",Button)
+        Text.Size = UDim2.new(1,0,1,0)
+        Text.TextScaled = true
+        Text.Text = name
+        Text.BackgroundTransparency = 1
+        Button.Activated:Connect(function()
+            ControlCfg:Open(name)
+        end) if loadedConfig==name then
+            Button.BackgroundColor3 = ConfigsWindow.SpecialColors:GetColor("ConfigButtonSelectedBackground")
+        else Button.BackgroundColor3 = ConfigsWindow.SpecialColors:GetColor("ButtonBackground")
+        end
+        Text.TextColor3 = ConfigsWindow.SpecialColors:GetColor("TextColor")
+    end cfglistrefreshing = false
+end ConfigsListRefresh()
+ConfigsFrame:GetPropertyChangedSignal("AbsoluteSize"):Connect(ConfigsListRefresh)
+GuiSize:GetPropertyChangedEvent("ConfigsCfgCornerRadius"):Connect(ConfigsListRefresh)
+GuiSize:GetPropertyChangedEvent("ConfigsWindowConfigsSize"):Connect(ConfigsListRefresh)
+ConfigsWindow.SpecialColors:GetColorChangedSignal("ButtonBackground"):Connect(ConfigsListRefresh)
+ConfigsWindow.SpecialColors:GetColorChangedSignal("ConfigButtonSelectedBackground"):Connect(ConfigsListRefresh)
+ConfigsWindow.SpecialColors:GetColorChangedSignal("TextColor"):Connect(ConfigsListRefresh)
+local STitleConfig = Instance.new("TextLabel",ConfigsSelectedFrame)
+STitleConfig.TextScaled = true
+STitleConfig.BackgroundTransparency = 1
+local ConfigSFrame = Instance.new("ScrollingFrame",ConfigsSelectedFrame)
+Instance.new("UIListLayout",ConfigSFrame)
+ConfigSFrame.BackgroundTransparency = 0.7
+ConfigSFrame.Position = UDim2.new(0,0,1,0)
+ConfigSFrame.AnchorPoint = Vector2.new(0,1)
+ConfigSFrame.ScrollBarThickness = 6
+ConfigSFrame.CanvasSize = UDim2.new(0,0,0,0)
+ConfigSFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+ConfigsWindow.SpecialColors:GetColorChangedSignal("OnTWindowTextColor"):Connect(function()
+    STitleConfig.TextColor3 = ConfigsWindow.SpecialColors:GetColor("OnTWindowTextColor")
+end) STitleConfig.TextColor3 = ConfigsWindow.SpecialColors:GetColor("OnTWindowTextColor")
+local function RefreshConfigsSFrameSize()
+    STitleConfig.Size = GuiSize.ConfigsTitleSize
+    ConfigSFrame.Size = UDim2.new(UDim.new(1,0),UDim.new(1,-5)-GuiSize.ConfigsTitleSize.Y)
+end RefreshConfigsSFrameSize()
+GuiSize:GetPropertyChangedEvent("ConfigsTitleSize"):Connect(RefreshConfigsSFrameSize)
+local function ConfigsCreateSettingsButton(dontchangetextcolor)
+    local Translator = Classes:CreateTranslator("...")
+    local Button = Instance.new("TextButton",ConfigSFrame)
+    local UICorner = Instance.new("UICorner",Button)
+    Button.TextScaled = true
+    Translator.TranslateValueChanged:Connect(function()
+        Button.Text = Translator:Translate()
+    end)
+    GuiSize:GetPropertyChangedEvent("ButtonCornerRadius"):Connect(function()
+        UICorner.CornerRadius = GuiSize.ButtonCornerRadius
+    end) UICorner.CornerRadius = GuiSize.ButtonCornerRadius
+    GuiSize:GetPropertyChangedEvent("ButtonSize"):Connect(function()
+        Button.Size = GuiSize.ButtonSize
+    end) Button.Size = GuiSize.ButtonSize
+    if not dontchangetextcolor then
+        ConfigsWindow.SpecialColors:GetColorChangedSignal("TextColor"):Connect(function()
+            Button.TextColor3 = ConfigsWindow.SpecialColors:GetColor("TextColor")
+        end) Button.TextColor3 = ConfigsWindow.SpecialColors:GetColor("TextColor")
+    end ConfigsWindow.SpecialColors:GetColorChangedSignal("ButtonBackground"):Connect(function()
+        Button.BackgroundColor3 = ConfigsWindow.SpecialColors:GetColor("ButtonBackground")
+    end) Button.BackgroundColor3 = ConfigsWindow.SpecialColors:GetColor("ButtonBackground")
+    return Button,Translator
+end
+local openedCfgName,openedCfg:{Settings:{}}?
+local function saveOpenedCfg()
+    local name = sanitizeFilename(openedCfgName)
+    if name then
+        writefile(ConfigsPath..name,HttpService:JSONEncode(openedCfg))
+    end
+end
+local OpenCFGButton,OpenCFGTranslator = ConfigsCreateSettingsButton()
+OpenCFGButton.Activated:Connect(function()
+    ControlCfg:Load(openedCfgName)
+end) local AutoSaveVCFGButton,ASKvFGTranslator = ConfigsCreateSettingsButton(true)
+ASKvFGTranslator:Load{ --#LANG_REQUIRED
+    ru="Автоматически сохранять значения",
+    en="Auto save values",
+} local function refreshCfgASV()
+    if openedCfg.Settings.AutoSaveValues then
+        AutoSaveVCFGButton.TextColor3 = ConfigsWindow.SpecialColors:GetColor("ToggleTrue")
+    else AutoSaveVCFGButton.TextColor3 = ConfigsWindow.SpecialColors:GetColor("ToggleFalse")
+    end
+end ConfigsWindow.SpecialColors:GetColorChangedSignal("ToggleTrue"):Connect(refreshCfgASV)
+ConfigsWindow.SpecialColors:GetColorChangedSignal("ToggleFalse"):Connect(refreshCfgASV)
+AutoSaveVCFGButton.Activated:Connect(function()
+    openedCfg.Settings.AutoSaveValues = not openedCfg.Settings.AutoSaveValues
+    refreshCfgASV() saveOpenedCfg()
+end)
+local AutoSaveKBCFGButton,ASKBCFGTranslator = ConfigsCreateSettingsButton(true)
+ASKBCFGTranslator:Load{ --#LANG_REQUIRED
+    ru="Автоматически сохранять назначения клавиш(ПК)",
+    en="Auto save Keybinds(PC)",
+} local function refreshCfgASKB()
+    if openedCfg.Settings.AutoSaveKeybinds then
+        AutoSaveKBCFGButton.TextColor3 = ConfigsWindow.SpecialColors:GetColor("ToggleTrue")
+    else AutoSaveKBCFGButton.TextColor3 = ConfigsWindow.SpecialColors:GetColor("ToggleFalse")
+    end
+end ConfigsWindow.SpecialColors:GetColorChangedSignal("ToggleTrue"):Connect(refreshCfgASKB)
+ConfigsWindow.SpecialColors:GetColorChangedSignal("ToggleFalse"):Connect(refreshCfgASKB)
+AutoSaveKBCFGButton.Activated:Connect(function()
+    openedCfg.Settings.AutoSaveKeybinds = not openedCfg.Settings.AutoSaveKeybinds
+    refreshCfgASKB() saveOpenedCfg()
+end)
+local function refreshOpenCFGTranslate()
+    if loadedConfig==openedCfgName then
+        OpenCFGTranslator:Load{ --#LANG_REQUIRED
+            ru="Перезагрузить",
+            en="Reload",
+        }
+    else OpenCFGTranslator:Load{ --#LANG_REQUIRED
+            ru="Загрузить",
+            en="Load",
+        }
+    end
+end Configs.OnLoaded:Connect(function()
+    refreshOpenCFGTranslate()
+    ConfigsListRefresh()
+end)
+function ControlCfg:Open(name:string)
+    openedCfgName = name
+    STitleConfig.Text = tostring(name)
+    refreshOpenCFGTranslate()
+    SettingsSave:SetToSave("lastOpenedConfigName",name)
+    openedCfg = ControlCfg:GetConfigData(name)
+    ConfigsSelectedFrame.Visible = openedCfg~=nil
+    if openedCfg then
+        refreshCfgASKB()
+        refreshCfgASV()
+    end
+end ControlCfg:Open(SettingsSave:GetFromSave("lastOpenedConfigName"))
+--Classes:CreateTWindow("Test")
 -- #FIND_POINT Scripts ------------------
 local TScripts = {}
 local CreatedTScriptsSanitize = {}
@@ -2578,9 +2874,14 @@ local Languages = Settings:CreateSequence("LanguagePreferences","Language (Яз�
     if not refreshingButtonPos then
         refreshingLang = true
         TimGui:SetLanguagePreferences(langs)
+        print(SettingsSave:SetToSave("LangPreferences",langs))
+        print(11)
     end
 end,SupportedLanguages)
-for k,v in TimGui.LanguagePreferences do
+local loadedLangPrefs = SettingsSave:GetFromSave("LangPreferences")
+if type(loadedLangPrefs)=="table" then
+    TimGui:SetLanguagePreferences(loadedLangPrefs)
+end for k,v in TimGui.LanguagePreferences do
     Languages:SetObjectPosition(v,k)
 end
 task.wait()
@@ -2594,39 +2895,6 @@ onLanguageChanged.Event:Connect(function()
     else refreshingLang = false
     end
 end)
-
--- TimGui For devs --
-local TimGui:{
-    Assets: table,
-    BaseDir: string,
-    Binder: table,
-    Classes: table,
-    Colors: table,
-    Exit: (self:any?)->(),
-    GetFrameGuiPosition: (self:any?,Opened:boolean)->(UDim2),
-    GlobalOpenedGroup: table,
-    GlobalOpenedGroupChanged: RBXScriptSignal,
-    Groups: table,
-    GuiAnimations: table,
-    GuiObjects: table,
-    GuiSize: table,
-    Header: table,
-    HttpGet: (self:any?,URL:string)->(string?),
-    IsA: (self:any?,className:string)->(boolean),
-    LanguageChanged: RBXScriptSignal,
-    LanguagePreferences: table,
-    Logger: table,
-    OnExit: RBXScriptSignal,
-    OnOpened: RBXScriptSignal,
-    Opened: boolean,
-    ScreenGui: ScreenGui,
-    SetLanguagePreferences: (self:any?,LanguagePreferences:{string})->(),
-    Setup: any,
-    SetupData:  table ,
-    State: table,
-    httpGet_BaseDir: string,
-    httpGet_BaseDirIsLocal: boolean,
-}=_G.TimGui
 --[[
 План:
     Сделать старые функции:

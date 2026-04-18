@@ -5,10 +5,16 @@
     "writeSameMode":true,
     "deprecated":false,
     "properties":{
-        "Saves":{
+        "Configs":{
+            "type":"class",
+            "class":"Configs",
+            "description":"Класс для ",
+            "canChange":false,
+            "deprecated":false
+        },"Saves":{
             "type":"class",
             "class":"Saves",
-            "description":"Сохранения, защищённые сохранения, конфигурации и др.",
+            "description":"Сохранения, проверка доступности",
             "canChange":false,
             "deprecated":false
         },"Groups":{

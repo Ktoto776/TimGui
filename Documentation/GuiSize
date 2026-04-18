@@ -120,6 +120,11 @@
             "description":"X Размер разделения окна конфигураций(между списком конфигов и выбранным конфигом)",
             "canChange":true,
             "deprecated":false
+        },"ConfigsTitleSize":{
+            "type":"UDim2",
+            "description":"Размер заголовка(названия) выбранного конфига",
+            "canChange":true,
+            "deprecated":false
         }
     }, "methods":{}, 
     "events":{}

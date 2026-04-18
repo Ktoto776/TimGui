@@ -1,0 +1,47 @@
+{
+    "description":"Класс настройки конфигураций, чтобы получить или сохранить данные используй Saves/TScript",
+    "type":"class",
+    "classes":["TClass","Configs"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "Window":{
+            "type":"TWindow",
+            "description":"Окно",
+            "canChange":false,
+            "deprecated":false
+        }
+    }, "methods":{
+        "LoadedConfig":{
+            "description":"Возвращает наличия свойства только для чтения",
+            "args":[],
+            "return":[
+                {
+                    "name":"name",
+                    "type":"string",
+                    "description":"Название конфига"
+                }
+            ], 
+            "deprecated":false
+        }
+    }, 
+    "events":{
+        "OnLoaded":{
+            "description":"Запускается если конфигурация была загружена",
+            "type":"RBXScriptEvent",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"Name",
+                    "type":"string | nil",
+                    "description":"Название конфига, если nil, то загружает без конфигурации"
+                }
+            ]
+        },"OnConfigDataChanged":{
+            "description":"Запускается если конфигурация была сохранена/изменена(лучше не ставить лагучие штуки на этот эвент, так как он может запускаться просто при изменении переключателя)",
+            "type":"RBXScriptEvent",
+            "deprecated":false,
+            "args":[]
+        }
+    }
+}

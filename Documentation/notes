@@ -23,3 +23,14 @@ classes:[string,...]
     isfile(path:string) - Saves
     listfiles(path:string) - Saves
     delfile(path:string) - Saves
+
+
+Saves:
+Название системных настроек TGuiSettings
+Параметры:
+    LoadedConfig: string
+    lastOpenedConfigName: string
+    LangPreferences: [string]
+
+Configs:
+Внимание: Имя не может содержать "\/:*?"<>|" и все такие символы станут пробелами

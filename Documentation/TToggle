@@ -15,6 +15,11 @@
             "description":"Значение",
             "canChange":true,
             "deprecated":false
+        },"DefaultValue":{
+            "type":"boolean",
+            "description":"Стандартное значения, изменяется на .Value через task.wait()",
+            "canChange":true,
+            "deprecated":false
         }
     }, 
     "methods":{

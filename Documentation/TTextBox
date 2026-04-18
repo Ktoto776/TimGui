@@ -40,6 +40,11 @@
             "description":"Размер изменения через кнопки",
             "canChange":true,
             "deprecated":false
+        },"DefaultValue":{
+            "type":"string | number",
+            "description":"Стандартное значения, изменяется на .Value через task.wait()",
+            "canChange":true,
+            "deprecated":false
         }
     }, 
     "methods":{

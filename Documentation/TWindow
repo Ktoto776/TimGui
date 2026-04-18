@@ -133,6 +133,11 @@
             "type":"RBXScriptEvent",
             "deprecated":false,
             "args":[]
+        },"OnMoved":{
+            "description":"Запускается если окно было подвинуто, через :Move или через drag detector в заголовке",
+            "type":"RBXScriptEvent",
+            "deprecated":false,
+            "args":[]
         }
     }
 }

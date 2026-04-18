@@ -1,0 +1,62 @@
+{
+    "description":"Класс управления конфигурациями(требует специальный доступ)",
+    "type":"class",
+    "classes":["TClass","ControlCfg"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "LoadedName":{
+            "type":"string",
+            "description":"Загруженный конфиг",
+            "canChange":true,
+            "deprecated":false
+        }
+    }, "methods":{
+        "Load":{
+            "description":"Возвращает наличия свойства только для чтения",
+            "args":[{
+                    "name":"CfgName",
+                    "type":"string",
+                    "description":"Название сохранения, если nil загружает без сохранения",
+                    "required":false
+                }
+            ],"return":[
+                {
+                    "name":"success",
+                    "type":"boolean",
+                    "description":"Успешно ли загружено(обычно nil если не найдено,false если ошибка чтения конфигурации)"
+                }
+            ], 
+            "deprecated":false
+        },"Create":{
+            "description":"Создаёт конфигурацию",
+            "args":[{
+                    "name":"CfgName",
+                    "type":"string",
+                    "description":"Название сохранения",
+                    "required":true
+                }
+            ],"return":[
+                {
+                    "name":"success",
+                    "type":"boolean",
+                    "description":"Успешно ли загружено(nil если не поддерживается, false при ошибке/файл уже есть)"
+                }
+            ], 
+            "deprecated":false
+        }
+    }, 
+    "events":{
+        "OnOpened":{
+            "description":"Запускается если окно открыто(.Opened=true)",
+            "type":"RBXScriptEvent",
+            "deprecated":false,
+            "args":[]
+        },"OnClose":{
+            "description":"Запускается если окно закрыто(.Opened=false)",
+            "type":"RBXScriptEvent",
+            "deprecated":false,
+            "args":[]
+        }
+    }
+}
