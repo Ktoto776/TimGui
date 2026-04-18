@@ -2591,10 +2591,11 @@ HideArrowAnimation:Bind(function(Win:table)
 end)
 -- #FIND_POINT Configs Window ------------------
 local ConfigsWindow = Classes:CreateTWindow("Configs",{ --LANG_REQUIRED
-    ru="Конфигурации TEST",
-    en="Configurations TEST",
-    uk="Конфігурації TEST"
+    ru="Конфигурации",
+    en="Configurations",
+    uk="Конфігурації"
 }) Configs.Window = ConfigsWindow
+ConfigsWindow.Opened = false
 local ConfigsFrame = Instance.new("Frame",ConfigsWindow.Frame)
 ConfigsFrame.Name = "Configs"
 ConfigsFrame.BackgroundTransparency = 1
@@ -2813,6 +2814,19 @@ function TimGui:GetTScript(ScriptName:string,allowLoadTwice:boolean?)
         if SavesIsSupported then
             writefile(scriptGlobalPath,HttpService:JSONEncode(scriptGlobalSave))
         end
+    end local cfgData = config.ScriptSaves[ScriptName]or {}
+    onLoadConfigEvent.Event:Connect(function()
+        cfgData = config.ScriptSaves[ScriptName]or {}
+    end) function TScript:GetFromConfig(key:string)
+        return cfgData[key]
+    end function TScript:SetToConfig(key:string,value)
+        if type(value)=="table" and value.__have_timgui_metatable then return end
+        cfgData[key] = value
+        local cleared = true for _ in cfgData do cleared = false end
+        if cleared then
+            config.ScriptSaves[ScriptName]=nil
+        else config.ScriptSaves[ScriptName]=cfgData
+        end onConfigChanged:Fire()
     end
     CreatedTScriptsSanitize[SanName] = not allowLoadTwice
     TScripts[ScriptName] = TScript
@@ -2862,12 +2876,11 @@ end) if not s then
     } State:SetErrorStateAndClose()
     logger:critical_error("MAIN","Error to create Settings group: \n"..tostring(Settings))
 end
-local seq = GuiObjects:CreateSequence("Test","TEST",Settings)
-seq:AddObject("Test")
-seq:AddObject("Test2")
-seq:AddObject("Test3")
-Settings:CreateButton("TEST2")
-State:ResetToDefault()
+State.Saying:Load{ -- #LANG_REQUIRED
+    ru="Загрузка ядра: Загрузка группы Настроек",
+    en="Loading core: Loading Settings group",
+    --uk=""
+}
 local refreshingLang = false
 local refreshingButtonPos = true
 local Languages = Settings:CreateSequence("LanguagePreferences","Language (Язык/Мова)",function(_,langs)
@@ -2895,6 +2908,14 @@ onLanguageChanged.Event:Connect(function()
     else refreshingLang = false
     end
 end)
+Settings:CreateButton("Configurator",{--#LANG_REQUIRED
+    en="Open configurator",
+    ru="Открыть конфигуратор"
+},function()
+    ConfigsWindow.Opened = not ConfigsWindow.Opened
+end)
+
+State:ResetToDefault()
 --[[
 План:
     Сделать старые функции:
