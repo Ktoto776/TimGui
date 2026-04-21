@@ -1,7 +1,7 @@
 {
     "description":"Класс текста(или заголовка) в интерфейсе, просто текст",
     "type":"class",
-    "classes":["TClass","TGuiObject","TextObject","TText"],
+    "classes":["TClass","ConfigObject","TGuiObject","TextObject","TText"],
     "writeSameMode":true,
     "deprecated":false,
     "properties":{

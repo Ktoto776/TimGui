@@ -1,7 +1,7 @@
 {
-    "description":"Класс обьекта TimGui, например группы/кнопки",
+    "description":"Класс обьекта TimGui, например группы/кнопки. Устанавливает ConfigSaveName по GlobalName и ставит только для чтения",
     "type":"class",
-    "classes":["TClass","TGuiObject"],
+    "classes":["TClass","ConfigObject","TGuiObject"],
     "writeSameMode":true,
     "deprecated":false,
     "properties":{

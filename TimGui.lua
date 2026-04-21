@@ -15,6 +15,7 @@ local DefaultConfig = {
 } local config = table.clone(DefaultConfig)
 local onConfigChanged = Instance.new("BindableEvent")
 local onLoadConfigEvent = Instance.new("BindableEvent")
+local onConfigSettingsChanged = Instance.new("BindableEvent")
 -- CODE
 local TweenService = game:GetService("TweenService")
 local TextService = game:GetService("TextService")
@@ -1204,7 +1205,22 @@ local function TGuiObjectClass(Name:string,Title:string|{string}?,Parent:any?,Ob
             logger:debug("TGuiObjectClass","Setting new parent for new "..Object.Type.." '"..Object.Name.."'")
             Object.Parent = Parent
         end 
-    end) return Object
+    end) Object = Classes:AddConfigObject(Object)
+    local defaultSaveDelay = Object.ConfigSavingDelay
+    local function updateAutoConfigSave()
+        if config.Settings.AutoSaveValues then
+            Object.ConfigSavingDelay = defaultSaveDelay
+        else Object.ConfigSavingDelay = -1
+        end print(1,config.Settings.AutoSaveValues,Object.ConfigSavingDelay)
+    end onConfigSettingsChanged.Event:Connect(updateAutoConfigSave)
+    updateAutoConfigSave()
+    Object:GetPropertyChangedEvent("GlobalName"):Once(function()
+        if not Object:GetReadOnly("ConfigSaveName") then
+            Object.ConfigSaveName = Object.GlobalName
+            Object:SetReadOnly("ConfigSaveName")
+        end
+    end)
+    return Object
 end
 local function CreateButtonForTGuiObject(TGuiObject)
     if type(TGuiObject)~="table" or TGuiObject.__type~="TClass" or not TGuiObject:IsA("TGuiObject") then
@@ -1257,6 +1273,118 @@ end local function CopyButtonToTextLabel(Button:TextButton,TextLabel:TextLabel)
         TextLabel.TextColor3 = Button.TextColor3
     end) TextLabel.TextColor3 = Button.TextColor3
 end
+-- #FIND_POIND Saving TObjectsToConfig
+local TObjectsToConfigs:{[string]:{Object:any,Name:string}} = {}
+function Classes:AddConfigObject(TObject,ConfigSaveName:string?,otherClassesSaving:boolean?)
+    if not Classes:IsA(TObject,"TClass") then logger:critical_error("Object is incorrect (expected TClass)") TObject = Classes:CreateTClass() end
+    TObject:AddClassName("ConfigObject")
+    TObject.ConfigSavingEnabled = true
+    TObject.ConfigSavingDelay = 0.1
+    local savingProperties = {}
+    local savingPropertiesDefValues = {}
+    local propAutosavingEnabled = {}
+    local savingIsNotDouble = false
+    local ConfigData = {}
+    ConfigData.Object = TObject
+    TObject:GetPropertyChangedEvent("ConfigSaveName"):Connect(function()
+        if savingIsNotDouble then
+            TObjectsToConfigs[ConfigData.Name] = nil
+        end ConfigData.Name = TObject.ConfigSaveName
+        if not otherClassesSaving then
+            ConfigData.Name = table.concat(TObject:GetClassNames(),"/").."/"..ConfigData.Name
+        end if TObjectsToConfigs[ConfigData.Name] then
+            savingIsNotDouble = false
+        else savingIsNotDouble = true
+            TObjectsToConfigs[ConfigData.Name] = ConfigData
+        end ConfigData.Data = config.Objects[ConfigData.Name] or {}
+        TObject:LoadConfigSave()
+    end) if type(ConfigSaveName)=="string" then
+        TObject.ConfigSaveName = ConfigSaveName
+    end onLoadConfigEvent.Event:Connect(function()
+        ConfigData.Data = config.Objects[ConfigData.Name] or {}
+        TObject:LoadConfigSave()
+    end)
+    function TObject:IsConfigSavingEnabled()
+        return TObject.ConfigSavingEnabled
+    end
+    function TObject:IsSavingProperty(PropertyName:string)
+        return table.find(savingProperties,PropertyName)~=nil
+    end local function Load(PropertyName:string,ResetToDefault:boolean)
+        if ResetToDefault==nil then ResetToDefault = true end
+        if savingIsNotDouble then
+            local data = ConfigData.Data[PropertyName]
+            if data==nil and ResetToDefault then
+                data = savingPropertiesDefValues[PropertyName]
+            end if data~=nil then
+                TObject[PropertyName] = data
+            end
+        end
+    end function TObject:LoadConfigSave(PropertyName:string?,ResetToDefault:boolean?)
+        if type(PropertyName)=="string" then
+            Load(PropertyName,ResetToDefault)
+        else for _,prop in savingProperties do
+                Load(prop,ResetToDefault)
+            end
+        end
+    end function TObject:IsEnabledAutosaveFor(PropertyName:string)
+        if PropertyName==nil then return end
+        return propAutosavingEnabled[PropertyName]
+    end function TObject:SetEnabledAutosaveFor(PropertyName:string,IsEnabled:boolean)
+        if type(PropertyName)~="string" then logger:critical_error("PropertyName is incorrect. String expected") end
+        propAutosavingEnabled[PropertyName] = (not IsEnabled)==false
+    end local savingFWaiter = false
+    local function Save(PropertyName:string,isAuto:boolean)
+        local savingE = savingIsNotDouble
+        if savingE and isAuto then
+            savingE = propAutosavingEnabled[PropertyName]
+        end if savingE then
+            local data = TObject[PropertyName]
+            if data==savingPropertiesDefValues[PropertyName] then
+                data = nil
+            end ConfigData.Data[PropertyName] = data
+            if savingFWaiter then return end
+            savingFWaiter = true
+            RunService.RenderStepped:Wait()
+            local isEmpty = true
+            for _,_ in ConfigData.Data do isEmpty = false break end
+            if isEmpty then
+                config.Objects[ConfigData.Name] = nil
+            else config.Objects[ConfigData.Name] = ConfigData.Data
+            end onConfigChanged:Fire()
+            savingFWaiter = false
+        end
+    end
+    function TObject:ConfigSave(PropertyName:string)
+        if type(PropertyName)=="string" then
+            Save(PropertyName,false)
+        else for _,prop in savingProperties do
+                Save(prop,false)
+            end
+        end
+    end
+    function TObject:AddPropertyToConfigSave(PropertyName:string,defaultValue:any?)
+        if type(PropertyName)~="string" then logger:critical_error("PropertyName is incorrect. String expected") end
+        savingPropertiesDefValues[PropertyName] = defaultValue
+        if not table.find(savingProperties,PropertyName) then
+            table.insert(savingProperties,PropertyName)
+            Load(PropertyName,false)
+            propAutosavingEnabled[PropertyName] = true
+            local savingPValue = false
+            TObject:GetPropertyChangedEvent(PropertyName):Connect(function()
+                if TObject.ConfigSavingDelay<0 then return end
+                if savingPValue then return end
+                savingPValue = true
+                task.wait(TObject.ConfigSavingDelay)
+                savingPValue = false
+                Save(PropertyName,true)
+            end)
+            return true
+        elseif TObject.ConfigSavingDelay>0 then
+            Save(PropertyName,true)
+        end
+    end
+    return TObject
+end
 -- #FIND_POINT TGroups
 local GlobalOpenedGroup
 local GlobalOpenedGroupChanged = Instance.new("BindableEvent")
@@ -1274,6 +1402,7 @@ function GuiObjects:CreateGroup(Name:string,Title:string|{[string]:string}?,Pare
     if not Group then Group = MakeGUIArchitectureClass() end -- For roblox lsp
     Group:AddClassName("TGroup")
     Group.Opened = false
+    Group:AddPropertyToConfigSave("Opened",false)
     Group.Type = "Group"
     Group:SetReadOnly("Type")
     local onOpened = Instance.new("BindableEvent")
@@ -1476,7 +1605,9 @@ function GuiObjects:CreateToggle(Name:string,Title:string|{[string]:string}?,Par
     Button.Type = "Toggle"
     Button:SetReadOnly("Type")
     Button.Value = false
-    Button.DefaultValue = false
+    Button:GetPropertyChangedEvent("DefaultValue"):Connect(function()
+        Button:AddPropertyToConfigSave("Value",Button.DefaultValue)
+    end) Button.DefaultValue = false
     task.spawn(function()
         task.wait() if not Button:GetReadOnly("DefaultValue") then
             Button.DefaultValue = Button.Value
@@ -1568,6 +1699,7 @@ local function MakeTextBoxObject(Object)
     TextBox.TextScaled = true
     TextBox.Size = UDim2.new(1,0,1,0)
     TextBox.Text = ""
+    TextBox.ClearTextOnFocus = false
     Object.TextBox = TextBox
     Object:SetReadOnly("TextLabel")
     Object.Destroying:Connect(function()
@@ -1627,7 +1759,9 @@ function GuiObjects:CreateTextbox(Name:string,Title:string|{[string]:string}?,Pa
     Textbox = MakeTextObject(Textbox)
     Textbox = MakeTextBoxObject(Textbox)
     Textbox.Value = ""
-    Textbox.DefaultValue = ""
+    Textbox:GetPropertyChangedEvent("DefaultValue"):Connect(function()
+        Textbox:AddPropertyToConfigSave("Value",Textbox.DefaultValue)
+    end) Textbox.DefaultValue = ""
     task.spawn(function()
         task.wait() if not Textbox:GetReadOnly("DefaultValue") then
             Textbox.DefaultValue = Textbox.Value
@@ -1637,6 +1771,7 @@ function GuiObjects:CreateTextbox(Name:string,Title:string|{[string]:string}?,Pa
     Textbox:GetPropertyChangedEvent("InputType"):Connect(function()
         if InputTypes[Textbox.InputType] then
             Textbox.Value = InputTypes[Textbox.InputType](Textbox.Value,false)
+            Textbox.DefaultValue = InputTypes[Textbox.InputType](Textbox.DefaultValue,false)
         else Textbox.InputType = "string"
         end Textbox.ButtonsEnabled = table.find(ButtonsEnabledForInpType,Textbox.InputType)~=nil
     end) local changedEvent = Instance.new("BindableEvent")
@@ -2297,6 +2432,7 @@ function ControlCfg:Load(Name:string)
         config = table.clone(DefaultConfig)
         SettingsSave:SetToSave("LoadedConfig",nil)
         onLoadConfigEvent:Fire(Name)
+        onConfigSettingsChanged:Fire()
         logger:info("ControlCfg:Load","Loading default config")
         return
     end Name = sanitizeFilename(Name)
@@ -2307,6 +2443,7 @@ function ControlCfg:Load(Name:string)
             config = ControlCfg:GetConfigData(Name) or table.clone(DefaultConfig)
             SettingsSave:SetToSave("LoadedConfig",Name)
             onLoadConfigEvent:Fire(Name)
+            onConfigSettingsChanged:Fire()
         end return true
     end
 end function ControlCfg:Create(Name:string)
@@ -2738,7 +2875,7 @@ end ConfigsWindow.SpecialColors:GetColorChangedSignal("ToggleTrue"):Connect(refr
 ConfigsWindow.SpecialColors:GetColorChangedSignal("ToggleFalse"):Connect(refreshCfgASV)
 AutoSaveVCFGButton.Activated:Connect(function()
     openedCfg.Settings.AutoSaveValues = not openedCfg.Settings.AutoSaveValues
-    refreshCfgASV() saveOpenedCfg()
+    refreshCfgASV() saveOpenedCfg() onConfigSettingsChanged:Fire()
 end)
 local AutoSaveKBCFGButton,ASKBCFGTranslator = ConfigsCreateSettingsButton(true)
 ASKBCFGTranslator:Load{ --#LANG_REQUIRED
@@ -2753,7 +2890,7 @@ end ConfigsWindow.SpecialColors:GetColorChangedSignal("ToggleTrue"):Connect(refr
 ConfigsWindow.SpecialColors:GetColorChangedSignal("ToggleFalse"):Connect(refreshCfgASKB)
 AutoSaveKBCFGButton.Activated:Connect(function()
     openedCfg.Settings.AutoSaveKeybinds = not openedCfg.Settings.AutoSaveKeybinds
-    refreshCfgASKB() saveOpenedCfg()
+    refreshCfgASKB() saveOpenedCfg() onConfigSettingsChanged:Fire()
 end)
 local function refreshOpenCFGTranslate()
     if loadedConfig==openedCfgName then
@@ -2915,24 +3052,29 @@ Settings:CreateButton("Configurator",{--#LANG_REQUIRED
     ConfigsWindow.Opened = not ConfigsWindow.Opened
 end)
 
+Settings:CreateText("Testing saving objects in config:")
+Settings:CreateToggle("TESTING CFG")
+Settings:CreateTextbox("Test cfg on Textbox")
+Settings:CreateTextbox("Test cfg on number box").InputType = "number"
 State:ResetToDefault()
+Groups:CreateGroup("Te")
 --[[
 План:
     Сделать старые функции:
         Нормальные плавающие кнопки на бабафонах
+        систему тем, таблицы с темами, которые могут добавлять другие скрипты
         Обширный Setup, со своей цветовой политрой размерами и тд
         choose(было askYN),свои кнопки(на Translator если не дали то Да или Нет) можно добавить :Run() или :Ask() или :Choose()
             и классы чтоб можно было менять уже запущенный
         notify(было print), также на Translator и с классами
-        конфиги(С новым интерфейсом)
-        часы, и чтоб можно было кастомить
+        часы, и чтоб можно было кастомить например добавить фпс
     Новое:
         Как Dev Инструмент смотреть иерархию, тоесть проводник, и показывать ошибки(например когда кнопка в глобальных группах и из-за этого не отображается)
         TextBoxPrompt, промпт где спросить юзера написать текста
         NumberPrompt тоже что и выше, только с цифрами
         Сделать NumberRange TGuiObject
         Сделать Color3 TGuiObject
-        Чтобы промты или сами читы можно было двигать
+        Чтобы сами читы можно было двигать
         Систему обновлений(уведомит что нового)
         Систему дополнений, и конфиги с сайта
         Интеграция сайта прям в читы, например скачивание дополнений/конфигов на прямую

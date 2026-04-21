@@ -1,0 +1,118 @@
+{
+    "description":"Сохранение для TClass параметров. При создании класса возможно был выключен параметр otherClassesSaving, и поэтому обьект должен состоять из одинаковых классов при сохранении и загрузке",
+    "type":"class",
+    "classes":["TClass","...","ConfigObject"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "ConfigSaveName":{
+            "type":"string",
+            "description":"Имя сохранения в конфиге(если используется уже существующее, просто не сохраняет)",
+            "canChange":true,
+            "deprecated":false
+        },"ConfigSavingEnabled":{
+            "type":"string",
+            "description":"Включено ли сохранение?[Может не сохраняться изза одинакого имени но всё равно стоять true]",
+            "canChange":true,
+            "deprecated":false
+        },"ConfigSavingDelay":{
+            "type":"number",
+            "description":"Задержка для сохранения(чтобы убрать спам при сменах свойств), по умолчанию 0.25. Отрицательные значения выключают автосохранения",
+            "canChange":true,
+            "deprecated":false
+        }
+    }, 
+    "methods":{
+        "IsConfigSavingEnabled":{
+            "description":"Выдает false если имя используется другим обьектом, или вернёт ConfigSavingEnabled",
+            "args":[],
+            "return":[{
+                    "name":"result",
+                    "type":"boolean",
+                    "description":"Включено ли сохранение?"
+                }
+            ], "deprecated":false
+        },"IsSavingProperty":{
+            "description":"Для проверки сохраняется ли свойство",
+            "args":[{
+                    "name":"PropertyName",
+                    "type":"string",
+                    "description":"Имя свойства",
+                    "required":true
+                }
+            ],
+            "return":[{
+                    "name":"result",
+                    "type":"boolean",
+                    "description":"Сохраняется ли значение"
+                }
+            ], "deprecated":false
+        },"IsEnabledAutosaveFor":{
+            "description":"Проверяет включено ли автосохранение свойства",
+            "args":[{
+                    "name":"PropertyName",
+                    "type":"string",
+                    "description":"Имя свойства",
+                    "required":true
+                }
+            ],
+            "return":[{
+                    "name":"result",
+                    "type":"boolean",
+                    "description":"Включено ли автосохранение для свойства"
+                }
+            ], "deprecated":false
+        },"SetEnabledAutosaveFor":{
+            "description":"Включает/выключает автосохранения свойству",
+            "args":[{
+                    "name":"PropertyName",
+                    "type":"string",
+                    "description":"Имя свойства",
+                    "required":true
+                },{
+                    "name":"IsEnabled",
+                    "type":"boolean",
+                    "description":"Включено ли автосохранение для свойства",
+                    "required":true
+                }
+            ],
+            "return":[], "deprecated":false
+        },"AddPropertyToConfigSave":{
+            "description":"Добавляет свойство в сохранение конфигураций, может использоваться для смены стандартного значения",
+            "args":[{
+                    "name":"PropertyName",
+                    "type":"string",
+                    "description":"Название свойства",
+                    "required":true
+                },{
+                    "name":"defaultValue",
+                    "type":"any",
+                    "description":"Стандартное значение, если его нет в конфиге, то загружает его. Если nil, то не сбрасывает его",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"success",
+                    "type":"boolean",
+                    "description":"Возвращает true если было установленно впервые(то есть до этого не следилось)."
+                }
+            ], "deprecated":false
+        },"LoadConfigSave":{
+            "description":"Устанавливает свойство по значению сохранённому в конфигурации(Сразу загружает из конфига, но не сбрасывает)",
+            "args":[{
+                    "name":"PropertyName",
+                    "type":"string",
+                    "description":"Имя свойства, если нету устанавливает всё",
+                    "required":false
+                },{
+                    "name":"resetToDefault",
+                    "type":"boolean",
+                    "description":"Сбрасывать ли для стандартного, если не указано/nil будет восприниматься как true",
+                    "required":false
+                }
+            ],
+            "return":[], "deprecated":false
+        }
+    }, 
+    "events":{}
+}
