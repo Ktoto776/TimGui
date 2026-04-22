@@ -1,0 +1,140 @@
+{
+    "description":"Класс Prompt. Часть других промтов",
+    "type":"class",
+    "classes":["TClass","ConfigObject","Prompt"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "Name":{
+            "type":"string",
+            "description":"Имя по которому его можно найти",
+            "canChange":true,
+            "deprecated":false
+        },"Parent":{
+            "type":"GUIArchitecture?",
+            "description":"В какой группе/архитектуре находится, можно менять на nil. При смене появляется в самом низу группы",
+            "canChange":true,
+            "deprecated":false
+        },"Tittle":{
+            "type":"Translator",
+            "description":"Название кнопки, которое видит пользователь",
+            "canChange":false,
+            "deprecated":false
+        },"ParentIsGlobal":{
+            "type":"boolean",
+            "description":"Глобальный ли родитель(для групп в группах), если находится в группе false, если находится в Groups или нигде(nil) то true",
+            "canChange":true,
+            "deprecated":false
+        },"SpecialColors":{
+            "type":"Preset",
+            "description":"Специальные цвета для этого обьекта, заполняй как в TimGui.Colors, только Load очищает прошлые значения",
+            "canChange":true,
+            "deprecated":false
+        },"Frame":{
+            "type":"Instance: Frame",
+            "description":"Frame в котором содержимое кнопки",
+            "canChange":false,
+            "deprecated":false
+        },"UICorner":{
+            "type":"Instance: UICorner",
+            "description":"Скругление",
+            "canChange":false,
+            "deprecated":false
+        },"CornerChangingEnabled":{
+            "type":"boolean",
+            "description":"Включить ли изменение скругления(при изменении в GuiSize.ButtonCornerRadius). Для специального изменения на этой кнопке",
+            "canChange":false,
+            "deprecated":false
+        },"SpecialSizeBind":{
+            "type":"Bind",
+            "description":"Специальные bind, но только для этого обьекта, работает по принципу из Binder.TObjectSize",
+            "canChange":true,
+            "deprecated":false
+        },"Menu":{
+            "type":"table",
+            "description":"Массив с функциями из меню обьекта",
+            "canChange":true,
+            "deprecated":false
+        },"Type":{
+            "type":"table",
+            "description":"Тип обьекта(Здесь unknown, изменяется в других классах и становится только для чтения)",
+            "canChange":true,
+            "deprecated":false
+        },"Position":{
+            "type":"number",
+            "description":"Позиция, становится самой нижней если Parent меняется",
+            "canChange":true,
+            "deprecated":false
+        },"Indent":{
+            "type":"UDim2",
+            "description":"Отступ",
+            "canChange":true,
+            "deprecated":false
+        },"SpecialButtonPositionBind":{
+            "type":"Bind",
+            "description":"Специальный бинд для подсчета позиции кнопки, работает как в Binder.ButtonPositionBind",
+            "canChange":true,
+            "deprecated":false
+        },"Visible":{
+            "type":"boolean",
+            "description":"Если true, то этот обьект видим и с ним можно взаимодейсвовать",
+            "canChange":true,
+            "deprecated":false
+        },"SpecialVisibleBind":{
+            "type":"Bind",
+            "description":"Специальный бинд для точной прорисовки кнопки(если группа не открыта, не показывать. свойство Visible считается само), работает как в Binder.VisibleBind",
+            "canChange":true,
+            "deprecated":false
+        },"GlobalName":{
+            "type":"string",
+            "description":"Можно изменить сразу при создании(после task.wait) уже нельзя, по умолчанию ставится также через task.wait(), нужно для индефикации этого обьекта после перезахода(например конфигураций)",
+            "canChange":true,
+            "deprecated":false
+        }
+    }, 
+    "methods":{
+        "Destroy":{
+            "description":"Удаляет обьект и запускает Destroyed евент",
+            "args":[],
+            "return":[], 
+            "deprecated":false
+        },"RefreshSize":{
+            "description":"Обновляет размер, запуская специальный Bind(SizeBind)",
+            "args":[{
+                    "name":"dontRefreshPosition",
+                    "type":"boolean",
+                    "description":"Не запускать ли обновление позиции",
+                    "required":false
+                }
+            ],
+            "return":[], 
+            "deprecated":false
+        },"GetGlobalGroup":{
+            "description":"Сравнивает имя класса с 1 параметром",
+            "args":[],
+            "return":[{
+                    "name":"group",
+                    "type":"GUIArchitecture?",
+                    "description":"Глобальная группа, если есть"
+                }
+            ], "deprecated":false
+        },"RefreshPosition":{
+            "description":"Обновляет позиции группы",
+            "args":[],
+            "return":[{
+                    "name":"success",
+                    "type":"boolean",
+                    "description":"Успешно ли было запущено"
+                }
+            ], "deprecated":false
+        }
+    }, 
+    "events":{
+        "Destroyed":{
+            "description":"Запускается когда :Destroy() был запущен",
+            "type":"RBXScriptEvent",
+            "args":[],
+            "deprecated":false
+        }
+    }
+}

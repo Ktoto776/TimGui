@@ -45,6 +45,11 @@
             "description":"Frame с кнопками в не глобальной группе",
             "canChange":false,
             "deprecated":false
+        },"ConfigSavingForNewGroupObjects":{
+            "type":"boolean",
+            "description":"Включено ли сохранение в конфиг для новых обьектов созданных через методы в этой группе.(Устанавливает .ConfigSavingEnabled на это значение). По умолчанию true",
+            "canChange":true,
+            "deprecated":false
         }
     }, 
     "methods":{

@@ -124,6 +124,16 @@
                     "type":"string | Translator | table",
                     "description":"Заголовок окна",
                     "required":false
+                },{
+                    "name":"Title",
+                    "type":"string | Translator | table",
+                    "description":"Заголовок окна",
+                    "required":false
+                },{
+                    "name":"disableDefaultConfigSettingsRefresh",
+                    "type":"boolean",
+                    "description":"Выключены ли стандартное обновление сохранений при смене настроек конфига",
+                    "required":false
                 }
             ],
             "return":[{
@@ -141,6 +151,23 @@
                     "type":"class",
                     "class":"SpecialColors",
                     "description":"Класс для специальных цветов"
+                }
+            ],"deprecated":false
+        },"CreatePrompt":{ 
+            "description":"Создаёт пустой prompt",
+            "args":[
+                {
+                    "name":"Title",
+                    "type":"string | Translator | table",
+                    "description":"Заголовок окна",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"class",
+                    "class":"Prompt",
+                    "description":"Класс Prompt"
                 }
             ],"deprecated":false
         }

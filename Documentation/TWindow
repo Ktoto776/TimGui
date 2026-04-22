@@ -1,7 +1,7 @@
 {
-    "description":"Класс для создания окн, по умолчанию пустое окно",
+    "description":"Класс для создания окн, по умолчанию пустое окно. Устанавливает ConfigSaveName на Name через task.wait() и делает его только для чтения",
     "type":"class",
-    "classes":["TClass","TWindow"],
+    "classes":["TClass","ConfigObject","TWindow"],
     "writeSameMode":true,
     "deprecated":false,
     "properties":{
@@ -100,8 +100,28 @@
             "deprecated":false
         },"HideButton":{
             "type":"Instance: ImageButton",
-            "description":"ImageButton для сворачивания окна",
+            "description":"ImageButton для сворачивания окна.Если сменено на false то меняет фокус на true",
             "canChange":false,
+            "deprecated":false
+        },"CanHide":{
+            "type":"boolean",
+            "description":"Обычно true, будет ли показываться кнопка 'спрятать'(то есть можно ли скрыть окно)",
+            "canChange":true,
+            "deprecated":false
+        },"Focused":{
+            "type":"boolean",
+            "description":"Есть ли фокус на окне, обычно окно с фокусом находится выше других окон +Сохраняется в конфиге",
+            "canChange":true,
+            "deprecated":false
+        },"Opened":{
+            "type":"boolean",
+            "description":"Открыто ли окно(то есть видно ли окно пользователю). Если сменено на true то также меняет и фокус на true",
+            "canChange":true,
+            "deprecated":false
+        },"Position":{
+            "type":"boolean",
+            "description":"Позиция относительно левого верхнего угла окна. +Сохраняется в конфиге",
+            "canChange":true,
             "deprecated":false
         }
     }, "methods":{

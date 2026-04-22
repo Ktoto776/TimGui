@@ -7,7 +7,9 @@ local SupportedLanguages = {
 local DefaultConfig = {
     Settings={
         AutoSaveKeybinds=true,
-        AutoSaveValues=true
+        AutoSaveValues=true,
+        AutoSaveWindows=true,
+        SaveWindows=true
     },
     Objects={},
     Saves={},
@@ -284,7 +286,7 @@ function Classes:CreateTClass(rawClass:{any?}?,meta:{any}?,writeSameModeExclude:
 end TimGui.Classes = Classes
 table.insert(TimGuiReadOnly,"Classes")
 -- #FIND_POINT Class Preset
-local function RBXValueToTable(v)
+local function RBXValueToTable(v,returnOrigin)
     local type = typeof(v)
     local val
     if type=="Color3" then
@@ -299,8 +301,16 @@ local function RBXValueToTable(v)
         val = {type,v.X,v.Y}
     elseif type=="TweenInfo" then
         val = {type,v.Time,v.EasingStyle.Name,v.EasingDirection.Name,v.RepeatCount,v.Reverses,v.DelayTime}
+    elseif returnOrigin then
+        val = v
     end return val
-end local function TableToRBXValue(v)
+end local function TableToRBXValue(v,returnOrigin)
+    if type(v)~="table" then 
+        if returnOrigin then
+            return v
+        else return
+        end
+    end
     local val
     if v[1]=="Color3" then
         val = Color3.new(table.unpack(v,2))
@@ -1149,6 +1159,7 @@ local function TGuiObjectClass(Name:string,Title:string|{string}?,Parent:any?,Ob
         end
     end Object:GetPropertyChangedEvent("Position"):Connect(function()
         logger:debug("TGuiObject.PositionChanged","Property Position of '"..Object.Name.."' ["..Object.Type.."] changed")
+        Frame.LayoutOrder = Object.Position
         Object:RefreshPosition()
     end) Object:GetPropertyChangedEvent("Indent"):Connect(function()
         logger:debug("TGuiObject.IndentChanged","Property Indent of '"..Object.Name.."' ["..Object.Type.."] changed")
@@ -1204,14 +1215,14 @@ local function TGuiObjectClass(Name:string,Title:string|{string}?,Parent:any?,Ob
         if Classes:IsA(Parent,"GUIArchitecture") then
             logger:debug("TGuiObjectClass","Setting new parent for new "..Object.Type.." '"..Object.Name.."'")
             Object.Parent = Parent
-        end 
+        end
     end) Object = Classes:AddConfigObject(Object)
     local defaultSaveDelay = Object.ConfigSavingDelay
     local function updateAutoConfigSave()
         if config.Settings.AutoSaveValues then
             Object.ConfigSavingDelay = defaultSaveDelay
         else Object.ConfigSavingDelay = -1
-        end print(1,config.Settings.AutoSaveValues,Object.ConfigSavingDelay)
+        end
     end onConfigSettingsChanged.Event:Connect(updateAutoConfigSave)
     updateAutoConfigSave()
     Object:GetPropertyChangedEvent("GlobalName"):Once(function()
@@ -1305,14 +1316,14 @@ function Classes:AddConfigObject(TObject,ConfigSaveName:string?,otherClassesSavi
         TObject:LoadConfigSave()
     end)
     function TObject:IsConfigSavingEnabled()
-        return TObject.ConfigSavingEnabled
+        return savingIsNotDouble and TObject.ConfigSavingEnabled
     end
     function TObject:IsSavingProperty(PropertyName:string)
         return table.find(savingProperties,PropertyName)~=nil
     end local function Load(PropertyName:string,ResetToDefault:boolean)
         if ResetToDefault==nil then ResetToDefault = true end
-        if savingIsNotDouble then
-            local data = ConfigData.Data[PropertyName]
+        if savingIsNotDouble and TObject.ConfigSavingEnabled then
+            local data = TableToRBXValue(ConfigData.Data[PropertyName],true)
             if data==nil and ResetToDefault then
                 data = savingPropertiesDefValues[PropertyName]
             end if data~=nil then
@@ -1334,11 +1345,11 @@ function Classes:AddConfigObject(TObject,ConfigSaveName:string?,otherClassesSavi
         propAutosavingEnabled[PropertyName] = (not IsEnabled)==false
     end local savingFWaiter = false
     local function Save(PropertyName:string,isAuto:boolean)
-        local savingE = savingIsNotDouble
+        local savingE = savingIsNotDouble and TObject.ConfigSavingEnabled
         if savingE and isAuto then
             savingE = propAutosavingEnabled[PropertyName]
         end if savingE then
-            local data = TObject[PropertyName]
+            local data = RBXValueToTable(TObject[PropertyName],true)
             if data==savingPropertiesDefValues[PropertyName] then
                 data = nil
             end ConfigData.Data[PropertyName] = data
@@ -1558,16 +1569,22 @@ function GuiObjects:CreateGroup(Name:string,Title:string|{[string]:string}?,Pare
             Group.Opened = true
         else Group.Opened = not Group.Opened
         end
-    end) function Group:CreateButton(Name:string?,Title:string|{[string]: string}?,func:(any)->())
-        return GuiObjects:CreateButton(Name,Title,Group,func)
+    end) Group.ConfigSavingForNewGroupObjects = true
+    function Group:CreateButton(Name:string?,Title:string|{[string]: string}?,func:(any)->())
+        local obj = GuiObjects:CreateButton(Name,Title,Group,func)
+        obj.ConfigSavingEnabled = Group.ConfigSavingForNewGroupObjects return obj
     end function Group:CreateToggle(Name:string?,Title:string|{[string]: string}?,func:(any)->())
-        return GuiObjects:CreateToggle(Name,Title,Group,func)
+        local obj = GuiObjects:CreateToggle(Name,Title,Group,func)
+        obj.ConfigSavingEnabled = Group.ConfigSavingForNewGroupObjects return obj
     end function Group:CreateText(Name:string?,Title:string|{[string]: string}?)
-        return GuiObjects:CreateText(Name,Title,Group)
+        local obj = GuiObjects:CreateText(Name,Title,Group)
+        obj.ConfigSavingEnabled = Group.ConfigSavingForNewGroupObjects return obj
     end function Group:CreateTextbox(Name:string?,Title:string|{[string]: string}?,func:(any)->())
-        return GuiObjects:CreateTextbox(Name,Title,Group,func)
+        local obj = GuiObjects:CreateTextbox(Name,Title,Group,func)
+        obj.ConfigSavingEnabled = Group.ConfigSavingForNewGroupObjects return obj
     end function Group:CreateSequence(Name:string?,Title:string|{[string]: string}?,func:(any,{string})->(),Buttons:{[string]: {[string]: string} | string})
-        return GuiObjects:CreateSequence(Name,Title,Group,func,Buttons)
+        local obj = GuiObjects:CreateSequence(Name,Title,Group,func,Buttons)
+        obj.ConfigSavingEnabled = Group.ConfigSavingForNewGroupObjects return obj
     end
     return Group
 end 
@@ -2431,8 +2448,8 @@ function ControlCfg:Load(Name:string)
         loadedConfig = Name
         config = table.clone(DefaultConfig)
         SettingsSave:SetToSave("LoadedConfig",nil)
-        onLoadConfigEvent:Fire(Name)
         onConfigSettingsChanged:Fire()
+        onLoadConfigEvent:Fire(Name)
         logger:info("ControlCfg:Load","Loading default config")
         return
     end Name = sanitizeFilename(Name)
@@ -2442,8 +2459,8 @@ function ControlCfg:Load(Name:string)
             logger:info("ControlCfg:Load","Loading '"..Name.."'")
             config = ControlCfg:GetConfigData(Name) or table.clone(DefaultConfig)
             SettingsSave:SetToSave("LoadedConfig",Name)
-            onLoadConfigEvent:Fire(Name)
             onConfigSettingsChanged:Fire()
+            onLoadConfigEvent:Fire(Name)
         end return true
     end
 end function ControlCfg:Create(Name:string)
@@ -2476,8 +2493,8 @@ local function addZIndexToFrame(Frame:Frame,add:number)
             v.ZIndex += add
         end
     end
-end local lastWFocusFrame
-function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?)
+end local FocusedWindow
+function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?,disableDefaultConfigSettingsRefresh:boolean?)
     if type(Name)~="string" then logger:critical_error("Classes:CreateTWindow","Name is incorrect. Expected string") end
     if type(Title)~="table" then
         Title = Classes:CreateTranslator(Title or Name)
@@ -2489,14 +2506,33 @@ function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?)
             Title = Classes:CreateTranslator(Name)
         end
     end logger:debug("Classes:CreateTWindow","Creating window: "..Name)
-    local Window = Classes:CreateTClass()
-    Window:AddClassName("TWindow")
+    local Window = Classes:AddConfigObject(Classes:CreateTClass())
+    task.spawn(function()
+        task.wait()
+        if not Window:GetReadOnly("ConfigSaveName") then
+            Window.ConfigSaveName = Name
+            Window:SetReadOnly("ConfigSaveName")
+            Window:AddPropertyToConfigSave("Position",Window.Position)
+        end
+    end) if not disableDefaultConfigSettingsRefresh then
+        local defaultSaveDelay = Window.ConfigSavingDelay
+        local function refreshConfig()
+            Window.ConfigSavingEnabled = config.Settings.SaveWindows
+            if config.Settings.AutoSaveWindows then
+                Window.ConfigSavingDelay = defaultSaveDelay
+            else Window.ConfigSavingDelay = -1
+            end
+        end refreshConfig()
+        onConfigSettingsChanged.Event:Connect(refreshConfig) 
+    end Window:AddClassName("TWindow")
     Window.Title = Title
     Window:SetReadOnly("Title")
     Window.Name = Name
     Window:SetReadOnly("Name")
     Window.Opened = true
     Window.Hidden = false
+    Window.CanHide = true
+    Window:AddPropertyToConfigSave("Hidden", Window.Hidden)
     local SpecialColors = Classes:CreateSpecialColors()
     Window.SpecialColors = SpecialColors
     Window:SetReadOnly("SpecialColors")
@@ -2505,6 +2541,13 @@ function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?)
     WindowFrame.AnchorPoint = Vector2.new(0.5,0.5)
     WindowFrame.Position = UDim2.new(0.5,0,0.5,0)
     WindowFrame.BackgroundTransparency = 1
+    WindowFrame.DescendantAdded:Connect(function(Inst:GuiObject)
+        if Inst:IsA("GuiObject") then
+            if FocusedWindow==Window then
+                Inst.ZIndex += 1
+            end
+        end
+    end)
     Window.WindowFrame = WindowFrame
     Window:SetReadOnly("WindowFrame")
     local HeaderFrame = Instance.new("Frame",WindowFrame)
@@ -2646,6 +2689,12 @@ function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?)
     WindowSizeRefresh.OnBinded:Connect(RefreshSize)
     Window:GetPropertyChangedEvent("Size"):Connect(RefreshSize)
     Window:GetPropertyChangedEvent("HeaderSize"):Connect(RefreshSize)
+    Window:GetPropertyChangedEvent("CanHide"):Connect(function()
+        if not Window.CanHide then
+            Window.Hidden = false
+        end HideButton.Visible = Window.CanHide
+        RefreshSize()
+    end)
     local onOpened = Instance.new("BindableEvent")
     local onClosed = Instance.new("BindableEvent")
     Window.OnOpened = onOpened.Event
@@ -2657,41 +2706,74 @@ function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?)
     Window:SetReadOnly("OnMoved")
     function Window:Move(Position:UDim2,AnchorPoint:Vector2)
         if typeof(AnchorPoint)~="Vector2" then AnchorPoint=Vector2.new(0.5,0.5) end
-        local anchor = WindowFrame.AnchorPoint-AnchorPoint
+        local anchor = -AnchorPoint
         local Size = WindowFrame.Size
         local pos = Position+UDim2.new(Size.X.Scale*anchor.X,Size.X.Offset*anchor.X,Size.Y.Scale*anchor.Y,Size.Y.Offset*anchor.Y)
-        WindowFrame.Position = pos OnMoved:Fire()
-    end Window:GetPropertyChangedEvent("Opened"):Connect(function()
+        Window.Position = pos
+    end Window:GetPropertyChangedEvent("Position"):Connect(function()
+        local anchor = WindowFrame.AnchorPoint
+        local Size = WindowFrame.Size
+        local pos = Window.Position+UDim2.new(Size.X.Scale*anchor.X,Size.X.Offset*anchor.X,Size.Y.Scale*anchor.Y,Size.Y.Offset*anchor.Y)
+        WindowFrame.Position = pos
+        OnMoved:Fire()
+    end) Window:GetPropertyChangedEvent("Size"):Connect(function()
+        Window:Move(WindowFrame.Position,WindowFrame.AnchorPoint)
+    end) Window:Move(UDim2.new(0.5,0,0.5,0),Vector2.new(0.5,0.5))
+    Window:AddPropertyToConfigSave("Position",Window.Position)
+    Window:GetPropertyChangedEvent("Opened"):Connect(function()
         WindowFrame.Visible = Window.Opened
         if Window.Opened then
             onOpened:Fire()
+            Window.Focused = true
         else onClosed:Fire()
         end
     end) Window:GetPropertyChangedEvent("Hidden"):Connect(function()
-        BackgroundFrame.Visible = not Window.Hidden
+        if not Window.CanHide then
+            Window.Hidden = false
+            return
+        end BackgroundFrame.Visible = not Window.Hidden
         HeaderDownFrame.Visible = not Window.Hidden
         Window.SpecialHideArrowAnimation:Run(Window)
+        if not Window.Hidden then
+            Window.Focused = true
+        end
     end) local dragDetector = Instance.new("UIDragDetector",HeaderFrame)
     dragDetector.DragStyle = Enum.UIDragDetectorDragStyle.Scriptable
     local lastInput
     Window.DefaultDragEventsEnabled = true
+    local fullInputDelta
     dragDetector.DragStart:Connect(function(input)
         if Window.DefaultDragEventsEnabled then
             lastInput = input
-        end addZIndexToFrame(WindowFrame,1)
-        if lastWFocusFrame then
-            addZIndexToFrame(lastWFocusFrame,-1)
-        end lastWFocusFrame = WindowFrame
+            fullInputDelta = UDim2.new(0,0,0,0)
+        end Window.Focused = true
     end) dragDetector.DragContinue:Connect(function(input)
         if Window.DefaultDragEventsEnabled and lastInput then
             local delta = (input-lastInput)/game.Workspace.CurrentCamera.ViewportSize
-            WindowFrame.Position += UDim2.fromScale(delta.X,delta.Y)
+            local UDim2Delta = UDim2.fromScale(delta.X,delta.Y)
+            fullInputDelta += UDim2Delta
+            WindowFrame.Position += UDim2Delta
             lastInput = input
         end
     end) dragDetector.DragEnd:Connect(function()
-        lastInput = nil OnMoved:Fire()
+        if fullInputDelta then
+            Window.Position += fullInputDelta
+        end lastInput = nil
     end) Window.DragDetector = dragDetector
     Window:SetReadOnly("DragDetector")
+    Window:GetPropertyChangedEvent("Focused"):Connect(function()
+        if Window.Focused then
+            local lastFocus = FocusedWindow
+            FocusedWindow = Window
+            if lastFocus then
+                lastFocus.Focused = false
+            end addZIndexToFrame(WindowFrame,1)
+        else if FocusedWindow==Window then
+                FocusedWindow = nil
+            end addZIndexToFrame(WindowFrame,-1)
+        end
+    end)
+    Window.Focused = true
     return Window
 end WindowSizeRefresh:Bind(function(TWindow)
     if not TWindow then logger:critical_error("WindowSizeRefresh","Window is incorrect")TWindow=Classes:CreateTWindow() end
@@ -2700,9 +2782,12 @@ end WindowSizeRefresh:Bind(function(TWindow)
     TWindow.BackgroundFrame.Size = UDim2.new(UDim.new(1,0),UDim.new(1,0)-TWindow.HeaderSize)
     local HeaderYSize = TWindow.HeaderFrame.AbsoluteSize.Y
     TWindow.CloseButton.Size = UDim2.new(0,HeaderYSize,1,0)
-    TWindow.HideButton.Size = UDim2.new(0,HeaderYSize,1,0)
-    TWindow.HideButton.Position = UDim2.new(UDim.new(1,-HeaderYSize-5),UDim.new(0,0))
-    TWindow.Header.Size = UDim2.new(UDim.new(1,-HeaderYSize*2-5),UDim.new(1,0))
+    local buttons = 1
+    if TWindow.CanHide then
+        TWindow.HideButton.Size = UDim2.new(0,HeaderYSize,1,0)
+        TWindow.HideButton.Position = UDim2.new(UDim.new(1,-HeaderYSize*buttons-5),UDim.new(0,0))
+        buttons += 1
+    end TWindow.Header.Size = UDim2.new(UDim.new(1,-HeaderYSize*buttons-5),UDim.new(1,0))
     return true
 end) GuiAnimations.TWindowHideArrowTI = GuiAnimations.ArrowRotateTI
 GuiAnimations.EnableArrowTWindowAnimation = true
@@ -2726,6 +2811,15 @@ HideArrowAnimation:Bind(function(Win:table)
     else Arrow.Rotation = rotation
     end return true
 end)
+-- #FIND_POINT Prompts --------------------------
+local Prompts = Classes:CreateTClass()
+TimGui.Prompts = Prompts
+table.insert(TimGuiReadOnly,"Prompts")
+function Classes:CreatePrompt()
+    local Prompt = Classes:CreateTWindow()
+    Prompt:AddClassName("Prompt")
+    return Prompt
+end
 -- #FIND_POINT Configs Window ------------------
 local ConfigsWindow = Classes:CreateTWindow("Configs",{ --LANG_REQUIRED
     ru="Конфигурации",
@@ -2858,39 +2952,29 @@ local function saveOpenedCfg()
     if name then
         writefile(ConfigsPath..name,HttpService:JSONEncode(openedCfg))
     end
+end local onOpenedConfigChange = Instance.new("BindableEvent")
+local function ConfigToggle(Name,Lang)
+    local CFGButton,Translator = ConfigsCreateSettingsButton(true)
+    Translator:Load(Lang) local function refresh()
+        if openedCfg and openedCfg.Settings[Name] then
+            CFGButton.TextColor3 = ConfigsWindow.SpecialColors:GetColor("ToggleTrue")
+        else CFGButton.TextColor3 = ConfigsWindow.SpecialColors:GetColor("ToggleFalse")
+        end
+    end refresh()
+    ConfigsWindow.SpecialColors:GetColorChangedSignal("ToggleTrue"):Connect(refresh)
+    ConfigsWindow.SpecialColors:GetColorChangedSignal("ToggleFalse"):Connect(refresh)
+    onOpenedConfigChange.Event:Connect(refresh)
+    CFGButton.Activated:Connect(function()
+        openedCfg.Settings[Name] = not openedCfg.Settings[Name]
+        saveOpenedCfg() if openedCfg==config then
+            onConfigSettingsChanged:Fire()
+        end refresh()
+    end) 
 end
 local OpenCFGButton,OpenCFGTranslator = ConfigsCreateSettingsButton()
 OpenCFGButton.Activated:Connect(function()
     ControlCfg:Load(openedCfgName)
-end) local AutoSaveVCFGButton,ASKvFGTranslator = ConfigsCreateSettingsButton(true)
-ASKvFGTranslator:Load{ --#LANG_REQUIRED
-    ru="Автоматически сохранять значения",
-    en="Auto save values",
-} local function refreshCfgASV()
-    if openedCfg.Settings.AutoSaveValues then
-        AutoSaveVCFGButton.TextColor3 = ConfigsWindow.SpecialColors:GetColor("ToggleTrue")
-    else AutoSaveVCFGButton.TextColor3 = ConfigsWindow.SpecialColors:GetColor("ToggleFalse")
-    end
-end ConfigsWindow.SpecialColors:GetColorChangedSignal("ToggleTrue"):Connect(refreshCfgASV)
-ConfigsWindow.SpecialColors:GetColorChangedSignal("ToggleFalse"):Connect(refreshCfgASV)
-AutoSaveVCFGButton.Activated:Connect(function()
-    openedCfg.Settings.AutoSaveValues = not openedCfg.Settings.AutoSaveValues
-    refreshCfgASV() saveOpenedCfg() onConfigSettingsChanged:Fire()
-end)
-local AutoSaveKBCFGButton,ASKBCFGTranslator = ConfigsCreateSettingsButton(true)
-ASKBCFGTranslator:Load{ --#LANG_REQUIRED
-    ru="Автоматически сохранять назначения клавиш(ПК)",
-    en="Auto save Keybinds(PC)",
-} local function refreshCfgASKB()
-    if openedCfg.Settings.AutoSaveKeybinds then
-        AutoSaveKBCFGButton.TextColor3 = ConfigsWindow.SpecialColors:GetColor("ToggleTrue")
-    else AutoSaveKBCFGButton.TextColor3 = ConfigsWindow.SpecialColors:GetColor("ToggleFalse")
-    end
-end ConfigsWindow.SpecialColors:GetColorChangedSignal("ToggleTrue"):Connect(refreshCfgASKB)
-ConfigsWindow.SpecialColors:GetColorChangedSignal("ToggleFalse"):Connect(refreshCfgASKB)
-AutoSaveKBCFGButton.Activated:Connect(function()
-    openedCfg.Settings.AutoSaveKeybinds = not openedCfg.Settings.AutoSaveKeybinds
-    refreshCfgASKB() saveOpenedCfg() onConfigSettingsChanged:Fire()
+    ControlCfg:Open(openedCfgName)
 end)
 local function refreshOpenCFGTranslate()
     if loadedConfig==openedCfgName then
@@ -2906,20 +2990,33 @@ local function refreshOpenCFGTranslate()
 end Configs.OnLoaded:Connect(function()
     refreshOpenCFGTranslate()
     ConfigsListRefresh()
-end)
+end) ConfigToggle("AutoSaveValues",{ --#LANG_REQUIRED
+    ru="Автоматически сохранять значения",
+    en="Auto save values",
+}) 
+-- ConfigToggle("AutoSaveKeybinds",{ --#LANG_REQUIRED
+--     ru="Автоматически сохранять назначения клавиш(ПК)",
+--     en="Auto save Keybinds(PC)",
+-- }) 
+ConfigToggle("AutoSaveWindows",{ --#LANG_REQUIRED
+    ru="Автоматически сохранять окна",
+    en="Auto save windows",
+}) ConfigToggle("SaveWindows",{ --#LANG_REQUIRED
+    ru="Сохранять окна",
+    en="Save windows",
+})
 function ControlCfg:Open(name:string)
     openedCfgName = name
     STitleConfig.Text = tostring(name)
     refreshOpenCFGTranslate()
     SettingsSave:SetToSave("lastOpenedConfigName",name)
-    openedCfg = ControlCfg:GetConfigData(name)
-    ConfigsSelectedFrame.Visible = openedCfg~=nil
-    if openedCfg then
-        refreshCfgASKB()
-        refreshCfgASV()
-    end
+    if name==loadedConfig then
+        openedCfg = config
+    else openedCfg = ControlCfg:GetConfigData(name)
+    end ConfigsSelectedFrame.Visible = openedCfg~=nil
+    onOpenedConfigChange:Fire()
 end ControlCfg:Open(SettingsSave:GetFromSave("lastOpenedConfigName"))
---Classes:CreateTWindow("Test")
+Classes:CreateTWindow("Test").CanHide = false
 -- #FIND_POINT Scripts ------------------
 local TScripts = {}
 local CreatedTScriptsSanitize = {}
@@ -3027,7 +3124,7 @@ local Languages = Settings:CreateSequence("LanguagePreferences","Language (Яз�
         print(SettingsSave:SetToSave("LangPreferences",langs))
         print(11)
     end
-end,SupportedLanguages)
+end,SupportedLanguages) Languages.ConfigSavingEnabled = false
 local loadedLangPrefs = SettingsSave:GetFromSave("LangPreferences")
 if type(loadedLangPrefs)=="table" then
     TimGui:SetLanguagePreferences(loadedLangPrefs)

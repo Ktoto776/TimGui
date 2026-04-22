@@ -12,7 +12,7 @@
             "deprecated":false
         },"ConfigSavingEnabled":{
             "type":"string",
-            "description":"Включено ли сохранение?[Может не сохраняться изза одинакого имени но всё равно стоять true]",
+            "description":"Включено ли сохранение(P.S: загрузка тоже)?[Может не сохраняться изза одинакого имени но всё равно стоять true]",
             "canChange":true,
             "deprecated":false
         },"ConfigSavingDelay":{

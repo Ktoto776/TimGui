@@ -23,6 +23,12 @@
             "description":"БАЗА. Группы, в которые ложить можно кнопки итд.",
             "canChange":false,
             "deprecated":false
+        },"Prompts":{
+            "type":"class",
+            "class":"Prompts",
+            "description":"Создания prompt окна(для того чтобы, что нибудь спросить у пользователя)",
+            "canChange":false,
+            "deprecated":false
         },"GuiObjects":{
             "type":"class",
             "class":"GUIArchitecture",
