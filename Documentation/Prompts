@@ -148,27 +148,5 @@
             ], "deprecated":false
         }
     }, 
-    "events":{
-        "ChildAdded":{
-            "description":"Запускается когда добавлен новый ребёнок",
-            "type":"RBXScriptEvent",
-            "args":[{
-                    "name":"child",
-                    "type":"TGuiObject",
-                    "description":"TGuiObject который теперь в этой архитектуре"
-                }
-            ],
-            "deprecated":false
-        },"ChildRemoved":{
-            "description":"Запускается когда убран ребёнок",
-            "type":"RBXScriptEvent",
-            "args":[{
-                    "name":"child",
-                    "type":"TGuiObject",
-                    "description":"TGuiObject который теперь не в этой архитектуре"
-                }
-            ],
-            "deprecated":false
-        }
-    }
+    "events":{}
 }

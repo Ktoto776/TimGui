@@ -125,7 +125,12 @@
             "deprecated":false
         }
     }, "methods":{
-        "Move":{
+        "Destroy":{
+            "description":"Удаляет окно и запускает Destroyed евент",
+            "args":[],
+            "return":[], 
+            "deprecated":false
+        },"Move":{
             "description":"Возвращает наличия свойства только для чтения",
             "args":[{
                     "name":"Position",
@@ -158,6 +163,11 @@
             "type":"RBXScriptEvent",
             "deprecated":false,
             "args":[]
+        },"Destroyed":{
+            "description":"Запускается при запуске :Destroy()",
+            "type":"RBXScriptEvent",
+            "args":[],
+            "deprecated":false
         }
     }
 }

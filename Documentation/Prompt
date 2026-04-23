@@ -5,10 +5,11 @@
     "writeSameMode":true,
     "deprecated":false,
     "properties":{
-        "Name":{
-            "type":"string",
-            "description":"Имя по которому его можно найти",
-            "canChange":true,
+        "Description":{
+            "type":"class",
+            "class":"Translator",
+            "description":"Описание",
+            "canChange":false,
             "deprecated":false
         },"Parent":{
             "type":"GUIArchitecture?",
@@ -93,47 +94,69 @@
         }
     }, 
     "methods":{
-        "Destroy":{
-            "description":"Удаляет обьект и запускает Destroyed евент",
-            "args":[],
-            "return":[], 
-            "deprecated":false
-        },"RefreshSize":{
-            "description":"Обновляет размер, запуская специальный Bind(SizeBind)",
+        "EmulateInput":{
+            "description":"Запускает .OnInput с любыми параметрами",
             "args":[{
-                    "name":"dontRefreshPosition",
-                    "type":"boolean",
-                    "description":"Не запускать ли обновление позиции",
+                    "name":"...any",
+                    "type":"...",
+                    "description":"Любые параметры",
                     "required":false
                 }
             ],
             "return":[], 
             "deprecated":false
-        },"GetGlobalGroup":{
-            "description":"Сравнивает имя класса с 1 параметром",
-            "args":[],
-            "return":[{
-                    "name":"group",
-                    "type":"GUIArchitecture?",
-                    "description":"Глобальная группа, если есть"
+        },"Run":{
+            "description":"Запускает Prompt с любыми параметрами",
+            "args":[{
+                    "name":"...any",
+                    "type":"...",
+                    "description":"Любые параметры",
+                    "required":false
                 }
-            ], "deprecated":false
-        },"RefreshPosition":{
-            "description":"Обновляет позиции группы",
-            "args":[],
-            "return":[{
-                    "name":"success",
-                    "type":"boolean",
-                    "description":"Успешно ли было запущено"
+            ],
+            "return":[
+                {
+                    "name":"...any",
+                    "type":"...",
+                    "description":"Любые параметры, которые могут быть запущены через :EmulateInput(...)"
                 }
-            ], "deprecated":false
+            ], 
+            "deprecated":false
         }
     }, 
     "events":{
-        "Destroyed":{
-            "description":"Запускается когда :Destroy() был запущен",
-            "type":"RBXScriptEvent",
-            "args":[],
+        "OnInput":{
+            "description":"Запускается если произошёл Input или был запущен :EmulateInput(...)",
+            "type":"TEvent.Event",
+            "args":[
+                {
+                    "name":"...any",
+                    "type":"...",
+                    "description":"Всё что угодно, читай в документации класса использующего этот класс"
+                }
+            ],
+            "deprecated":false
+        },"OnRunned":{
+            "description":"Запускается если произошёл :Run(...)",
+            "type":"TEvent.Event",
+            "args":[
+                {
+                    "name":"...any",
+                    "type":"...",
+                    "description":"Всё что угодно, те параметры что запускается при запуске"
+                }
+            ],
+            "deprecated":false
+        },"RunStopped":{
+            "description":"Запускается если произошёл :Run(...) и был запущен Input",
+            "type":"TEvent.Event",
+            "args":[
+                {
+                    "name":"...any",
+                    "type":"...",
+                    "description":"Всё что угодно, те параметры что запускается при запуске(:Run(...))"
+                }
+            ],
             "deprecated":false
         }
     }

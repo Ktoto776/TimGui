@@ -120,10 +120,10 @@
             "description":"Создаёт пустое окно",
             "args":[
                 {
-                    "name":"Title",
-                    "type":"string | Translator | table",
-                    "description":"Заголовок окна",
-                    "required":false
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Название окна",
+                    "required":true
                 },{
                     "name":"Title",
                     "type":"string | Translator | table",
@@ -157,9 +157,29 @@
             "description":"Создаёт пустой prompt",
             "args":[
                 {
+                    "name":"PromptType",
+                    "type":"string",
+                    "description":"Тип промта",
+                    "required":true
+                },{
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Название",
+                    "required":true
+                },{
                     "name":"Title",
                     "type":"string | Translator | table",
                     "description":"Заголовок окна",
+                    "required":false
+                },{
+                    "name":"Description",
+                    "type":"string | Translator | table",
+                    "description":"Описание",
+                    "required":false
+                },{
+                    "name":"disableDefaultConfigSettingsRefresh",
+                    "type":"boolean",
+                    "description":"Выключены ли стандартное обновление сохранений при смене настроек конфига",
                     "required":false
                 }
             ],

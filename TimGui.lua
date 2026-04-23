@@ -1189,6 +1189,10 @@ local function TGuiObjectClass(Name:string,Title:string|{string}?,Parent:any?,Ob
         destroyed = true
         Object:SetReadOnly("Parent")
         destroyingEvent:Fire()
+        Object.ConfigSavingEnabled = false
+        Object.ConfigSaveName = "Destroyed"
+        Object:SetReadOnly("ConfigSavingEnabled")
+        Object:SetReadOnly("ConfigSaveName")
     end -- TGuiObject Special colors
     local SpecialColors = Classes:CreateSpecialColors()
     Object.SpecialColors = SpecialColors
@@ -2880,7 +2884,22 @@ function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?,disab
         end
     end)
     Window.Focused = true
-    return Window
+    local isDestroyed = false
+    local Destroyed = Instance.new("BindableEvent")
+    Window.Destroyed = Destroyed.Event
+    Window:SetReadOnly("Destroyed")
+    function Window:Destroy()
+        if isDestroyed then return end
+        isDestroyed = true
+        Window.Focused = false
+        Window:SetReadOnly("Focused")
+        Destroyed:Fire()
+        Window.ConfigSavingEnabled = false
+        Window.ConfigSaveName = "Destroyed"
+        Window:SetReadOnly("ConfigSavingEnabled")
+        Window:SetReadOnly("ConfigSaveName")
+        WindowFrame:Destroy()
+    end return Window
 end WindowSizeRefresh:Bind(function(TWindow)
     if not TWindow then logger:critical_error("WindowSizeRefresh","Window is incorrect")TWindow=Classes:CreateTWindow() end
     TWindow.WindowFrame.Size = TWindow.Size+UDim2.new(UDim.new(0,0),TWindow.HeaderSize)
@@ -2921,9 +2940,41 @@ end)
 local Prompts = Classes:CreateTClass()
 TimGui.Prompts = Prompts
 table.insert(TimGuiReadOnly,"Prompts")
-function Classes:CreatePrompt()
-    local Prompt = Classes:CreateTWindow()
+function Classes:CreatePrompt(PromptType:string,Name:string,Title: string | {[string]: string}?,Description:string | {[string]: string}?,disableDefaultConfigSettingsRefresh:boolean?)
+    if type(PromptType)~="string" then logger:critical_error("Classes:CreatePrompt","PromptType is incorrect(expected string)") end
+    if type(Name)~="string" then logger:critical_error("Classes:CreatePrompt","Name is incorrect(expected string)") end
+    if type(Description)~="table" then
+        Description = Classes:CreateTranslator(Description or "")
+    else if Description.__type~="TClass" then
+            local oldTitle = Description
+            Description = Classes:CreateTranslator("")
+            Description:Load(oldTitle)
+        elseif not Description:IsA("Translator") then
+            Description = Classes:CreateTranslator("")
+        end
+    end local Prompt = Classes:CreateTWindow(Name,Title,disableDefaultConfigSettingsRefresh)
     Prompt:AddClassName("Prompt")
+    Prompt.Description = Description
+    Prompt:SetReadOnly("Description")
+    local Input = Classes:CreateTEvent()
+    Prompt.OnInput = Input.Event
+    Prompt:SetReadOnly("OnInput")
+    function Prompt:EmulateInput(...)
+        Input:Fire(...)
+    end local OnRunned = Classes:CreateTEvent()
+    Prompt.OnRun = OnRunned.Event
+    Prompt:SetReadOnly("OnRun")
+    local RunStopped = Classes:CreateTEvent()
+    Prompt.RunStopped = RunStopped.Event
+    Prompt:SetReadOnly("RunStopped")
+    function Prompt:Run(...)
+        Prompt.Opened = true
+        OnRunned:Fire(...)
+        local value = table.pack(Input.Event:Wait())
+        Prompt.Opened = false
+        RunStopped:Fire(...)
+        return table.unpack(value)
+    end
     return Prompt
 end
 -- #FIND_POINT Configs Window ------------------

@@ -110,7 +110,7 @@
             "return":[], 
             "deprecated":false
         },"GetGlobalGroup":{
-            "description":"Сравнивает имя класса с 1 параметром",
+            "description":"Возвращает глобальную группу в которой находится",
             "args":[],
             "return":[{
                     "name":"group",
