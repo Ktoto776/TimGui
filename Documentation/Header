@@ -1,19 +1,30 @@
 {
-    "description":"Класс для цветов, использующий пресеты",
+    "description":"Класс для кастомизации заголовка",
     "type":"class",
-    "classes":["TClass","Preset","Colors"],
+    "classes":["TClass","Preset","Header"],
     "writeSameMode":true,
     "deprecated":false,
     "properties":{
         "SeparatorSize":{
             "type":"number",
-            "description":"Цвет стрелочки открытия",
+            "description":"Ширина разделителя(может быть 0 или меньше)",
             "canChange":true,
             "deprecated":false
         },"FirstName":{
             "type":"string",
             "description":"Первая часть Имени",
             "canChange":true,
+            "deprecated":false
+        },"SecondName":{
+            "type":"string",
+            "description":"Вторая часть Имени",
+            "canChange":true,
+            "deprecated":false
+        },"InfoValue":{
+            "type":"class",
+            "class":"ValueBinder",
+            "description":"Информация в заголовке(По умолчанию время).Если не string, то конвертирует в string. Listeners: 1-clock, 2-fps",
+            "canChange":false,
             "deprecated":false
         }
     }, "methods":{}, 

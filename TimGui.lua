@@ -441,6 +441,68 @@ end -- #FIND_POINT IsA()
 function Classes:IsA(Object:any,className:string)
     return type(Object)=="table" and Object.__type=="TClass" and Object:IsA(className)
 end
+-- #FIND_POINT ValueBinder
+function Classes:CreateValueBinder(DefaultValue)
+    if DefaultValue==nil then logger:critical_error("DefaultValue is incorrect") end
+    local VBinder = Classes:CreateTClass(nil,nil,{"Value"})
+    VBinder:AddClassName("ValueBinder")
+    local binds = {}
+    VBinder.ListenId = 0
+    VBinder.Value = DefaultValue
+    local function refreshBind()
+        local Bind = binds[VBinder.ListenId]
+        if Bind then
+            VBinder.Value = Bind.Value
+        else VBinder.Value = DefaultValue
+        end
+    end VBinder:GetPropertyChangedEvent("ListenId"):Connect(refreshBind)
+    function VBinder:Bind(SetToListen:boolean?)
+        local Bind = Classes:CreateTClass(nil,nil,{"Value"})
+        local OnEnabled = Instance.new("BindableEvent")
+        local OnDisabled = Instance.new("BindableEvent")
+        Bind.OnEnabled = OnEnabled.Event
+        Bind.OnDisabled = OnDisabled.Event
+        Bind:SetReadOnly("OnEnabled")
+        Bind:SetReadOnly("OnDisabled")
+        table.insert(binds,Bind)
+        Bind:AddClassName("ValueBind")
+        Bind.Value = DefaultValue
+        Bind.Translator = Classes:CreateTranslator(DefaultValue)
+        Bind:SetReadOnly("Translator")
+        Bind.Translator.TranslateValueChanged:Connect(function()
+            Bind.Value = Bind.Translator:Translate()
+        end) Bind.Id = table.find(binds,Bind)
+        Bind:SetReadOnly("Id")
+        local isEnabled = false
+        Bind.Enabled = false
+        Bind:GetPropertyChangedEvent("Enabled"):Connect(function()
+            if Bind.Enabled~=isEnabled then
+                if Bind.Enabled then
+                    VBinder.ListenId = Bind.Id
+                else VBinder.ListenId = 0
+                end
+            end
+        end) Bind:GetPropertyChangedEvent("Value"):Connect(function()
+            if isEnabled then
+                VBinder.Value = Bind.Value
+            end
+        end) VBinder:GetPropertyChangedEvent("ListenId"):Connect(function()
+            if VBinder.ListenId==Bind.Id then
+                isEnabled = true
+                OnEnabled:Fire()
+            elseif isEnabled then
+                isEnabled = false
+                OnDisabled:Fire()
+            end Bind.Enabled = isEnabled
+        end) if SetToListen~=false or Bind.ListenId==Bind.Id then
+            if Bind.ListenId==Bind.Id then
+                VBinder.ListenId = 0
+            end VBinder.ListenId = Bind.Id
+        end refreshBind()
+        return Bind
+    end
+    return VBinder
+end
 -- #FIND_POINT Binder
 local Binder = Classes:CreateTClass()
 Binder:AddClassName("Binder")
@@ -464,6 +526,7 @@ Colors.TextColor = Color3.new(1,1,1)
 Colors.HeaderSeparatorColor = Color3.new(0,0,0)
 Colors.HeaderFirstNameColor = Color3.new(1,1,0)
 Colors.HeaderSecondNameColor = Color3.new(1,0,1)
+Colors.HeaderTextColor = Color3.new(1,1,1)
 Colors.HeaderBackgroundColor = Color3.new(0.15, 0.15, 0.3)
 Colors.MainBackgroundColor = Color3.new(0.15, 0.15, 0.3)
 Colors.GroupsBackgroundColor = Color3.new(0.15, 0.15, 0.25)
@@ -760,6 +823,49 @@ Header.SecondName.TranslateValueChanged:Connect(function()
 end)
 TimGui.Header = Header
 table.insert(TimGuiReadOnly,"Header")
+local HeaderInfo = Instance.new("TextLabel",HeaderFrame)
+HeaderInfo.Size = UDim2.new(1,0,1,0)
+HeaderInfo.TextXAlignment = Enum.TextXAlignment.Right
+HeaderInfo.TextScaled = true
+Colors:GetPropertyChangedEvent("HeaderTextColor"):Connect(function()
+    HeaderInfo.TextColor3 = Colors.HeaderTextColor
+end) HeaderInfo.TextColor3 = Colors.HeaderTextColor
+HeaderInfo.BackgroundTransparency = 1
+local HeaderInfoValue = Classes:CreateValueBinder("")
+Header.InfoValue = HeaderInfoValue
+Header:SetReadOnly("InfoValue")
+GuiInstances.HeaderInfo = HeaderInfo
+GuiInstances:SetReadOnly("HeaderInfo")
+HeaderInfo.Text = ""
+HeaderInfoValue:GetPropertyChangedEvent("Value"):Connect(function()
+    HeaderInfo.Text = tostring(HeaderInfoValue.Value)
+end)
+-- #FIND-POINT Clock/FPS in HeaderInfo
+task.spawn(function()
+    local ClockBind = HeaderInfoValue:Bind()
+    ClockBind.Translator:Load{ --#LANG_REQUIRED
+        ru="Загрузка",
+        en="Loading"
+    } while task.wait(0.5) do
+        ClockBind.Value = os.date("%H:%M:%S",os.time())
+    end
+end) local FPSInfoBind = HeaderInfoValue:Bind(false)
+local FPSConnection: RBXScriptSignal
+FPSInfoBind.OnDisabled:Connect(function()
+    if FPSConnection then FPSConnection:Disconnect() end
+end) FPSInfoBind.OnEnabled:Connect(function()
+    if FPSConnection then FPSConnection:Disconnect() end
+    local Post2FPS = 0
+    local PostFPS = 0
+    FPSConnection = RunService.PreRender:Connect(function(deltaTime:number)
+        local thisFPS = 1/deltaTime
+        local FPS = (Post2FPS+PostFPS+thisFPS)/3
+        local CFPS = math.floor(FPS)
+        FPSInfoBind.Value = CFPS.."."..math.floor((FPS-CFPS)*10).." FPS"
+        Post2FPS = PostFPS
+        PostFPS = thisFPS
+    end)
+end)
 -- #FIND-POINT GUI Main
 local GroupsSFrame = Instance.new("ScrollingFrame",MainFrame)
 GroupsSFrame.ScrollingDirection = Enum.ScrollingDirection.Y

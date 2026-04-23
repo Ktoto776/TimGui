@@ -170,6 +170,23 @@
                     "description":"Класс Prompt"
                 }
             ],"deprecated":false
+        },"CreateValueBinder":{ 
+            "description":"Создаёт пустой value binder",
+            "args":[
+                {
+                    "name":"defaultValue",
+                    "type":"any",
+                    "description":"Стандартное значение",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"class",
+                    "class":"ValueBinder",
+                    "description":"Класс ValueBinder"
+                }
+            ],"deprecated":false
         }
     },
     "events":{}

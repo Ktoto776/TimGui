@@ -1,0 +1,46 @@
+{
+    "description":"Биндер для значений, используется чтобы значения не наслаивались друг на друга. Создаётся через TClasses:CreateValueBinder(Стандартное значение)",
+    "type":"class",
+    "classes":["TClass","ValueBinder"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "Id":{
+            "type":"class",
+            "class":"ValueBind",
+            "description":"Id этого бинда",
+            "canChange":true,
+            "deprecated":false
+        },"Value":{
+            "type":"class",
+            "class":"any",
+            "description":"Значение, writeSameMode отсутствует!(Может быть установлен с помощью .Translator)",
+            "canChange":true,
+            "deprecated":false
+        },"Translator":{
+            "type":"class",
+            "class":"Translator",
+            "description":"Значение, но с переводом, изменяет .Value если нужный перевод был изменён",
+            "canChange":false,
+            "deprecated":false
+        },"Enabled":{
+            "type":"boolean",
+            "description":"Включен ли бинд(то есть прослушивается ли)",
+            "canChange":true,
+            "deprecated":false
+        }
+    }, "methods":{}, 
+    "events":{
+        "OnEnabled":{
+            "description":"Запускается если Binder слушает этот Bind",
+            "type":"RBXScriptEvent",
+            "args":[],
+            "deprecated":false
+        },"OnDisabled":{
+            "description":"Запускается если Binder больше не слушает этот Bind",
+            "type":"RBXScriptEvent",
+            "args":[],
+            "deprecated":false
+        }
+    }
+}

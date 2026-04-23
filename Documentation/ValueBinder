@@ -1,0 +1,56 @@
+{
+    "description":"Биндер для значений, используется чтобы значения не наслаивались друг на друга. Создаётся через TClasses:CreateValueBinder(Стандартное значение)",
+    "type":"class",
+    "classes":["TClass","ValueBinder"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "ListenId":{
+            "type":"class",
+            "class":"ValueBind",
+            "description":"Id слушаемого ValueBind'а, его значения будут в .Value. По умолчанию 0(если не существует, то стандартное значение)",
+            "canChange":true,
+            "deprecated":false
+        },"Value":{
+            "type":"class",
+            "class":"any",
+            "description":"Значение, можно изменить прям так, но не советуется. writeSameMode отсутствует!",
+            "canChange":true,
+            "deprecated":false
+        }
+    }, "methods":{
+        "Bind":{
+            "description":"Bind для установки значения",
+            "args":[
+                {
+                    "name":"SetToListen",
+                    "type":"boolean",
+                    "description":"Установить на слушание(если nil, то считается как true)",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"class",
+                    "class":"ValueBind",
+                    "description":"Класс ValueBind"
+                }
+            ], 
+            "deprecated":false
+        }
+    }, 
+    "events":{
+        "OnBinded":{
+            "description":"Запускается при Bind:Bind",
+            "type":"RBXScriptEvent",
+            "args":[
+                {
+                    "name":"Id",
+                    "type":"number",
+                    "description":"Всё что угодно, может быть написано в классе Binder"
+                }
+            ],
+            "deprecated":false
+        }
+    }
+}
