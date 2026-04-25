@@ -123,6 +123,16 @@
             "description":"Позиция относительно левого верхнего угла окна. +Сохраняется в конфиге",
             "canChange":true,
             "deprecated":false
+        },"DisplayOrder":{
+            "type":"number",
+            "description":"+ZOrder для окна, обычно 1, а для Prompt 2",
+            "canChange":true,
+            "deprecated":false
+        },"UserCanClose":{
+            "type":"boolean",
+            "description":"Может ли пользователь закрыть это окно. Обычно true",
+            "canChange":true,
+            "deprecated":false
         }
     }, "methods":{
         "Destroy":{
@@ -165,6 +175,16 @@
             "args":[]
         },"Destroyed":{
             "description":"Запускается при запуске :Destroy()",
+            "type":"RBXScriptEvent",
+            "args":[],
+            "deprecated":false
+        },"OnFocus":{
+            "description":"Запускается если .Focused стало true",
+            "type":"RBXScriptEvent",
+            "deprecated":false,
+            "args":[]
+        },"OnFocusLost":{
+            "description":"Запускается если .Focused стало false",
             "type":"RBXScriptEvent",
             "args":[],
             "deprecated":false

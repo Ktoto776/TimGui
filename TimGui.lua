@@ -82,7 +82,10 @@ end) TimGui.OnOpened = onOpenedEvent.Event
 table.insert(TimGuiReadOnly,"OnOpened")
 TimGui.OnExit = OnExitEvent.Event
 table.insert(TimGuiReadOnly,"OnExit")
+TimGui.Closed = false
+table.insert(TimGuiReadOnly,"Closed")
 function TimGui:Exit()
+    TimGuiRaw.Closed = true
     OnExitEvent:Fire()
     _G.TimGui = nil
 end function TimGui:IsA(class:string)
@@ -558,6 +561,7 @@ Colors.TWindowHideColor = Color3.new(1,1,1)
 Colors.TWindowHeaderTextColor = Color3.new(1,1,1)
 --OnWindow -------------------------
 Colors.OnTWindowTextColor = Color3.new(1,1,1)
+Colors.OnTWindowTextBoxBackgroundColor = Color3.fromRGB(27, 27, 56)
 --Configs --------------------------
 Colors.ConfigsSeparationColor = Color3.new(0,0,0)
 Colors.ConfigButtonSelectedBackground = Color3.fromRGB(50,75,100)
@@ -598,6 +602,9 @@ GuiSize.SequenceObjectGrabSize = UDim.new(1,0)
 GuiSize.TWindowHeaderSize = UDim.new(0,32)
 GuiSize.TWindowHeaderCornerRadius = UDim.new(0,12)
 GuiSize.TWindowCornerRadius = UDim.new(0,12)
+-- Prompts ------------------
+GuiSize.TextBoxPromptSize = UDim2.new(0.8,0,0,50)
+GuiSize.TextBoxPromptPosition = UDim2.new(0.5,0,0,10)
 -- ConfigWindow -------------
 GuiSize.ConfigsSeparatorSize = UDim.new(0,1)
 GuiSize.ConfigsWindowConfigsSize = UDim.new(0,30)
@@ -1455,7 +1462,7 @@ function Classes:AddConfigObject(TObject,ConfigSaveName:string?,otherClassesSavi
         propAutosavingEnabled[PropertyName] = (not IsEnabled)==false
     end local savingFWaiter = false
     local function Save(PropertyName:string,isAuto:boolean)
-        local savingE = savingIsNotDouble and TObject.ConfigSavingEnabled
+        local savingE = not TimGui.Closed and savingIsNotDouble and TObject.ConfigSavingEnabled
         if savingE and isAuto then
             savingE = propAutosavingEnabled[PropertyName]
         end if savingE then
@@ -2653,10 +2660,16 @@ function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?,disab
     WindowFrame.BackgroundTransparency = 1
     WindowFrame.DescendantAdded:Connect(function(Inst:GuiObject)
         if Inst:IsA("GuiObject") then
+            local order = Window.DisplayOrder-1
             if FocusedWindow==Window then
-                Inst.ZIndex += 1
-            end
+                order += 1
+            end Inst.ZIndex += order
         end
+    end) Window.DisplayOrder = 1
+    local oldDisplayOrder = Window.DisplayOrder
+    Window:GetPropertyChangedEvent("DisplayOrder"):Connect(function()
+        addZIndexToFrame(WindowFrame,Window.DisplayOrder-oldDisplayOrder)
+        oldDisplayOrder = Window.DisplayOrder
     end)
     Window.WindowFrame = WindowFrame
     Window:SetReadOnly("WindowFrame")
@@ -2804,6 +2817,9 @@ function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?,disab
             Window.Hidden = false
         end HideButton.Visible = Window.CanHide
         RefreshSize()
+    end) Window:GetPropertyChangedEvent("UserCanClose"):Connect(function()
+        CloseButton.Visible = Window.CanHide
+        RefreshSize()
     end)
     local onOpened = Instance.new("BindableEvent")
     local onClosed = Instance.new("BindableEvent")
@@ -2871,6 +2887,12 @@ function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?,disab
         end lastInput = nil
     end) Window.DragDetector = dragDetector
     Window:SetReadOnly("DragDetector")
+    local Focused = Instance.new("BindableEvent")
+    local FocusLost = Instance.new("BindableEvent")
+    Window.OnFocused = Focused.Event
+    Window.OnFocusLost = FocusLost.Event
+    Window:SetReadOnly("OnFocus")
+    Window:SetReadOnly("OnFocusLost")
     Window:GetPropertyChangedEvent("Focused"):Connect(function()
         if Window.Focused then
             local lastFocus = FocusedWindow
@@ -2878,9 +2900,11 @@ function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?,disab
             if lastFocus then
                 lastFocus.Focused = false
             end addZIndexToFrame(WindowFrame,1)
+            Focused:Fire()
         else if FocusedWindow==Window then
                 FocusedWindow = nil
             end addZIndexToFrame(WindowFrame,-1)
+            FocusLost:Fire()
         end
     end)
     Window.Focused = true
@@ -2906,11 +2930,13 @@ end WindowSizeRefresh:Bind(function(TWindow)
     TWindow.HeaderFrame.Size = UDim2.new(UDim.new(1,0),TWindow.HeaderSize)
     TWindow.BackgroundFrame.Size = UDim2.new(UDim.new(1,0),UDim.new(1,0)-TWindow.HeaderSize)
     local HeaderYSize = TWindow.HeaderFrame.AbsoluteSize.Y
-    TWindow.CloseButton.Size = UDim2.new(0,HeaderYSize,1,0)
-    local buttons = 1
-    if TWindow.CanHide then
+    local buttons = 0
+    if TWindow.UserCanClose then
+        TWindow.CloseButton.Size = UDim2.new(0,-(HeaderYSize+5)*buttons,1,0)
+        buttons += 1
+    end if TWindow.CanHide then
         TWindow.HideButton.Size = UDim2.new(0,HeaderYSize,1,0)
-        TWindow.HideButton.Position = UDim2.new(UDim.new(1,-HeaderYSize*buttons-5),UDim.new(0,0))
+        TWindow.HideButton.Position = UDim2.new(UDim.new(1,-(HeaderYSize+5)*buttons),UDim.new(0,0))
         buttons += 1
     end TWindow.Header.Size = UDim2.new(UDim.new(1,-HeaderYSize*buttons-5),UDim.new(1,0))
     return true
@@ -2953,14 +2979,20 @@ function Classes:CreatePrompt(PromptType:string,Name:string,Title: string | {[st
             Description = Classes:CreateTranslator("")
         end
     end local Prompt = Classes:CreateTWindow(Name,Title,disableDefaultConfigSettingsRefresh)
+    Prompt.DisplayOrder = 2
+    Prompt.CanHide = false
     Prompt:AddClassName("Prompt")
     Prompt.Description = Description
     Prompt:SetReadOnly("Description")
+    Prompt.Type = PromptType
+    Prompt:SetReadOnly("Type")
     local Input = Classes:CreateTEvent()
     Prompt.OnInput = Input.Event
     Prompt:SetReadOnly("OnInput")
+    Prompt.Running = false
     function Prompt:EmulateInput(...)
         Input:Fire(...)
+        Prompt.Running = false
     end local OnRunned = Classes:CreateTEvent()
     Prompt.OnRun = OnRunned.Event
     Prompt:SetReadOnly("OnRun")
@@ -2969,6 +3001,7 @@ function Classes:CreatePrompt(PromptType:string,Name:string,Title: string | {[st
     Prompt:SetReadOnly("RunStopped")
     function Prompt:Run(...)
         Prompt.Opened = true
+        Prompt.Running = true
         OnRunned:Fire(...)
         local value = table.pack(Input.Event:Wait())
         Prompt.Opened = false
@@ -2976,7 +3009,25 @@ function Classes:CreatePrompt(PromptType:string,Name:string,Title: string | {[st
         return table.unpack(value)
     end
     return Prompt
-end
+end function Prompts:CreateTextPrompt(Name:string,Title:string | {[string]: string}?,Description:string | {[string]: string}?,disableDefaultConfigSettingsRefresh:boolean?)
+    local Prompt = Classes:CreatePrompt("Text",Name,Title,Description,disableDefaultConfigSettingsRefresh)
+    Prompt:AddClassName("TextPrompt")
+    local TextBox = Instance.new("TextBox",Prompt.Frame)
+    Prompt.CanHide = true
+    TextBox.ClearTextOnFocus = false
+    TextBox.Text = ""
+    TextBox.AnchorPoint = Vector2.new(0.5,0)
+    GuiSize:GetPropertyChangedEvent("TextBoxPromptPosition"):Connect(function()
+        TextBox.Position = GuiSize.TextBoxPromptPosition
+    end) TextBox.Position = GuiSize.TextBoxPromptPosition
+    GuiSize:GetPropertyChangedEvent("TextBoxPromptSize"):Connect(function()
+        TextBox.Size = GuiSize.TextBoxPromptSize
+    end) TextBox.Size = GuiSize.TextBoxPromptSize
+    Prompt.SpecialColors:GetColorChangedSignal("OnTWindowTextBoxBackgroundColor"):Connect(function()
+        TextBox.BackgroundColor3 = Prompt.SpecialColors:GetColor("OnTWindowTextBoxBackgroundColor")
+    end) TextBox.BackgroundColor3 = Prompt.SpecialColors:GetColor("OnTWindowTextBoxBackgroundColor")
+    return Prompt
+end Prompts:CreateTextPrompt("TestPrompt","BETA","Testing for TextPrompt")
 -- #FIND_POINT Configs Window ------------------
 local ConfigsWindow = Classes:CreateTWindow("Configs",{ --LANG_REQUIRED
     ru="Конфигурации",
@@ -3173,7 +3224,6 @@ function ControlCfg:Open(name:string)
     end ConfigsSelectedFrame.Visible = openedCfg~=nil
     onOpenedConfigChange:Fire()
 end ControlCfg:Open(SettingsSave:GetFromSave("lastOpenedConfigName"))
-Classes:CreateTWindow("Test").CanHide = false
 -- #FIND_POINT Scripts ------------------
 local TScripts = {}
 local CreatedTScriptsSanitize = {}

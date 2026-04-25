@@ -1,14 +1,19 @@
 {
-    "description":"Главный обьект интерфейса. Можно получить с помощью _G.TimGui (или TimGui, но если поддерживается)",
+    "description":"Главный обьект ВСЕЙ системы TGui. Можно получить с помощью _G.TimGui (или TimGui, но если поддерживается)",
     "type":"class",
     "class":"TimGui",
     "writeSameMode":true,
     "deprecated":false,
     "properties":{
-        "Configs":{
+        "Closed":{
+            "type":"boolean",
+            "description":"Класс для ",
+            "canChange":false,
+            "deprecated":false
+        },"Configs":{
             "type":"class",
             "class":"Configs",
-            "description":"Класс для ",
+            "description":"Класс для получения информации о конфигурациях(но не для изменения, если нужно изменить см. ControlCfg)",
             "canChange":false,
             "deprecated":false
         },"Saves":{
