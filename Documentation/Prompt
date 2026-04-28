@@ -5,23 +5,7 @@
     "writeSameMode":true,
     "deprecated":false,
     "properties":{
-        "Description":{
-            "type":"class",
-            "class":"Translator",
-            "description":"Описание",
-            "canChange":false,
-            "deprecated":false
-        },"Tittle":{
-            "type":"Translator",
-            "description":"Название кнопки, которое видит пользователь",
-            "canChange":false,
-            "deprecated":false
-        },"CornerChangingEnabled":{
-            "type":"boolean",
-            "description":"Включить ли изменение скругления(при изменении в GuiSize.ButtonCornerRadius). Для специального изменения на этой кнопке",
-            "canChange":false,
-            "deprecated":false
-        },"Type":{
+        "Type":{
             "type":"table",
             "description":"Тип промта, устанавливается значение из PromptType при запуске TClasses:CreatePrompt(...)",
             "canChange":true,
@@ -33,37 +17,7 @@
             "deprecated":false
         }
     }, 
-    "methods":{
-        "EmulateInput":{
-            "description":"Запускает .OnInput с любыми параметрами",
-            "args":[{
-                    "name":"...any",
-                    "type":"...",
-                    "description":"Любые параметры",
-                    "required":false
-                }
-            ],
-            "return":[], 
-            "deprecated":false
-        },"Run":{
-            "description":"Запускает Prompt с любыми параметрами",
-            "args":[{
-                    "name":"...any",
-                    "type":"...",
-                    "description":"Любые параметры",
-                    "required":false
-                }
-            ],
-            "return":[
-                {
-                    "name":"...any",
-                    "type":"...",
-                    "description":"Любые параметры, которые могут быть запущены через :EmulateInput(...)"
-                }
-            ], 
-            "deprecated":false
-        }
-    }, 
+    "methods":{}, 
     "events":{
         "OnInput":{
             "description":"Запускается если произошёл Input или был запущен :EmulateInput(...)",
@@ -73,28 +27,6 @@
                     "name":"...any",
                     "type":"...",
                     "description":"Всё что угодно, читай в документации класса использующего этот класс"
-                }
-            ],
-            "deprecated":false
-        },"OnRunned":{
-            "description":"Запускается если произошёл :Run(...)",
-            "type":"TEvent.Event",
-            "args":[
-                {
-                    "name":"...any",
-                    "type":"...",
-                    "description":"Всё что угодно, те параметры что запускается при запуске"
-                }
-            ],
-            "deprecated":false
-        },"RunStopped":{
-            "description":"Запускается если произошёл :Run(...) и был запущен Input",
-            "type":"TEvent.Event",
-            "args":[
-                {
-                    "name":"...any",
-                    "type":"...",
-                    "description":"Всё что угодно, те параметры что запускается при запуске(:Run(...))"
                 }
             ],
             "deprecated":false

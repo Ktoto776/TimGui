@@ -40,7 +40,7 @@
                 {
                     "name":"success",
                     "type":"boolean",
-                    "description":"Успешно ли загружено(nil если не поддерживается, false при ошибке/файл уже есть)"
+                    "description":"Успешно ли загружено(nil если не поддерживается или файл уже есть, false при ошибке)"
                 }
             ], 
             "deprecated":false

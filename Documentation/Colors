@@ -100,6 +100,36 @@
             "description":"Цвет текстов на окнах(TWindow)",
             "canChange":true,
             "deprecated":false
+        },"OnTWindowTextBoxBackgroundColor":{
+            "type":"Color3",
+            "description":"Цвет фона TextBox'а на окне",
+            "canChange":true,
+            "deprecated":false
+        },"OnTWindowTextBoxTextColor":{
+            "type":"Color3",
+            "description":"Цвет текста TextBox'а на окне",
+            "canChange":true,
+            "deprecated":false
+        },"OnTWindowConfirmButtonColor":{
+            "type":"Color3",
+            "description":"Цвет кнопки подтверждения на окне(обычно промтах)",
+            "canChange":true,
+            "deprecated":false
+        },"OnTWindowConfirmButtonTextColor":{
+            "type":"Color3",
+            "description":"Цвет текста кнопки подтверждения на окне(обычно промтах)",
+            "canChange":true,
+            "deprecated":false
+        },"OnTWindowCancelButtonColor":{
+            "type":"Color3",
+            "description":"Цвет кнопки отмены на окне(обычно промтах)",
+            "canChange":true,
+            "deprecated":false
+        },"OnTWindowCancelButtonTextColor":{
+            "type":"Color3",
+            "description":"Цвет текста кнопки отмены на окне(обычно промтах)",
+            "canChange":true,
+            "deprecated":false
         }
     }, "methods":{}, 
     "events":{}

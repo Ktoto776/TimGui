@@ -562,6 +562,11 @@ Colors.TWindowHeaderTextColor = Color3.new(1,1,1)
 --OnWindow -------------------------
 Colors.OnTWindowTextColor = Color3.new(1,1,1)
 Colors.OnTWindowTextBoxBackgroundColor = Color3.fromRGB(27, 27, 56)
+Colors.OnTWindowTextBoxTextColor = Color3.new(1,1,1)
+Colors.OnTWindowConfirmButtonColor = Color3.new(0.2,0.7,0.3)
+Colors.OnTWindowConfirmButtonTextColor = Color3.new(1,1,1)
+Colors.OnTWindowCancelButtonColor = Color3.new(0.7,0.2,0.3)
+Colors.OnTWindowCancelButtonTextColor = Color3.new(1,1,1)
 --Configs --------------------------
 Colors.ConfigsSeparationColor = Color3.new(0,0,0)
 Colors.ConfigButtonSelectedBackground = Color3.fromRGB(50,75,100)
@@ -603,8 +608,11 @@ GuiSize.TWindowHeaderSize = UDim.new(0,32)
 GuiSize.TWindowHeaderCornerRadius = UDim.new(0,12)
 GuiSize.TWindowCornerRadius = UDim.new(0,12)
 -- Prompts ------------------
+GuiSize.PromptYIndent = UDim.new(0,5)
 GuiSize.TextBoxPromptSize = UDim2.new(0.8,0,0,50)
-GuiSize.TextBoxPromptPosition = UDim2.new(0.5,0,0,10)
+GuiSize.TextPromptButtonsSize = UDim2.new(0.8,0,0,50)
+GuiSize.TextPromptXAnchor = 0.5
+GuiSize.TextPromptDescriptionTextSize = 15
 -- ConfigWindow -------------
 GuiSize.ConfigsSeparatorSize = UDim.new(0,1)
 GuiSize.ConfigsWindowConfigsSize = UDim.new(0,30)
@@ -1900,12 +1908,11 @@ function GuiObjects:CreateTextbox(Name:string,Title:string|{[string]:string}?,Pa
         task.wait() if not Textbox:GetReadOnly("DefaultValue") then
             Textbox.DefaultValue = Textbox.Value
         end
-    end)
-    Textbox.InputType = "string"
+    end) Textbox.InputType = "string"
     Textbox:GetPropertyChangedEvent("InputType"):Connect(function()
         if InputTypes[Textbox.InputType] then
-            Textbox.Value = InputTypes[Textbox.InputType](Textbox.Value,false)
             Textbox.DefaultValue = InputTypes[Textbox.InputType](Textbox.DefaultValue,false)
+            Textbox.Value = InputTypes[Textbox.InputType](Textbox.Value,false)
         else Textbox.InputType = "string"
         end Textbox.ButtonsEnabled = table.find(ButtonsEnabledForInpType,Textbox.InputType)~=nil
     end) local changedEvent = Instance.new("BindableEvent")
@@ -2590,10 +2597,15 @@ end function ControlCfg:Create(Name:string)
                 logger:error("ControlCfg:Create","Error to create cfg:\n"..tostring(err))
             else table.insert(CFGList,Name)
             end return s
-        end return false
+        end
     end
 end
-ControlCfg:Load(SettingsSave:GetFromSave("LoadedConfig"))
+local cfg = SettingsSave:GetFromSave("LoadedConfig")
+if not cfg then
+    cfg = "Default"
+    ControlCfg:Create(cfg)
+end
+ControlCfg:Load(cfg)
 -- #FIND_POINT CLASS TWindow ------------------
 local WindowSizeRefresh = Classes:CreateBind()
 Binder.TWindowSizeRefresh = WindowSizeRefresh
@@ -2649,6 +2661,7 @@ function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?,disab
     Window.Opened = true
     Window.Hidden = false
     Window.CanHide = true
+    Window.UserCanClose = true
     Window:AddPropertyToConfigSave("Hidden", Window.Hidden)
     local SpecialColors = Classes:CreateSpecialColors()
     Window.SpecialColors = SpecialColors
@@ -2698,7 +2711,6 @@ function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?,disab
     local CloseButton = Instance.new("ImageButton",HeaderFrame)
     CloseButton.Name = "Close"
     CloseButton.AnchorPoint = Vector2.new(1,0)
-    CloseButton.Position = UDim2.new(1,0,0,0)
     CloseButton.Activated:Connect(function()
         Window.Opened = false
     end)
@@ -2818,9 +2830,9 @@ function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?,disab
         end HideButton.Visible = Window.CanHide
         RefreshSize()
     end) Window:GetPropertyChangedEvent("UserCanClose"):Connect(function()
-        CloseButton.Visible = Window.CanHide
+        CloseButton.Visible = Window.UserCanClose
         RefreshSize()
-    end)
+    end) CloseButton.Visible = Window.UserCanClose
     local onOpened = Instance.new("BindableEvent")
     local onClosed = Instance.new("BindableEvent")
     Window.OnOpened = onOpened.Event
@@ -2932,7 +2944,8 @@ end WindowSizeRefresh:Bind(function(TWindow)
     local HeaderYSize = TWindow.HeaderFrame.AbsoluteSize.Y
     local buttons = 0
     if TWindow.UserCanClose then
-        TWindow.CloseButton.Size = UDim2.new(0,-(HeaderYSize+5)*buttons,1,0)
+        TWindow.CloseButton.Position = UDim2.new(UDim.new(1,-(HeaderYSize+5)*buttons),UDim.new(0,0))
+        TWindow.CloseButton.Size = UDim2.new(0,HeaderYSize,1,0)
         buttons += 1
     end if TWindow.CanHide then
         TWindow.HideButton.Size = UDim2.new(0,HeaderYSize,1,0)
@@ -2979,6 +2992,7 @@ function Classes:CreatePrompt(PromptType:string,Name:string,Title: string | {[st
             Description = Classes:CreateTranslator("")
         end
     end local Prompt = Classes:CreateTWindow(Name,Title,disableDefaultConfigSettingsRefresh)
+    Prompt.Opened = false
     Prompt.DisplayOrder = 2
     Prompt.CanHide = false
     Prompt:AddClassName("Prompt")
@@ -3009,26 +3023,161 @@ function Classes:CreatePrompt(PromptType:string,Name:string,Title: string | {[st
         return table.unpack(value)
     end
     return Prompt
-end function Prompts:CreateTextPrompt(Name:string,Title:string | {[string]: string}?,Description:string | {[string]: string}?,disableDefaultConfigSettingsRefresh:boolean?)
+end local TextPromptDescriptionSizeBind = Classes:CreateBind()
+Binder.TextPromptDescriptionSizeBind = TextPromptDescriptionSizeBind
+Binder:SetReadOnly("TextPromptDescriptionSizeBind")
+function Prompts:CreateTextPrompt(Name:string,Title:string | {[string]: string}?,Description:string | {[string]: string}?,disableDefaultConfigSettingsRefresh:boolean?)
     local Prompt = Classes:CreatePrompt("Text",Name,Title,Description,disableDefaultConfigSettingsRefresh)
     Prompt:AddClassName("TextPrompt")
-    local TextBox = Instance.new("TextBox",Prompt.Frame)
     Prompt.CanHide = true
+    local TextBox = Instance.new("TextBox",Prompt.Frame)
+    TextBox.TextScaled = true
     TextBox.ClearTextOnFocus = false
     TextBox.Text = ""
-    TextBox.AnchorPoint = Vector2.new(0.5,0)
-    GuiSize:GetPropertyChangedEvent("TextBoxPromptPosition"):Connect(function()
-        TextBox.Position = GuiSize.TextBoxPromptPosition
-    end) TextBox.Position = GuiSize.TextBoxPromptPosition
-    GuiSize:GetPropertyChangedEvent("TextBoxPromptSize"):Connect(function()
+    Prompt.TextBox = TextBox
+    Prompt:SetReadOnly("TextBox")
+    Prompt.OnClosed:Connect(function()
+        if Prompt.Running then
+            Prompt:EmulateInput()
+        end
+    end) TextBox:GetPropertyChangedSignal("Text"):Connect(function()
+        Prompt.Value = TextBox.Text
+    end) Prompt:GetPropertyChangedEvent("Value"):Connect(function()
+        if Prompt.Value ~= TextBox.Text then
+            TextBox.Text = Prompt.Value
+        end
+    end) Prompt.Value = TextBox.Text
+    local Descript = Instance.new("TextLabel",Prompt.Frame)
+    Descript.Text = Prompt.Description:Translate()
+    Descript.Name = "Description"
+    Prompt.DescriptionSize = GuiSize.TextPromptDescriptionTextSize
+    Prompt:GetPropertyChangedEvent("DescriptionSize"):Connect(function()
+        Descript.TextSize = Prompt.DescriptionSize
+    end) Descript.TextSize = Prompt.DescriptionSize
+    Descript.BackgroundTransparency = 1
+    Descript.TextWrapped = true
+    Prompt.DescriptionLabel = Descript
+    Prompt:SetReadOnly("DescriptionLabel")
+    local SpecDescriptionSizeBind = Classes:CreateBind()
+    SpecDescriptionSizeBind:Bind(function(...)
+        return TextPromptDescriptionSizeBind:Run(...)
+    end) Prompt.SpecialDescriptionSizeBind = SpecDescriptionSizeBind
+    Prompt:SetReadOnly("SpecialDescriptionSizeBind")
+    local Buttons = Instance.new("Frame",Prompt.Frame)
+    Buttons.Name = "Buttons"
+    Buttons.BackgroundTransparency = 1
+    Prompt.Buttons = Buttons
+    Prompt:SetReadOnly("Buttons")
+    local confirmButton = Instance.new("TextButton",Buttons)
+    confirmButton.Name = "Confirm"
+    confirmButton.AnchorPoint = Vector2.new(1,0)
+    confirmButton.Position = UDim2.new(1,0,0,0)
+    confirmButton.TextScaled = true
+    confirmButton.Activated:Connect(function()
+        Prompt:EmulateInput(TextBox.Text)
+    end) Prompt.ConfirmButton = confirmButton
+    Prompt:SetReadOnly("ConfirmButton")
+    local confirmTranslator = Classes:CreateTranslator("Confirm")
+    confirmTranslator:Load{ --#LANG_REQUIRED
+        ru="Подтвердить",
+        en="Confirm"
+    } confirmTranslator.TranslateValueChanged:Connect(function()
+        confirmButton.Text = confirmTranslator:Translate()
+    end) confirmButton.Text = confirmTranslator:Translate()
+    Prompt.ConfirmText = confirmTranslator
+    Prompt:SetReadOnly("ConfirmText")
+    Prompt.SpecialColors:GetColorChangedSignal("OnTWindowConfirmButtonColor"):Connect(function()
+        confirmButton.BackgroundColor3 = Prompt.SpecialColors:GetColor("OnTWindowConfirmButtonColor")
+    end) confirmButton.BackgroundColor3 = Prompt.SpecialColors:GetColor("OnTWindowConfirmButtonColor")
+    Prompt.SpecialColors:GetColorChangedSignal("OnTWindowConfirmButtonTextColor"):Connect(function()
+        confirmButton.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowConfirmButtonTextColor")
+    end) confirmButton.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowConfirmButtonTextColor")
+    Prompt.CancelEnabled = true
+    local cancelButton = Instance.new("TextButton",Buttons)
+    cancelButton.Name = "Cancel"
+    cancelButton.Size = UDim2.new(0.5,0,1,0)
+    cancelButton.TextScaled = true
+    cancelButton.Activated:Connect(function()
+        Prompt:EmulateInput()
+    end) Prompt.CancelButton = cancelButton
+    Prompt:SetReadOnly("CancelButton")
+    local cancelTranslator = Classes:CreateTranslator("Cancel")
+    cancelTranslator:Load{ --#LANG_REQUIRED
+        ru="Отменить",
+        en="Cancel"
+    } cancelTranslator.TranslateValueChanged:Connect(function()
+        cancelButton.Text = cancelTranslator:Translate()
+    end) cancelButton.Text = cancelTranslator:Translate()
+    Prompt.SpecialColors:GetColorChangedSignal("OnTWindowCancelButtonColor"):Connect(function()
+        cancelButton.BackgroundColor3 = Prompt.SpecialColors:GetColor("OnTWindowCancelButtonColor")
+    end) cancelButton.BackgroundColor3 = Prompt.SpecialColors:GetColor("OnTWindowCancelButtonColor")
+    Prompt.SpecialColors:GetColorChangedSignal("OnTWindowCancelButtonTextColor"):Connect(function()
+        cancelButton.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowCancelButtonTextColor")
+    end) cancelButton.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowCancelButtonTextColor")
+    Prompt.CancelText = cancelTranslator
+    Prompt:SetReadOnly("CancelText")
+    local function cancelRefresh()
+        Prompt.UserCanClose = Prompt.CancelEnabled
+        if Prompt.CancelEnabled then
+            confirmButton.Size = UDim2.new(0.5,0,1,0)
+        else confirmButton.Size = UDim2.new(1,0,1,0)
+        end
+    end cancelRefresh()
+    Prompt:GetPropertyChangedEvent("CancelEnabled"):Connect(cancelRefresh)
+    --Buttons.BackgroundTransparency = 1
+    local function refreshSize()
+        local YPos:UDim = GuiSize.PromptYIndent
+        local xAnch = GuiSize.TextPromptXAnchor
+        TextBox.Position = UDim2.new(UDim.new(xAnch,0),YPos)
+        TextBox.AnchorPoint = Vector2.new(xAnch,0)
         TextBox.Size = GuiSize.TextBoxPromptSize
-    end) TextBox.Size = GuiSize.TextBoxPromptSize
+        YPos += TextBox.Size.Y
+        YPos = SpecDescriptionSizeBind:Run(Prompt,YPos)
+        if typeof(YPos)=="UDim" then
+            Buttons.Position = UDim2.new(UDim.new(xAnch,0),YPos)
+            Buttons.Size = GuiSize.TextPromptButtonsSize
+            Buttons.AnchorPoint = Vector2.new(xAnch,0)
+            YPos += Buttons.Size.Y
+            Prompt.Size = UDim2.new(Prompt.Size.X,YPos+GuiSize.PromptYIndent)
+        end
+    end refreshSize()
+    TextPromptDescriptionSizeBind.OnBinded:Connect(refreshSize)
+    SpecDescriptionSizeBind.OnBinded:Connect(refreshSize)
+    GuiSize:GetPropertyChangedEvent("PromptYIndent"):Connect(refreshSize)
+    GuiSize:GetPropertyChangedEvent("TextPromptXAnchor"):Connect(refreshSize)
+    GuiSize:GetPropertyChangedEvent("TextPromptButtonsSize"):Connect(refreshSize)
+    GuiSize:GetPropertyChangedEvent("TextBoxPromptSize"):Connect(refreshSize)
+    Prompt.Description.TranslateValueChanged:Connect(function()
+        Descript.Text = Prompt.Description:Translate()
+        refreshSize()
+    end)
     Prompt.SpecialColors:GetColorChangedSignal("OnTWindowTextBoxBackgroundColor"):Connect(function()
         TextBox.BackgroundColor3 = Prompt.SpecialColors:GetColor("OnTWindowTextBoxBackgroundColor")
     end) TextBox.BackgroundColor3 = Prompt.SpecialColors:GetColor("OnTWindowTextBoxBackgroundColor")
+    Prompt.SpecialColors:GetColorChangedSignal("OnTWindowTextBoxTextColor"):Connect(function()
+        TextBox.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowTextBoxTextColor")
+    end) TextBox.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowTextBoxTextColor")
+    Prompt.SpecialColors:GetColorChangedSignal("OnTWindowTextColor"):Connect(function()
+        Descript.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowTextColor")
+    end) Descript.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowTextColor")
     return Prompt
-end Prompts:CreateTextPrompt("TestPrompt","BETA","Testing for TextPrompt")
+end TextPromptDescriptionSizeBind:Bind(function(TPrompt,YPos:UDim)
+    if not TPrompt then logger:critical_error("TextPrompt is incorrect") TPrompt=Prompts:CreateTextPrompt() end
+    local desc:TextLabel = TPrompt.DescriptionLabel
+    local GetTextBoundsParams = Instance.new("GetTextBoundsParams")
+    GetTextBoundsParams.Width = desc.AbsoluteSize.X
+    GetTextBoundsParams.Font = desc.FontFace
+    GetTextBoundsParams.RichText = desc.RichText
+    GetTextBoundsParams.Text = desc.Text--.."\n"
+    GetTextBoundsParams.Size = desc.TextSize
+    local offset = TextService:GetTextBoundsAsync(GetTextBoundsParams)
+    local sizeYUdim = UDim.new(0,offset.Y+1)
+    desc.Position = UDim2.new(UDim.new(0,0),YPos)
+    desc.Size = UDim2.new(UDim.new(1,0),sizeYUdim)
+    return desc.Position.Y+sizeYUdim
+end)
 -- #FIND_POINT Configs Window ------------------
+local ConfigsListRefresh
 local ConfigsWindow = Classes:CreateTWindow("Configs",{ --LANG_REQUIRED
     ru="Конфигурации",
     en="Configurations",
@@ -3047,6 +3196,33 @@ local ConfigsButtons = Instance.new("Frame",ConfigsFrame)
 ConfigsButtons.BackgroundTransparency = 1
 ConfigsButtons.AnchorPoint = Vector2.new(0,1)
 ConfigsButtons.Position = UDim2.new(0,0,1,0)
+local CreateConfigButton = Instance.new("TextButton",ConfigsButtons)
+CreateConfigButton.Name = "Create"
+CreateConfigButton.Text = "+"
+CreateConfigButton.TextScaled = true
+Instance.new("UICorner",CreateConfigButton).CornerRadius = UDim.new(1,0)
+ConfigsWindow.SpecialColors:GetColorChangedSignal("ButtonBackground"):Connect(function()
+    CreateConfigButton.BackgroundColor3 = ConfigsWindow.SpecialColors:GetColor("ButtonBackground")
+end) CreateConfigButton.BackgroundColor3 = ConfigsWindow.SpecialColors:GetColor("ButtonBackground")
+ConfigsWindow.SpecialColors:GetColorChangedSignal("TextColor"):Connect(function()
+    CreateConfigButton.TextColor3 = ConfigsWindow.SpecialColors:GetColor("TextColor")
+end) CreateConfigButton.TextColor3 = ConfigsWindow.SpecialColors:GetColor("TextColor")
+local CreateConfigNamePrompt = Prompts:CreateTextPrompt("NewConfigName",{ --#LANG_REQUIRED
+    ru="Создание конфига",
+    en="Config creating"
+},{ --#LANG_REQUIRED
+    ru="Введи имя для новой конфигурации",
+    en="Enter name for a new configuration"
+},true) CreateConfigNamePrompt.ConfigSavingEnabled = false
+CreateConfigNamePrompt:SetReadOnly("ConfigSavingEnabled")
+CreateConfigButton.Activated:Connect(function()
+    if not SavesIsSupported or CreateConfigNamePrompt.Running then return end
+    local name = CreateConfigNamePrompt:Run()
+    if name then
+        local res = ControlCfg:Create(name)
+        ConfigsListRefresh()
+    end
+end)
 local ConfigsSelectedFrame = Instance.new("Frame",ConfigsWindow.Frame)
 ConfigsSelectedFrame.Position = UDim2.new(1,0,0,0)
 ConfigsSelectedFrame.AnchorPoint = Vector2.new(1,0)
@@ -3061,8 +3237,8 @@ local function CfgWindowRefresh()
     ConfigsScF.Size = UDim2.new(UDim.new(1,0),UDim.new(1,0)-GuiSize.ConfigsWindowConfigsSize)
     ConfigsButtons.Size = UDim2.new(UDim.new(1,0),GuiSize.ConfigsWindowConfigsSize)
     for k,v:ImageButton in ConfigsButtons:GetChildren() do
-        if v:IsA("ImageButton") then
-            v.Size = UDim2.new(UDim.new(0,ConfigsButtons.AbsoluteSize.Y),GuiSize.ConfigsWindowConfigsSize)
+        if v:IsA("ImageButton") or v:IsA("TextButton") then
+            v.Size = UDim2.new(0,ConfigsButtons.AbsoluteSize.Y,1,0)
             v.Position = UDim2.new(0,(ConfigsButtons.AbsoluteSize.Y+3)*(k-1),0,0)
         end
     end ConfigsFrame.Size = UDim2.new(GuiSize.ConfigsWindowConfigsFrameSize,UDim.new(1,0))
@@ -3075,7 +3251,7 @@ GuiSize:GetPropertyChangedEvent("ConfigsWindowConfigsFrameSize"):Connect(CfgWind
 GuiSize:GetPropertyChangedEvent("ConfigsWindowSize"):Connect(CfgWindowRefresh)
 local cfglistrefreshing = false
 Instance.new("UIListLayout",ConfigsScF)
-local function ConfigsListRefresh()
+function ConfigsListRefresh()
     if cfglistrefreshing then return end
     cfglistrefreshing = true
     RunService.PreRender:Wait()
@@ -3328,8 +3504,7 @@ local Languages = Settings:CreateSequence("LanguagePreferences","Language (Яз�
     if not refreshingButtonPos then
         refreshingLang = true
         TimGui:SetLanguagePreferences(langs)
-        print(SettingsSave:SetToSave("LangPreferences",langs))
-        print(11)
+        SettingsSave:SetToSave("LangPreferences",langs)
     end
 end,SupportedLanguages) Languages.ConfigSavingEnabled = false
 local loadedLangPrefs = SettingsSave:GetFromSave("LangPreferences")
@@ -3349,12 +3524,21 @@ onLanguageChanged.Event:Connect(function()
     else refreshingLang = false
     end
 end)
-Settings:CreateButton("Configurator",{--#LANG_REQUIRED
+local configuratorButton = Settings:CreateButton("Configurator",nil,function()
+    ConfigsWindow.Opened = not ConfigsWindow.Opened
+end) local configuratorTitleClosed = {--#LANG_REQUIRED
     en="Open configurator",
     ru="Открыть конфигуратор"
-},function()
-    ConfigsWindow.Opened = not ConfigsWindow.Opened
-end)
+} local configuratorTitleOpened = {--#LANG_REQUIRED
+    en="Close configurator",
+    ru="Закрыть конфигуратор"
+} configuratorButton.Title:Load(configuratorTitleClosed)
+ConfigsWindow:GetPropertyChangedEvent("Opened"):Connect(function()
+    if ConfigsWindow.Opened then
+        configuratorButton.Title:Load(configuratorTitleOpened)
+    else configuratorButton.Title:Load(configuratorTitleClosed)
+    end
+end) configuratorButton.Visible = SavesIsSupported
 
 Settings:CreateText("Testing saving objects in config:")
 Settings:CreateToggle("TESTING CFG")

@@ -6,8 +6,8 @@
     "deprecated":false,
     "properties":{}, 
     "methods":{
-        "CreateGroup":{
-            "description":"Создаёт группу",
+        "CreateTextPrompt":{
+            "description":"Создаёт текстовый промпт",
             "args":[{
                     "name":"Name",
                     "type":"string",
@@ -19,134 +19,19 @@
                     "description":"Название которое видит пользователь, если nil берёт из Name, string-только англ",
                     "required":false
                 },{
-                    "name":"Parent",
-                    "type":"GUIArchitecture",
-                    "description":"Parent для новой группы",
+                    "name":"disableDefaultConfigSettingsRefresh",
+                    "type":"boolean",
+                    "description":"Выключены ли стандартные настройки сохранения",
                     "required":false
                 }
             ],
             "return":[{
                     "name":"response",
-                    "type":"TGroup",
-                    "description":"Глобальная группа"
+                    "type":"TextPrompt",
+                    "description":"Текстовый промпт"
                 }
             ], "deprecated":false
-        },"CreateToggle":{
-            "description":"Создаёт переключатель",
-            "args":[{
-                    "name":"Name",
-                    "type":"string",
-                    "description":"Имя переключателя",
-                    "required":true
-                },{
-                    "name":"Title",
-                    "type":"string | Translator | {langCode=string}",
-                    "description":"Название которое видит пользователь, если nil берёт из Name, string-только англ",
-                    "required":false
-                },{
-                    "name":"Parent",
-                    "type":"GUIArchitecture",
-                    "description":"Parent для новой переключателя",
-                    "required":false
-                },{
-                    "name":"function",
-                    "type":"(TButton)->()",
-                    "description":"Функция, для установки на клик, запускается с этой же кнопкой(нужно, чтобы не нагружать код лишними переменными)",
-                    "required":false
-                }
-            ],
-            "return":[{
-                    "name":"response",
-                    "type":"TToggle",
-                    "description":"Переключатель"
-                }
-            ], "deprecated":false
-        },"CreateButton":{
-            "description":"Создаёт кнопку",
-            "args":[{
-                    "name":"Name",
-                    "type":"string",
-                    "description":"Имя кнопки",
-                    "required":true
-                },{
-                    "name":"Title",
-                    "type":"string | Translator | {langCode=string}",
-                    "description":"Название которое видит пользователь, если nil берёт из Name, string-только англ",
-                    "required":false
-                },{
-                    "name":"Parent",
-                    "type":"GUIArchitecture",
-                    "description":"Parent для новой кнопки",
-                    "required":false
-                },{
-                    "name":"function",
-                    "type":"(TButton)->()",
-                    "description":"Функция, для установки на клик, запускается с этой же кнопкой(нужно, чтобы не нагружать код лишними переменными)",
-                    "required":false
-                }
-            ],
-            "return":[{
-                    "name":"response",
-                    "type":"TButton",
-                    "description":"Кнопка"
-                }
-            ], "deprecated":false
-        },"CreateText":{
-            "description":"Создаёт текст",
-            "args":[{
-                    "name":"Name",
-                    "type":"string",
-                    "description":"Имя текста",
-                    "required":true
-                },{
-                    "name":"Title",
-                    "type":"string | Translator | {langCode=string}",
-                    "description":"Текст который видит пользователь, если nil берёт из Name, string-только англ",
-                    "required":false
-                },{
-                    "name":"Parent",
-                    "type":"GUIArchitecture",
-                    "description":"Parent для нового текста",
-                    "required":false
-                }
-            ],
-            "return":[{
-                    "name":"response",
-                    "type":"TText",
-                    "description":"Текст"
-                }
-            ], "deprecated":false
-        },"CreateTextbox":{
-            "description":"Создаёт поле для ввода данных(TextBox), данные могут быть не только текстовыми",
-            "args":[{
-                    "name":"Name",
-                    "type":"string",
-                    "description":"Имя",
-                    "required":true
-                },{
-                    "name":"Title",
-                    "type":"string | Translator | {langCode=string}",
-                    "description":"Название которое видит пользователь, если nil берёт из Name, string-только англ",
-                    "required":false
-                },{
-                    "name":"Parent",
-                    "type":"GUIArchitecture",
-                    "description":"Parent для нового для ввода данных",
-                    "required":false
-                },{
-                    "name":"function",
-                    "type":"(TToggle)->()",
-                    "description":"Функция, для установки на смену значения, запускается с этим же TTextBox(нужно, чтобы не нагружать код лишними переменными)",
-                    "required":false
-                }
-            ],
-            "return":[{
-                    "name":"response",
-                    "type":"TTextBox",
-                    "description":"Поле для ввода данных"
-                }
-            ], "deprecated":false
-        }
+        }     
     }, 
     "events":{}
 }

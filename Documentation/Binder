@@ -89,6 +89,12 @@
             "description":"Анимация стрелочки для открытия/закрытия TWindow. Параметры: TWindow:TWindow.",
             "canChange":false,
             "deprecated":false
+        },"TextPromptDescriptionSizeBind":{
+            "type":"class",
+            "class":"Bind",
+            "description":"Бинд для установки размера описанию TextPrompt'а. Параметры: TextPrompt:TextPrompt, startYPos:UDim(Позиция начала описания). Должно вернуть самую нижнюю точку y(UDim)",
+            "canChange":false,
+            "deprecated":false
         }
     }, "methods":{
         "New":{

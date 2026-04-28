@@ -15,7 +15,7 @@
             "description":"В какой группе/архитектуре находится, можно менять на nil. При смене появляется в самом низу группы",
             "canChange":true,
             "deprecated":false
-        },"Tittle":{
+        },"Title":{
             "type":"Translator",
             "description":"Название кнопки, которое видит пользователь",
             "canChange":false,

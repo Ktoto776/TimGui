@@ -125,6 +125,31 @@
             "description":"Размер заголовка(названия) выбранного конфига",
             "canChange":true,
             "deprecated":false
+        },"PromptYIndent":{
+            "type":"UDim",
+            "description":"Отступ промта сверху и снизу",
+            "canChange":true,
+            "deprecated":false
+        },"TextBoxPromptSize":{
+            "type":"UDim2",
+            "description":"Размер TextBox'а в TextPrompt'е",
+            "canChange":true,
+            "deprecated":false
+        },"TextPromptButtonsSize":{
+            "type":"UDim2",
+            "description":"Размер Frame с кнопками в TextPrompt'е",
+            "canChange":true,
+            "deprecated":false
+        },"TextPromptXAnchor":{
+            "type":"number",
+            "description":"XAlign, к чему прикрепить кнопки и TextBox в TextPrompt(0-лево,0.5-центр,1-право)",
+            "canChange":true,
+            "deprecated":false
+        },"TextPromptDescriptionTextSize":{
+            "type":"number",
+            "description":"Размер текста для описания в TextPrompt",
+            "canChange":true,
+            "deprecated":false
         }
     }, "methods":{}, 
     "events":{}
