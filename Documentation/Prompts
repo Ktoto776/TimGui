@@ -11,12 +11,17 @@
             "args":[{
                     "name":"Name",
                     "type":"string",
-                    "description":"Имя группы",
+                    "description":"Имя промпта",
                     "required":true
                 },{
                     "name":"Title",
                     "type":"string | Translator | {langCode=string}",
                     "description":"Название которое видит пользователь, если nil берёт из Name, string-только англ",
+                    "required":false
+                },{
+                    "name":"Description",
+                    "type":"string | Translator | {langCode=string}",
+                    "description":"Описание промпта",
                     "required":false
                 },{
                     "name":"disableDefaultConfigSettingsRefresh",
@@ -31,7 +36,37 @@
                     "description":"Текстовый промпт"
                 }
             ], "deprecated":false
-        }     
+        },"CreateConfirmationPrompt":{
+            "description":"Создаёт промпт-подтверждение",
+            "args":[{
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Имя группы",
+                    "required":true
+                },{
+                    "name":"Title",
+                    "type":"string | Translator | {langCode=string}",
+                    "description":"Название которое видит пользователь, если nil берёт из Name, string-только англ",
+                    "required":false
+                },{
+                    "name":"Description",
+                    "type":"string | Translator | {langCode=string}",
+                    "description":"Описание промпта",
+                    "required":false
+                },{
+                    "name":"disableDefaultConfigSettingsRefresh",
+                    "type":"boolean",
+                    "description":"Выключены ли стандартные настройки сохранения",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"ConfirmationPrompt",
+                    "description":"Текстовый промпт"
+                }
+            ], "deprecated":false
+        } 
     }, 
     "events":{}
 }

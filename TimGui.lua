@@ -609,10 +609,16 @@ GuiSize.TWindowHeaderCornerRadius = UDim.new(0,12)
 GuiSize.TWindowCornerRadius = UDim.new(0,12)
 -- Prompts ------------------
 GuiSize.PromptYIndent = UDim.new(0,5)
+--TextPrompt
 GuiSize.TextBoxPromptSize = UDim2.new(0.8,0,0,50)
 GuiSize.TextPromptButtonsSize = UDim2.new(0.8,0,0,50)
 GuiSize.TextPromptXAnchor = 0.5
 GuiSize.TextPromptDescriptionTextSize = 15
+--ConfirmPrompt
+GuiSize.ConfirmBoxPromptSize = UDim2.new(0.8,0,0,50)
+GuiSize.ConfirmPromptButtonsSize = UDim2.new(0.8,0,0,50)
+GuiSize.ConfirmPromptXAnchor = 0.5
+GuiSize.ConfirmPromptDescriptionTextSize = 15
 -- ConfigWindow -------------
 GuiSize.ConfigsSeparatorSize = UDim.new(0,1)
 GuiSize.ConfigsWindowConfigsSize = UDim.new(0,30)
@@ -2531,9 +2537,15 @@ end Configs.OnLoaded = onLoadConfigEvent.Event
 Configs:SetReadOnly("OnLoaded")
 Configs.OnConfigDataChanged = onConfigChanged.Event
 Configs:SetReadOnly("OnConfigDataChanged")
+local OnConfigListChanged = Instance.new("BindableEvent")
+local CFGList = {}
 onConfigChanged.Event:Connect(function()
-    if SavesIsSupported then
-        writefile(ConfigsPath..loadedConfig,HttpService:JSONEncode(config))
+    if SavesIsSupported and loadedConfig then
+        local path = ConfigsPath..loadedConfig
+        if not table.find(CFGList,loadedConfig) then
+            table.insert(CFGList,loadedConfig)
+            OnConfigListChanged:Fire()
+        end writefile(path,HttpService:JSONEncode(config))
     end
 end)
 function ControlCfg:GetConfigData(Name:string)
@@ -2546,20 +2558,22 @@ function ControlCfg:GetConfigData(Name:string)
             end)
             if s then
                 local function loadNonError(data,def)
-                    for k,v in table.clone(def) do
+                    for k,v in def do
                         if type(data[k])~=type(v) then
-                            data[k] = v
+                            if type(v)=="table" then
+                                data[k] = table.clone(v)
+                            else data[k] = v
+                            end
                         elseif type(v)=="table" then
                             loadNonError(data[k],v)
                         end
                     end return data
-                end return loadNonError(cfg,DefaultConfig)
+                end return loadNonError(cfg,table.clone(DefaultConfig))
             else logger:error("GetConfigData","Error to load "..Name..":\n"..tostring(cfg))
             end
         end
     end
-end local CFGList = {}
-if SavesIsSupported then
+end if SavesIsSupported then
     for k,v:string in listfiles(ConfigsPath) do
         local vv = v:gsub("\\","/"):split("/")
         CFGList[k] = vv[#vv]
@@ -2567,6 +2581,18 @@ if SavesIsSupported then
 end function ControlCfg:GetList()
     return table.clone(CFGList)
 end logger:info("ConfigList",ControlCfg:GetList())
+function ControlCfg:GetEmpty()
+    local clone
+    function clone(tab)
+        local res = {}
+        for k,v in tab do
+            if type(v)=="table" then
+                res[k] = clone(v)
+            else res[k] = v
+            end
+        end return res
+    end return clone(DefaultConfig)
+end
 function ControlCfg:Load(Name:string)
     if Name==nil then
         loadedConfig = Name
@@ -2581,22 +2607,43 @@ function ControlCfg:Load(Name:string)
         if SavesIsSupported then
             loadedConfig = Name
             logger:info("ControlCfg:Load","Loading '"..Name.."'")
-            config = ControlCfg:GetConfigData(Name) or table.clone(DefaultConfig)
+            config = ControlCfg:GetConfigData(Name) or ControlCfg:GetEmpty()
             SettingsSave:SetToSave("LoadedConfig",Name)
             onConfigSettingsChanged:Fire()
             onLoadConfigEvent:Fire(Name)
         end return true
     end
-end function ControlCfg:Create(Name:string)
-    if SavesIsSupported then
-        local path = ConfigsPath..sanitizeFilename(Name)
-        if path and not isfile(path) then
+end ControlCfg.OnConfigListChanged = OnConfigListChanged.Event
+ControlCfg:SetReadOnly("OnConfigListChanged")
+function ControlCfg:Create(Name:string)
+    Name = sanitizeFilename(Name)
+    if SavesIsSupported and Name then
+        local path = ConfigsPath..Name
+        if not isfile(path) then
             local s,err = pcall(function()
                 writefile(path,"{}")
             end) if not s then
                 logger:error("ControlCfg:Create","Error to create cfg:\n"..tostring(err))
             else table.insert(CFGList,Name)
+                OnConfigListChanged:Fire()
             end return s
+        end
+    end
+end local OnConfigDeleted = Instance.new("BindableEvent")
+ControlCfg.OnConfigDeleted = OnConfigDeleted.Event
+ControlCfg:SetReadOnly("OnConfigDeleted")
+function ControlCfg:Delete(Name:string)
+    Name = sanitizeFilename(Name)
+    if SavesIsSupported and Name then
+        local path = ConfigsPath..Name
+        if isfile(path) then
+            delfile(path)
+            local cfgPos = table.find(CFGList,Name)
+            if cfgPos then table.remove(CFGList,cfgPos) end
+            if loadedConfig==Name then
+                ControlCfg:Load("Default")
+            end OnConfigListChanged:Fire()
+            OnConfigDeleted:Fire(Name)
         end
     end
 end
@@ -2671,17 +2718,20 @@ function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?,disab
     WindowFrame.AnchorPoint = Vector2.new(0.5,0.5)
     WindowFrame.Position = UDim2.new(0.5,0,0.5,0)
     WindowFrame.BackgroundTransparency = 1
+    local focusingZIndexEnabled = false
     WindowFrame.DescendantAdded:Connect(function(Inst:GuiObject)
         if Inst:IsA("GuiObject") then
-            local order = Window.DisplayOrder-1
-            if FocusedWindow==Window then
+            local order = (Window.DisplayOrder-1)*2
+            if FocusedWindow==Window and focusingZIndexEnabled then
                 order += 1
             end Inst.ZIndex += order
         end
+    end) task.spawn(function()
+        task.wait() focusingZIndexEnabled = true
     end) Window.DisplayOrder = 1
     local oldDisplayOrder = Window.DisplayOrder
     Window:GetPropertyChangedEvent("DisplayOrder"):Connect(function()
-        addZIndexToFrame(WindowFrame,Window.DisplayOrder-oldDisplayOrder)
+        addZIndexToFrame(WindowFrame,(Window.DisplayOrder-oldDisplayOrder)*2)
         oldDisplayOrder = Window.DisplayOrder
     end)
     Window.WindowFrame = WindowFrame
@@ -3029,7 +3079,6 @@ Binder:SetReadOnly("TextPromptDescriptionSizeBind")
 function Prompts:CreateTextPrompt(Name:string,Title:string | {[string]: string}?,Description:string | {[string]: string}?,disableDefaultConfigSettingsRefresh:boolean?)
     local Prompt = Classes:CreatePrompt("Text",Name,Title,Description,disableDefaultConfigSettingsRefresh)
     Prompt:AddClassName("TextPrompt")
-    Prompt.CanHide = true
     local TextBox = Instance.new("TextBox",Prompt.Frame)
     TextBox.TextScaled = true
     TextBox.ClearTextOnFocus = false
@@ -3124,7 +3173,10 @@ function Prompts:CreateTextPrompt(Name:string,Title:string | {[string]: string}?
         end
     end cancelRefresh()
     Prompt:GetPropertyChangedEvent("CancelEnabled"):Connect(cancelRefresh)
-    --Buttons.BackgroundTransparency = 1
+    Buttons.BackgroundTransparency = 1
+    local SizeRefreshed = Instance.new("BindableEvent")
+    Prompt.OnSizeRefreshed = SizeRefreshed.Event
+    Prompt:SetReadOnly("OnSizeRefreshed")
     local function refreshSize()
         local YPos:UDim = GuiSize.PromptYIndent
         local xAnch = GuiSize.TextPromptXAnchor
@@ -3139,7 +3191,7 @@ function Prompts:CreateTextPrompt(Name:string,Title:string | {[string]: string}?
             Buttons.AnchorPoint = Vector2.new(xAnch,0)
             YPos += Buttons.Size.Y
             Prompt.Size = UDim2.new(Prompt.Size.X,YPos+GuiSize.PromptYIndent)
-        end
+        end SizeRefreshed:Fire()
     end refreshSize()
     TextPromptDescriptionSizeBind.OnBinded:Connect(refreshSize)
     SpecDescriptionSizeBind.OnBinded:Connect(refreshSize)
@@ -3161,9 +3213,9 @@ function Prompts:CreateTextPrompt(Name:string,Title:string | {[string]: string}?
         Descript.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowTextColor")
     end) Descript.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowTextColor")
     return Prompt
-end TextPromptDescriptionSizeBind:Bind(function(TPrompt,YPos:UDim)
-    if not TPrompt then logger:critical_error("TextPrompt is incorrect") TPrompt=Prompts:CreateTextPrompt() end
-    local desc:TextLabel = TPrompt.DescriptionLabel
+end local function DefaultPromptDescSizeF(Prompt,YPos:UDim)
+    if not Prompt then logger:critical_error("Prompt is incorrect") Prompt=Prompts:CreateTextPrompt() end
+    local desc:TextLabel = Prompt.DescriptionLabel
     local GetTextBoundsParams = Instance.new("GetTextBoundsParams")
     GetTextBoundsParams.Width = desc.AbsoluteSize.X
     GetTextBoundsParams.Font = desc.FontFace
@@ -3172,12 +3224,127 @@ end TextPromptDescriptionSizeBind:Bind(function(TPrompt,YPos:UDim)
     GetTextBoundsParams.Size = desc.TextSize
     local offset = TextService:GetTextBoundsAsync(GetTextBoundsParams)
     local sizeYUdim = UDim.new(0,offset.Y+1)
-    desc.Position = UDim2.new(UDim.new(0,0),YPos)
+    if desc.Text=="" then
+        sizeYUdim = UDim.new(0,0)
+    end desc.Position = UDim2.new(UDim.new(0,0),YPos)
     desc.Size = UDim2.new(UDim.new(1,0),sizeYUdim)
     return desc.Position.Y+sizeYUdim
-end)
+end TextPromptDescriptionSizeBind:Bind(DefaultPromptDescSizeF)
+local ConfirmationPromptDescriptionSizeBind = Classes:CreateBind()
+Binder.ConfirmationPromptDescriptionSizeBind = ConfirmationPromptDescriptionSizeBind
+Binder:SetReadOnly("ConfirmationPromptDescriptionSizeBind")
+function Prompts:CreateConfirmationPrompt(Name:string,Title:string | {[string]: string}?,Description:string | {[string]: string}?,disableDefaultConfigSettingsRefresh:boolean?)
+    local Prompt = Classes:CreatePrompt("Confirmation",Name,Title,Description,disableDefaultConfigSettingsRefresh)
+    Prompt:AddClassName("ConfirmationPrompt")
+    Prompt.OnClosed:Connect(function()
+        if Prompt.Running then
+            Prompt:EmulateInput()
+        end
+    end)
+    local Descript = Instance.new("TextLabel",Prompt.Frame)
+    Descript.Text = Prompt.Description:Translate()
+    Descript.Name = "Description"
+    Prompt.DescriptionSize = GuiSize.ConfirmPromptDescriptionTextSize
+    Prompt:GetPropertyChangedEvent("DescriptionSize"):Connect(function()
+        Descript.TextSize = Prompt.DescriptionSize
+    end) Descript.TextSize = Prompt.DescriptionSize
+    Descript.BackgroundTransparency = 1
+    Descript.TextWrapped = true
+    Prompt.DescriptionLabel = Descript
+    Prompt:SetReadOnly("DescriptionLabel")
+    local SpecDescriptionSizeBind = Classes:CreateBind()
+    SpecDescriptionSizeBind:Bind(function(...)
+        return ConfirmationPromptDescriptionSizeBind:Run(...)
+    end) Prompt.SpecialDescriptionSizeBind = SpecDescriptionSizeBind
+    Prompt:SetReadOnly("SpecialDescriptionSizeBind")
+    local Buttons = Instance.new("Frame",Prompt.Frame)
+    Buttons.Name = "Buttons"
+    Buttons.BackgroundTransparency = 1
+    Prompt.Buttons = Buttons
+    Prompt:SetReadOnly("Buttons")
+    local confirmButton = Instance.new("TextButton",Buttons)
+    confirmButton.Name = "Confirm"
+    confirmButton.AnchorPoint = Vector2.new(1,0)
+    confirmButton.Position = UDim2.new(1,0,0,0)
+    confirmButton.Size = UDim2.new(0.5,0,1,0)
+    confirmButton.TextScaled = true
+    confirmButton.Activated:Connect(function()
+        Prompt:EmulateInput(true)
+    end) Prompt.ConfirmButton = confirmButton
+    Prompt:SetReadOnly("ConfirmButton")
+    local confirmTranslator = Classes:CreateTranslator("Confirm")
+    confirmTranslator:Load{ --#LANG_REQUIRED
+        ru="Подтвердить",
+        en="Confirm"
+    } confirmTranslator.TranslateValueChanged:Connect(function()
+        confirmButton.Text = confirmTranslator:Translate()
+    end) confirmButton.Text = confirmTranslator:Translate()
+    Prompt.ConfirmText = confirmTranslator
+    Prompt:SetReadOnly("ConfirmText")
+    Prompt.SpecialColors:GetColorChangedSignal("OnTWindowConfirmButtonColor"):Connect(function()
+        confirmButton.BackgroundColor3 = Prompt.SpecialColors:GetColor("OnTWindowConfirmButtonColor")
+    end) confirmButton.BackgroundColor3 = Prompt.SpecialColors:GetColor("OnTWindowConfirmButtonColor")
+    Prompt.SpecialColors:GetColorChangedSignal("OnTWindowConfirmButtonTextColor"):Connect(function()
+        confirmButton.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowConfirmButtonTextColor")
+    end) confirmButton.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowConfirmButtonTextColor")
+    Prompt.CancelEnabled = true
+    local cancelButton = Instance.new("TextButton",Buttons)
+    cancelButton.Name = "Reject"
+    cancelButton.Size = UDim2.new(0.5,0,1,0)
+    cancelButton.TextScaled = true
+    cancelButton.Activated:Connect(function()
+        Prompt:EmulateInput(false)
+    end) Prompt.RejectButton = cancelButton
+    Prompt:SetReadOnly("RejectButton")
+    local cancelTranslator = Classes:CreateTranslator("Reject")
+    cancelTranslator:Load{ --#LANG_REQUIRED
+        ru="Отклонить",
+        en="Reject"
+    } cancelTranslator.TranslateValueChanged:Connect(function()
+        cancelButton.Text = cancelTranslator:Translate()
+    end) cancelButton.Text = cancelTranslator:Translate()
+    Prompt.SpecialColors:GetColorChangedSignal("OnTWindowCancelButtonColor"):Connect(function()
+        cancelButton.BackgroundColor3 = Prompt.SpecialColors:GetColor("OnTWindowCancelButtonColor")
+    end) cancelButton.BackgroundColor3 = Prompt.SpecialColors:GetColor("OnTWindowCancelButtonColor")
+    Prompt.SpecialColors:GetColorChangedSignal("OnTWindowCancelButtonTextColor"):Connect(function()
+        cancelButton.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowCancelButtonTextColor")
+    end) cancelButton.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowCancelButtonTextColor")
+    Prompt.RejectText = cancelTranslator
+    Prompt:SetReadOnly("RejectText")
+    local function cancelRefresh()
+        Prompt.UserCanClose = Prompt.CancelEnabled
+    end cancelRefresh()
+    Prompt:GetPropertyChangedEvent("CancelEnabled"):Connect(cancelRefresh)
+    Buttons.BackgroundTransparency = 1
+    local SizeRefreshed = Instance.new("BindableEvent")
+    Prompt.OnSizeRefreshed = SizeRefreshed.Event
+    Prompt:SetReadOnly("OnSizeRefreshed")
+    local function refreshSize()
+        local YPos:UDim = GuiSize.PromptYIndent
+        local xAnch = GuiSize.ConfirmPromptXAnchor
+        YPos = SpecDescriptionSizeBind:Run(Prompt,YPos)
+        if typeof(YPos)=="UDim" then
+            Buttons.Position = UDim2.new(UDim.new(xAnch,0),YPos)
+            Buttons.Size = GuiSize.ConfirmPromptButtonsSize
+            Buttons.AnchorPoint = Vector2.new(xAnch,0)
+            YPos += Buttons.Size.Y
+            Prompt.Size = UDim2.new(Prompt.Size.X,YPos+GuiSize.PromptYIndent)
+        end SizeRefreshed:Fire()
+    end refreshSize()
+    TextPromptDescriptionSizeBind.OnBinded:Connect(refreshSize)
+    SpecDescriptionSizeBind.OnBinded:Connect(refreshSize)
+    GuiSize:GetPropertyChangedEvent("PromptYIndent"):Connect(refreshSize)
+    GuiSize:GetPropertyChangedEvent("ConfirmPromptXAnchor"):Connect(refreshSize)
+    GuiSize:GetPropertyChangedEvent("ConfirmPromptButtonsSize"):Connect(refreshSize)
+    Prompt.Description.TranslateValueChanged:Connect(function()
+        Descript.Text = Prompt.Description:Translate()
+        refreshSize()
+    end) Prompt.SpecialColors:GetColorChangedSignal("OnTWindowTextColor"):Connect(function()
+        Descript.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowTextColor")
+    end) Descript.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowTextColor")
+    return Prompt
+end ConfirmationPromptDescriptionSizeBind:Bind(DefaultPromptDescSizeF)
 -- #FIND_POINT Configs Window ------------------
-local ConfigsListRefresh
 local ConfigsWindow = Classes:CreateTWindow("Configs",{ --LANG_REQUIRED
     ru="Конфигурации",
     en="Configurations",
@@ -3217,13 +3384,12 @@ local CreateConfigNamePrompt = Prompts:CreateTextPrompt("NewConfigName",{ --#LAN
 CreateConfigNamePrompt:SetReadOnly("ConfigSavingEnabled")
 CreateConfigButton.Activated:Connect(function()
     if not SavesIsSupported or CreateConfigNamePrompt.Running then return end
+    CreateConfigNamePrompt:Move(ConfigsWindow.WindowFrame.Position)
     local name = CreateConfigNamePrompt:Run()
     if name then
         local res = ControlCfg:Create(name)
-        ConfigsListRefresh()
     end
-end)
-local ConfigsSelectedFrame = Instance.new("Frame",ConfigsWindow.Frame)
+end) local ConfigsSelectedFrame = Instance.new("Frame",ConfigsWindow.Frame)
 ConfigsSelectedFrame.Position = UDim2.new(1,0,0,0)
 ConfigsSelectedFrame.AnchorPoint = Vector2.new(1,0)
 ConfigsSelectedFrame.BackgroundTransparency = 1
@@ -3251,7 +3417,7 @@ GuiSize:GetPropertyChangedEvent("ConfigsWindowConfigsFrameSize"):Connect(CfgWind
 GuiSize:GetPropertyChangedEvent("ConfigsWindowSize"):Connect(CfgWindowRefresh)
 local cfglistrefreshing = false
 Instance.new("UIListLayout",ConfigsScF)
-function ConfigsListRefresh()
+local function ConfigsListRefresh()
     if cfglistrefreshing then return end
     cfglistrefreshing = true
     RunService.PreRender:Wait()
@@ -3288,6 +3454,7 @@ GuiSize:GetPropertyChangedEvent("ConfigsWindowConfigsSize"):Connect(ConfigsListR
 ConfigsWindow.SpecialColors:GetColorChangedSignal("ButtonBackground"):Connect(ConfigsListRefresh)
 ConfigsWindow.SpecialColors:GetColorChangedSignal("ConfigButtonSelectedBackground"):Connect(ConfigsListRefresh)
 ConfigsWindow.SpecialColors:GetColorChangedSignal("TextColor"):Connect(ConfigsListRefresh)
+OnConfigListChanged.Event:Connect(ConfigsListRefresh)
 local STitleConfig = Instance.new("TextLabel",ConfigsSelectedFrame)
 STitleConfig.TextScaled = true
 STitleConfig.BackgroundTransparency = 1
@@ -3374,10 +3541,32 @@ local function refreshOpenCFGTranslate()
 end Configs.OnLoaded:Connect(function()
     refreshOpenCFGTranslate()
     ConfigsListRefresh()
-end) ConfigToggle("AutoSaveValues",{ --#LANG_REQUIRED
+end) local DeleteConfigConfirmPrompt = Prompts:CreateConfirmationPrompt("DeleteConfigConfirm",{ --#LANG_REQUIRED
+    ru="Подтверждение для удаление конфига",
+    en="Confirmation config delete"
+},"",true)
+DeleteConfigConfirmPrompt.ConfigSavingEnabled = false
+DeleteConfigConfirmPrompt:SetReadOnly("ConfigSavingEnabled")
+local DeleteCFGButton,DeleteCFGTranslator = ConfigsCreateSettingsButton()
+DeleteCFGButton.Activated:Connect(function()
+    DeleteConfigConfirmPrompt:Move(ConfigsWindow.WindowFrame.Position)
+    DeleteConfigConfirmPrompt.Description:Load{ --#LANG_REQUIRED + Minecraft Bugrock reference
+        ru=`Удалить ли конфигурацию "{openedCfgName}"? Её больше НИКОГДА нельзя будет восстановить((очень) долго)`,
+        en=`Should I delete the configuration "{openedCfgName}"? You won't be able to restore it.`
+    } local isDel = DeleteConfigConfirmPrompt:Run()
+    if isDel then
+        ControlCfg:Delete(openedCfgName)
+    end
+end)
+DeleteCFGTranslator:Load{ --#LANG_REQUIRED
+    ru="Удалить",
+    en="Delete",
+}
+
+ConfigToggle("AutoSaveValues",{ --#LANG_REQUIRED
     ru="Автоматически сохранять значения",
     en="Auto save values",
-}) 
+})
 -- ConfigToggle("AutoSaveKeybinds",{ --#LANG_REQUIRED
 --     ru="Автоматически сохранять назначения клавиш(ПК)",
 --     en="Auto save Keybinds(PC)",
@@ -3400,6 +3589,11 @@ function ControlCfg:Open(name:string)
     end ConfigsSelectedFrame.Visible = openedCfg~=nil
     onOpenedConfigChange:Fire()
 end ControlCfg:Open(SettingsSave:GetFromSave("lastOpenedConfigName"))
+OnConfigDeleted.Event:Connect(function(Name)
+    if openedCfgName == Name then
+        ControlCfg:Open()
+    end
+end)
 -- #FIND_POINT Scripts ------------------
 local TScripts = {}
 local CreatedTScriptsSanitize = {}
@@ -3540,12 +3734,28 @@ ConfigsWindow:GetPropertyChangedEvent("Opened"):Connect(function()
     end
 end) configuratorButton.Visible = SavesIsSupported
 
-Settings:CreateText("Testing saving objects in config:")
-Settings:CreateToggle("TESTING CFG")
-Settings:CreateTextbox("Test cfg on Textbox")
-Settings:CreateTextbox("Test cfg on number box").InputType = "number"
+local testG = Groups:CreateGroup("Te",{
+    en="Test",
+    ru="Тест"
+})
+testG:CreateText("Tittle",{
+    en="Testing saving objects in config:",
+    ru="Тест сохранения в конфиг:"
+})
+testG:CreateToggle("TESTING CFG",{
+    en="Toggle",
+    ru="Переключатель"
+})
+testG:CreateTextbox("Test cfg on Textbox",{
+    en="Textbox",
+    ru="Текст коробка"
+})
+testG:CreateTextbox("Test cfg on number box",{
+    en="Number box",
+    ru="Число ящик"
+}).InputType = "number"
+task.wait(2.5)
 State:ResetToDefault()
-Groups:CreateGroup("Te")
 --[[
 План:
     Сделать старые функции:

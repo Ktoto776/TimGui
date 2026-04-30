@@ -28,6 +28,22 @@
                 }
             ], 
             "deprecated":false
+        },"Delete":{
+            "description":"Удаляет конфигурацию навсегда",
+            "args":[{
+                    "name":"CfgName",
+                    "type":"string",
+                    "description":"Название сохранения, если nil загружает без сохранения",
+                    "required":false
+                }
+            ],"return":[
+                {
+                    "name":"success",
+                    "type":"boolean",
+                    "description":"Успешно ли загружено(обычно nil если не найдено,false если ошибка чтения конфигурации)"
+                }
+            ], 
+            "deprecated":false
         },"Create":{
             "description":"Создаёт конфигурацию",
             "args":[{
@@ -44,6 +60,17 @@
                 }
             ], 
             "deprecated":false
+        },"GetEmpty":{
+            "description":"Возвращает пустую конфигурацию",
+            "args":[],
+            "return":[
+                {
+                    "name":"response",
+                    "type":"table",
+                    "description":"Пустая конфигурация"
+                }
+            ], 
+            "deprecated":false
         }
     }, 
     "events":{
@@ -54,6 +81,22 @@
             "args":[]
         },"OnClose":{
             "description":"Запускается если окно закрыто(.Opened=false)",
+            "type":"RBXScriptEvent",
+            "deprecated":false,
+            "args":[]
+        },"OnConfigDeleted":{
+            "description":"Запускается если конфиг был удалён",
+            "type":"RBXScriptEvent",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"CfgName",
+                    "type":"string",
+                    "description":"Имя конфигурации"
+                }
+            ]
+        },"OnConfigListChanged":{
+            "description":"Запускается когда лист конфигураций изменился",
             "type":"RBXScriptEvent",
             "deprecated":false,
             "args":[]

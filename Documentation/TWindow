@@ -5,7 +5,12 @@
     "writeSameMode":true,
     "deprecated":false,
     "properties":{
-        "Name":{
+        "WindowFrame":{
+            "type":"Instance: Frame",
+            "description":"Frame Самого окна",
+            "canChange":false,
+            "deprecated":false
+        },"Name":{
             "type":"string",
             "description":"Имя окна",
             "canChange":false,

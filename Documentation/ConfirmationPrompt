@@ -1,15 +1,15 @@
 {
-    "description":"Класс TextPrompt, чтобы спрашивать текст у пользователя.",
+    "description":"Класс ConfirmationPrompt, для подтверждения действия. Отмена = закрытие окна",
     "type":"class",
-    "classes":["TClass","ConfigObject","TWindow","Prompt","TextPrompt"],
+    "classes":["TClass","ConfigObject","TWindow","Prompt","ConfirmationPrompt"],
     "writeSameMode":true,
     "deprecated":false,
     "RunArgs":[],
     "InputArgs":[
         {
-            "name":"text",
-            "type":"string?",
-            "description":"Текст который ввёл пользователь, если вызвана отмена, то nil"
+            "name":"result",
+            "type":"boolean?",
+            "description":"Выбрал ли пользователь confirm(false если выберет Reject), если окно закрыто, то nil"
         }
     ],
     "properties":{
@@ -50,14 +50,9 @@
             "description":"То что находится в TextBox(если изменить изменится и там)",
             "canChange":true,
             "deprecated":false
-        },"TextBox":{
-            "type":"TextBox",
-            "description":"Основной TextBox",
-            "canChange":false,
-            "deprecated":false
-        },"CancelButton":{
+        },"RejectButton":{
             "type":"TextButton",
-            "description":"TextButton для отмены(если .CancelEnabled == false, то прячет кнопку)",
+            "description":"TextButton для отклонения",
             "canChange":false,
             "deprecated":false
         },"CancelEnabled":{
@@ -65,10 +60,10 @@
             "description":"Если true, то пользователь может отменить окно",
             "canChange":true,
             "deprecated":false
-        },"CancelText":{
+        },"RejectText":{
             "type":"class",
             "class":"Translator",
-            "description":"Текст для кнопки отмены",
+            "description":"Текст для кнопки отклонения",
             "canChange":false,
             "deprecated":false
         }
