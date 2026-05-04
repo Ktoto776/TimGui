@@ -1,0 +1,53 @@
+{
+    "description":"Пустой (не) класс, не существует и нужен чтоб облегчить мне жизн",
+    "type":"class",
+    "classes":["TClass","?"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "None":{
+            "type":"any",
+            "description":"Хз",
+            "canChange":false,
+            "deprecated":false
+        },"NoneClass":{
+            "type":"class",
+            "class":"TClass",
+            "description":"Хз",
+            "canChange":false,
+            "deprecated":false
+        }
+    }, "methods":{
+        "ExampleMethod":{
+            "description":"Описание вроде",
+            "args":[{
+                    "name":"nil",
+                    "type":"any?",
+                    "description":"Позиция",
+                    "required":true
+                }
+            ],"return":[
+                {
+                    "name":"null",
+                    "type":"...",
+                    "description":""
+                }
+            ], 
+            "deprecated":false
+        }
+    }, 
+    "events":{
+        "ExampleEvent":{
+            "description":"",
+            "type":"RBXScriptEvent",
+            "args":[
+                {
+                    "name":"nothing",
+                    "type":"",
+                    "description":"IDK"
+                }
+            ],
+            "deprecated":false
+        }
+    }
+}

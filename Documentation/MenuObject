@@ -1,0 +1,86 @@
+{
+    "description":"Класс меню обьекта(часть меню для создания самого меню или под меню).",
+    "type":"class",
+    "classes":["TClass","MenuObject"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "MenuSize":{
+            "type":"UDim2",
+            "description":"UDim2 размера меню",
+            "canChange":true,
+            "deprecated":false
+        },"MenuFrame":{
+            "type":"Instance: Frame",
+            "description":"Основной Frame с menu items",
+            "canChange":false,
+            "deprecated":false
+        },"Opened":{
+            "type":"boolean",
+            "description":"Открыто ли меню, лучше использовать :Open(Position[UDim2]), иначе откроет там где и в прошлый раз",
+            "canChange":true,
+            "deprecated":false
+        },"OpenBind":{
+            "type":"class",
+            "class":"Bind",
+            "description":"Бинд при открытии(:Open). Параметры: Position:UDim2?",
+            "canChange":false,
+            "deprecated":false
+        },"MouseOnThisMenu":{
+            "type":"boolean",
+            "description":"Находится ли курсор на этом меню",
+            "canChange":true,
+            "deprecated":false
+        }
+    }, 
+    "methods":{
+        "GetChildren":{
+            "description":"Возвращает массив: {MenuItem, ...}",
+            "args":[],
+            "return":[
+                {
+                    "name":"result",
+                    "type":"table",
+                    "description":"array: {MenuItem, ...}"
+                }
+            ], 
+            "deprecated":false
+        },"RefreshMenuSize":{
+            "description":"Обновляет размер меню",
+            "args":[],
+            "return":[], 
+            "deprecated":false
+        },"RefreshMenuPosition":{
+            "description":"Обновляет позиции в меню",
+            "args":[],
+            "return":[], 
+            "deprecated":false
+        },"Open":{
+            "description":"Возвращает массив: {MenuItem, ...}",
+            "args":[
+                {
+                    "name":"Position",
+                    "type":"UDim2",
+                    "description":"Позиция меню",
+                    "required":false
+                }
+            ],
+            "return":[], 
+            "deprecated":false
+        }
+    }, 
+    "events":{
+        "ExampleEvent":{
+            "description":"",
+            "type":"RBXScriptEvent",
+            "args":[
+                {
+                    "name":"nothing",
+                    "type":"",
+                    "description":"IDK"
+                }
+            ],
+            "deprecated":false
+        }
+    }
+}

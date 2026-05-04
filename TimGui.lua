@@ -19,12 +19,14 @@ local onConfigChanged = Instance.new("BindableEvent")
 local onLoadConfigEvent = Instance.new("BindableEvent")
 local onConfigSettingsChanged = Instance.new("BindableEvent")
 -- CODE
+local UIS = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local TextService = game:GetService("TextService")
 local HttpService = game:GetService("HttpService")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
+local LocalMouse = LocalPlayer:GetMouse()
 local TimGuiRaw = {
     CoreVersion="3.0.0",
     CoreBuildCount=1,
@@ -230,24 +232,33 @@ local Classes = GetClassMetatable("TClasses",{},ClassesReadOnly,true)
 function Classes:CreateTEvent()
     local event = {}
     event.args = {}
+    local argId = 0
+    local args:{[number]:{any}} = {}
+    event.Args = args
     event.BEvent = Instance.new("BindableEvent")
     event.Event = GetClassMetatable("TEvent",{},{},true)
-    function event:Fire(...)
-        event.args = table.pack(...)
-        event.BEvent:Fire()
+    event.BEvent.Event:Connect(function(id)
+        task.wait(1)
+        args[id] = nil
+    end) function event:Fire(...)
+        argId += 1
+        local arg = table.pack(...)
+        event.args = arg
+        args[argId] = arg
+        event.BEvent:Fire(argId)
     end function event.Event:Connect(callback)
         if type(callback)~="function" then logger:critical_error("TEvent:Connect","Callback is incorrect.") end
-        event.BEvent.Event:Connect(function()
-            callback(table.unpack(event.args))
+        event.BEvent.Event:Connect(function(id)
+            callback(table.unpack(args[id]))
         end)
     end function event.Event:Once(callback)
         if type(callback)~="function" then logger:critical_error("TEvent:Connect","Callback is incorrect.") end
-        event.BEvent.Event:Once(function()
-            callback(table.unpack(event.args))
+        event.BEvent.Event:Once(function(id)
+            callback(table.unpack(args[id]))
         end)
     end function event.Event:Wait()
-        event.BEvent.Event:Wait()
-        return table.unpack(event.args)
+        local id = event.BEvent.Event:Wait()
+        return table.unpack(args[id])
     end return event
 end
 function Classes:CreateTClass(rawClass:{any?}?,meta:{any}?,writeSameModeExclude:{string}?)
@@ -570,6 +581,9 @@ Colors.OnTWindowCancelButtonTextColor = Color3.new(1,1,1)
 --Configs --------------------------
 Colors.ConfigsSeparationColor = Color3.new(0,0,0)
 Colors.ConfigButtonSelectedBackground = Color3.fromRGB(50,75,100)
+--Menu------------------------------
+Colors.MenuItemBackgroundColor = Color3.new(0.15,0.15,0.25)
+Colors.MenuItemTextColor = Color3.new(1,1,1)
 Colors.Default = Colors:GetPreset()
 -- #FIND_POINT GuiSize
 local GuiSize = Classes:CreatePreset()
@@ -626,6 +640,8 @@ GuiSize.ConfigsWindowConfigsFrameSize = UDim.new(0.3,0)
 GuiSize.ConfigsWindowSize = UDim2.new(0.25,100,0.3,200)
 GuiSize.ConfigsCfgCornerRadius = UDim.new(0.5,0)
 GuiSize.ConfigsTitleSize = UDim2.new(1,0,0.1,0)
+-- Menu --------------------------
+GuiSize.MenuItemYSize = 25
 GuiSize.Default = GuiSize:GetPreset()
 function TimGui:GetFrameGuiPosition(opened:boolean?)
     if opened==nil then opened = TimGui.Opened end
@@ -1016,6 +1032,274 @@ end) OnExitEvent.Event:Connect(function()
 end)
 State.OpenEnabled = false
 State:SetLoadingState()
+-- #FIND_POINT SpecialColors
+function Classes:CreateSpecialColors()
+    local SpecialColors = Classes:CreatePreset(true)
+    SpecialColors:AddClassName("Colors")
+    SpecialColors:AddClassName("SpecialColors")
+    function SpecialColors:GetColor(name:string)
+        if SpecialColors[name] then return SpecialColors[name] end
+        return Colors[name]
+    end function SpecialColors:GetColorChangedSignal(name:string)
+        local event = Instance.new("BindableEvent")
+        Colors:GetPropertyChangedEvent(name):Connect(function()
+            event:Fire()
+        end) SpecialColors:GetPropertyChangedEvent(name):Connect(function()
+            event:Fire()
+        end) return event.Event
+    end return SpecialColors
+end
+-- #FIND_POINT Menu
+State.Saying:Load({ -- #LANG_REQUIRED
+    ru="Загрузка ядра [Создание меню]...",
+    uk="Завантаження ядря [Створення меню]...",
+    en="Loading core [Creating menu]..."
+}) local MenuGUI = Instance.new("ScreenGui",STGui.Parent)
+MenuGUI.DisplayOrder = STGui.DisplayOrder+1
+MenuGUI.Name = "TimGui_Menu"
+MenuGUI.IgnoreGuiInset = true
+TimGui.MenuScreenGui = MenuGUI
+table.insert(TimGuiReadOnly,"MenuScreenGui")
+local onMenuNewChild,onMenuChildParentChanged = {},{}
+-- Arg 1 = onlyNotFocused
+local MenuCloseEvent = Instance.new("BindableEvent")
+local function CreateMenuObject(Menu)
+    if not Classes:IsA(Menu,"TClass") then
+        Menu = Classes:CreateTClass()
+    end Menu:AddClassName("MenuObject")
+    local children = {}
+    function Menu:GetChildren()
+        local res = {}
+        for k,v in children do
+            res[k] = v
+        end return res
+    end
+    local refreshing,nextRefresh = false,false
+    local function refreshPosition()
+        if refreshing then
+            nextRefresh = true
+            return
+        end refreshing = true
+        logger:debug("Menu","Refreshing Menu Objects Positions")
+        table.sort(children,function(a,b) print(a.Name,b.Name)
+            if a.Position~=b.Position then
+                return a.Position<b.Position
+            else return a.Id<b.Id
+            end
+        end) local yPos = UDim.new(0,0)
+        local xMaxOffset = 0
+        print("LOLOOLOLO",-1)
+        for k,v in children do print("LOLOOLOLO",v.Name)
+            yPos = v.SpecialRefreshPositionBind:Run(v,yPos,k)
+            if (tonumber(v.XSizeOffset)or 0)>xMaxOffset then
+                xMaxOffset = v.XSizeOffset
+            end
+        end Menu.MenuSize = UDim2.new(UDim.new(0,xMaxOffset+1),yPos)
+        RunService.RenderStepped:Wait()
+        refreshing = false
+        if nextRefresh then
+            nextRefresh = false 
+            refreshPosition()
+        end
+    end Menu.MenuSize = UDim2.new(0,0,0,0)
+    function Menu:RefreshMenuSize()
+        logger:debug("Menu","Refreshing Menu size")
+    end function Menu:RefreshMenuPosition()
+        refreshPosition()
+    end local MenuFrame = Instance.new("Frame")
+    MenuFrame.BackgroundTransparency = 1
+    MenuFrame.Visible = false
+    Menu.MenuFrame = MenuFrame
+    Menu:SetReadOnly("MenuFrame")
+    Menu:GetPropertyChangedEvent("MenuSize"):Connect(function()
+        MenuFrame.Size = Menu.MenuSize
+    end) Menu.MouseOnThisMenu = false
+    Menu:GetPropertyChangedEvent("MouseOnThisMenu"):Connect(function()
+        print(Menu.MouseOnThisMenu)
+    end) MenuFrame.MouseEnter:Connect(function()
+        Menu.MouseOnThisMenu = true
+    end) MenuFrame.MouseLeave:Connect(function()
+        Menu.MouseOnThisMenu = false
+    end)
+    onMenuNewChild[Menu] = function(child)
+        if not child then child = Classes:CreateMenuItem() end
+        table.insert(children,child) child.Position = #children
+    end onMenuChildParentChanged[Menu] = function(child)
+        if not child then child = Classes:CreateMenuItem() end
+        local pos = table.find(children,child)
+        if pos then
+            table.remove(children,pos)
+            refreshPosition()
+        end
+    end Menu.Opened = false
+    local openedWithMethod = false
+    Menu:GetPropertyChangedEvent("Opened"):Connect(function()
+        MenuFrame.Visible = Menu.Opened
+        if Menu.Opened~=openedWithMethod then
+            if Menu.Opened then
+                Menu.OpenBind:Run()
+            else Menu.CloseBind:Run()
+            end
+        end
+    end) local OpenBind = Classes:CreateBind()
+    Menu.OpenBind = OpenBind
+    Menu:SetReadOnly("OpenBind")
+    function Menu:Open(Position:UDim2?)
+        openedWithMethod = true
+        Menu.Opened = true
+        OpenBind:Run(Position)
+    end local CloseBind = Classes:CreateBind()
+    Menu.CloseBind = CloseBind
+    Menu:SetReadOnly("CloseBind")
+    function Menu:Close()
+        openedWithMethod = false
+        Menu.Opened = false
+        CloseBind:Run()
+    end MenuCloseEvent.Event:Connect(function(ignoreFocus)
+        if ignoreFocus or not Menu.MouseOnThisMenu then
+            Menu:Close()
+        end
+    end)
+    return Menu
+end
+function Classes:CreateMenu()
+    local Menu = CreateMenuObject()
+    Menu:AddClassName("Menu")
+    Menu.MenuFrame.Parent = MenuGUI
+    function Menu:SetPosition(Position:UDim2)
+        Menu.MenuFrame.Position = Position
+    end Menu.OpenBind:Bind(function(Position:UDim2)
+        Menu:SetPosition(Position)
+        return true
+    end)
+    return Menu
+end local MenuItemId = 0
+local MenuItemRefreshSizeBind = Classes:CreateBind()
+Binder.MenuItemRefreshSizeBind = MenuItemRefreshSizeBind
+Binder:SetReadOnly("MenuItemRefreshSizeBind")
+local MenuItemRefreshPositionBind = Classes:CreateBind()
+Binder.MenuItemRefreshPositionBind = MenuItemRefreshPositionBind
+Binder:SetReadOnly("MenuItemRefreshPositionBind")
+function Classes:CreateMenuItem(Name:string,Title:{[string]:string}|string?)
+    if type(Name)~="string" then logger:critical_error("Classes:CreateMenuItem","Name is incorrect(expected string)") end
+    if type(Title)~="table" then
+        Title = Classes:CreateTranslator(Title or Name)
+    else if Title.__type~="TClass" then
+            local oldTitle = Title
+            Title = Classes:CreateTranslator(Name)
+            Title:Load(oldTitle)
+        elseif not Title:IsA("Translator") then
+            Title = Classes:CreateTranslator(Name)
+        end
+    end local MenuItem = Classes:CreateTClass(nil,nil,{"Parent"})
+    MenuItem:AddClassName("MenuItem")
+    MenuItem.Name = Name
+    MenuItem:SetReadOnly("Name")
+    MenuItem.Title = Title
+    MenuItem:SetReadOnly("Title")
+    MenuItemId += 1
+    MenuItem.Id = MenuItemId
+    MenuItem:SetReadOnly("Id")
+    local SColors = Classes:CreateSpecialColors()
+    MenuItem.SpecialColors = SColors
+    MenuItem:SetReadOnly("SpecialColors")
+    local Frame = Instance.new("Frame")
+    MenuItem.Frame = Frame
+    MenuItem:SetReadOnly("MenuItem")
+    SColors:GetColorChangedSignal("MenuItemBackgroundColor"):Connect(function()
+        Frame.BackgroundColor3 = SColors:GetColor("MenuItemBackgroundColor")
+    end) Frame.BackgroundColor3 = SColors:GetColor("MenuItemBackgroundColor")
+    local oldParent
+    MenuItem.Position = 0
+    MenuItem:GetPropertyChangedEvent("Position"):Connect(function()
+        if oldParent then
+            oldParent:RefreshMenuPosition()
+        end
+    end) local SpecialRefreshPositionBind = Classes:CreateBind()
+    MenuItem.SpecialRefreshPositionBind = SpecialRefreshPositionBind
+    MenuItem:SetReadOnly("SpecialRefreshPositionBind")
+    MenuItem.XSizeOffset = 0
+    SpecialRefreshPositionBind:Bind(function(...)
+        return MenuItemRefreshPositionBind:Run(...)
+    end) function MenuItem:RefreshPosition()
+        if oldParent then
+            oldParent:RefreshMenuPosition()
+        end
+    end MenuItem:RefreshPosition()
+    SpecialRefreshPositionBind.OnBinded:Connect(function()
+        MenuItem:RefreshPosition()
+    end)
+    local SpecialRefreshSizeBind = Classes:CreateBind()
+    MenuItem.SpecialRefreshSizeBind = SpecialRefreshSizeBind
+    MenuItem:SetReadOnly("SpecialRefreshSizeBind")
+    MenuItem.XSizeOffset = 0
+    SpecialRefreshSizeBind:Bind(function(...)
+        return MenuItemRefreshSizeBind:Run(...)
+    end) function MenuItem:RefreshSize()
+        MenuItem.XSizeOffset = SpecialRefreshSizeBind:Run(MenuItem)
+        if oldParent then
+            oldParent:RefreshMenuSize()
+        end MenuItem:RefreshPosition()
+    end MenuItem:RefreshSize()
+    SpecialRefreshSizeBind.OnBinded:Connect(function()
+        MenuItem:RefreshSize()
+    end) GuiSize:GetPropertyChangedEvent("MenuItemYSize"):Connect(function()
+        MenuItem:RefreshSize()
+    end)
+    MenuItem:GetPropertyChangedEvent("Parent"):Connect(function()
+        logger:debug("MenuItem",`Parent of {MenuItem.ClassName} '{Name}' changed!`)
+        if oldParent then
+            local oldE = onMenuChildParentChanged[oldParent]
+            if oldE then
+                oldE(MenuItem)
+            end
+        end if Classes:IsA(MenuItem.Parent,"Menu") then
+            Frame.Parent = MenuItem.Parent.MenuFrame
+            oldParent = MenuItem.Parent
+            local newE = onMenuNewChild[MenuItem.Parent]
+            if newE then
+                newE(MenuItem)
+            end
+        else MenuItem.Parent = nil
+            Frame.Parent = nil
+            oldParent = nil
+        end
+    end) return MenuItem
+end MenuItemRefreshSizeBind:Bind(function(MenuItem)
+    if not MenuItem then logger:critical_error("MenuItemRefreshSizeBind","MenuItem is incorrect") MenuItem = Classes:CreateMenuItem() end
+    logger:debug("MenuItemRefreshSizeBind",`Updating Size for {MenuItem.Name}[{MenuItem.ClassName}]`)
+    local Frame = MenuItem.Frame
+    if Frame then
+        Frame.Size = UDim2.new(1,0,0,GuiSize.MenuItemYSize)
+        return 50
+    end return 0
+end) MenuItemRefreshPositionBind:Bind(function(MenuItem,pos:UDim,k)
+    if not MenuItem then logger:critical_error("MenuItemRefreshPositionBind","MenuItem is incorrect") MenuItem = Classes:CreateMenuItem() end
+    logger:debug("MenuItemRefreshPositionBind",`Updating Position for {MenuItem.Name}[{MenuItem.ClassName}]`)
+    MenuItem.Frame.Position = UDim2.new(UDim.new(0,0),pos)
+    return pos+MenuItem.Frame.Size.Y
+end) UIS.InputBegan:Connect(function(event)
+    if event.UserInputType==Enum.UserInputType.MouseButton1 then
+        MenuCloseEvent:Fire(false)
+    elseif event.UserInputType==Enum.UserInputType.MouseButton2 then
+        MenuCloseEvent:Fire(false)
+    elseif event.UserInputType==Enum.UserInputType.MouseButton3 then
+        MenuCloseEvent:Fire(false)
+    elseif event.UserInputType==Enum.UserInputType.Touch then
+        MenuCloseEvent:Fire(false)
+    elseif event.UserInputType==Enum.UserInputType.Keyboard then
+        MenuCloseEvent:Fire(true)
+    end
+end)
+
+local Menu = Classes:CreateMenu()
+Classes:CreateMenuItem("1").Parent = Menu
+Classes:CreateMenuItem("2").Parent = Menu
+Classes:CreateMenuItem("3").Parent = Menu
+local two = Classes:CreateMenuItem("4") two.Parent = Menu
+local one = Classes:CreateMenuItem("5") one.Parent = Menu
+print("LOLOOLOLO",two.Name)
+Menu:Open(UDim2.new(0,LocalMouse.X,0,LocalMouse.Y))
 State.SayEnabled = true
 State.Saying:Load({ -- #LANG_REQUIRED
     ru="Загрузка ядра [Создание GUI классов]...",
@@ -1150,23 +1434,7 @@ local function MakeGUIArchitectureClass(raw:{any?}?)
         end
     end)
     return GUIArchitecture
-end function Classes:CreateSpecialColors()
-    local SpecialColors = Classes:CreatePreset(true)
-    SpecialColors:AddClassName("Colors")
-    SpecialColors:AddClassName("SpecialColors")
-    function SpecialColors:GetColor(name:string)
-        if SpecialColors[name] then return SpecialColors[name] end
-        return Colors[name]
-    end function SpecialColors:GetColorChangedSignal(name:string)
-        local event = Instance.new("BindableEvent")
-        Colors:GetPropertyChangedEvent(name):Connect(function()
-            event:Fire()
-        end) SpecialColors:GetPropertyChangedEvent(name):Connect(function()
-            event:Fire()
-        end) return event.Event
-    end return SpecialColors
-end
-local LastTGuiObjectId = 0
+end local LastTGuiObjectId = 0
 local function TGuiObjectClass(Name:string,Title:string|{string}?,Parent:any?,Object:any?)
     if type(Name)~="string" then logger:critical_error("TGuiObjectClass","Name is incorrect.") end
     if type(Title)~="table" then

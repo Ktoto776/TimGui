@@ -156,8 +156,15 @@
             "deprecated":false
         },
         "GlobalOpenedGroup":{
-            "type":"TGroup",
+            "type":"class",
+            "class":"TGroup",
             "description":"Глобально открытая группа(типо та которая в группах слево)",
+            "canChange":false,
+            "deprecated":false
+        },
+        "MenuScreenGui":{
+            "type":"Instance: ScreenGui",
+            "description":"ScreenGui в котором находятся меню(должно быть поверх основного ScreenGui)",
             "canChange":false,
             "deprecated":false
         }

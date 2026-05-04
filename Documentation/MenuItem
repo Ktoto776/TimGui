@@ -1,0 +1,91 @@
+{
+    "description":"Предмет в Menu, используется в других классах",
+    "type":"class",
+    "classes":["TClass","MenuItem"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "Name":{
+            "type":"string",
+            "description":"Имя обьекта которое ставится при создании, нельзя менять",
+            "canChange":false,
+            "deprecated":false
+        },"Parent":{
+            "type":"class",
+            "class":"Menu?",
+            "description":"Меню которому принадлежит, можно менять на nil",
+            "canChange":true,
+            "deprecated":false
+        },"Title":{
+            "type":"class",
+            "class":"Translator",
+            "description":"Текст которое видит пользователь",
+            "canChange":false,
+            "deprecated":false
+        },"Frame":{
+            "type":"Frame",
+            "description":"Основной Frame обьекта",
+            "canChange":false,
+            "deprecated":false
+        },"SpecialColors":{
+            "type":"class",
+            "class":"SpecialColors",
+            "description":"Специальные цвета этого обьекта",
+            "canChange":false,
+            "deprecated":false
+        },"Position":{
+            "type":"number",
+            "description":"Позиция Y этого обьекта, при смене Parent становится в самый низ",
+            "canChange":true,
+            "deprecated":false
+        },"Id":{
+            "type":"number",
+            "description":"Id menu элемента, устанавливается при создании и не меняется",
+            "canChange":false,
+            "deprecated":false
+        },"SpecialRefreshSizeBind":{
+            "type":"class",
+            "class":"Bind",
+            "description":"Bind для установки размера обьекта. Работает как в Binder.MenuItemRefreshSizeBind",
+            "canChange":false,
+            "deprecated":false
+        },"XSizeOffset":{
+            "type":"number",
+            "description":"X размер кнопки",
+            "canChange":false,
+            "deprecated":false
+        },"SpecialRefreshPositionBind":{
+            "type":"class",
+            "class":"Bind",
+            "description":"Bind для установки позиции обьекта. Работает как в Binder.MenuItemRefreshPositionBind",
+            "canChange":false,
+            "deprecated":false
+        }
+    }, "methods":{
+        "RefreshPosition":{
+            "description":"Обновляет позицию этого обьекта(и всех в Parent)",
+            "args":[],
+            "return":[], 
+            "deprecated":false
+        },"RefreshSize":{
+            "description":"Обновляет размер этого обьекта и обновляет позицию",
+            "args":[],
+            "return":[], 
+            "deprecated":false
+        }
+    }, 
+    "events":{
+        "ExampleEvent":{
+            "description":"",
+            "type":"RBXScriptEvent",
+            "args":[
+                {
+                    "name":"nothing",
+                    "type":"",
+                    "description":"IDK"
+                }
+            ],
+            "deprecated":false
+        }
+    }
+}

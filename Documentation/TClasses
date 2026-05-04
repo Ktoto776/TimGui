@@ -190,21 +190,42 @@
                     "description":"Класс Prompt"
                 }
             ],"deprecated":false
-        },"CreateValueBinder":{ 
-            "description":"Создаёт пустой value binder",
+        },"CreateMenu":{ 
+            "description":"Создаёт Menu класс",
+            "args":[],
+            "return":[{
+                    "name":"response",
+                    "type":"class",
+                    "class":"Menu",
+                    "description":"Класс Menu"
+                }
+            ],"deprecated":false
+        },"CreateMenuItem":{ 
+            "description":"Создаёт menu item",
             "args":[
                 {
-                    "name":"defaultValue",
-                    "type":"any",
-                    "description":"Стандартное значение",
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Название",
+                    "required":true
+                },{
+                    "name":"Title",
+                    "type":"string | Translator | table",
+                    "description":"Заголовок(имя которое видит пользователь)",
+                    "required":false
+                },{
+                    "name":"Parent",
+                    "type":"class",
+                    "class":"Menu",
+                    "description":"Родитель этого обьекта",
                     "required":false
                 }
             ],
             "return":[{
                     "name":"response",
                     "type":"class",
-                    "class":"ValueBinder",
-                    "description":"Класс ValueBinder"
+                    "class":"MenuItem",
+                    "description":"Класс MenuItem"
                 }
             ],"deprecated":false
         }

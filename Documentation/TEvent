@@ -11,7 +11,12 @@
             "deprecated":false
         },"args":{
             "type":"table",
-            "description":"Массив, с последними args",
+            "description":"Массив, с последними args [Новая версия .Args]",
+            "canChange":true,
+            "deprecated":true
+        },"Args":{
+            "type":"table",
+            "description":"Таблица с массивами, с последними args {[number]={...}}. Исчезают через 1 секунду после запуска",
             "canChange":true,
             "deprecated":false
         },"BEvent":{

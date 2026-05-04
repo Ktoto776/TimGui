@@ -150,6 +150,11 @@
             "description":"Размер текста для описания в TextPrompt",
             "canChange":true,
             "deprecated":false
+        },"MenuItemYSize":{
+            "type":"number",
+            "description":"Размер Y MenuItem'а",
+            "canChange":true,
+            "deprecated":false
         }
     }, "methods":{}, 
     "events":{}

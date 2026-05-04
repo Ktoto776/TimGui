@@ -1,0 +1,36 @@
+{
+    "description":"Класс меню.",
+    "type":"class",
+    "classes":["TClass","MenuObject","Menu"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        
+    }, "methods":{
+        "SetPosition":{
+            "description":"Устанавливает позицию меню(обычно игнорирует GuiInsets)",
+            "args":[{
+                    "name":"Position",
+                    "type":"UDim2",
+                    "description":"Позиция",
+                    "required":true
+                }
+            ],"return":[], 
+            "deprecated":false
+        }
+    }, 
+    "events":{
+        "ExampleEvent":{
+            "description":"",
+            "type":"RBXScriptEvent",
+            "args":[
+                {
+                    "name":"nothing",
+                    "type":"",
+                    "description":"IDK"
+                }
+            ],
+            "deprecated":false
+        }
+    }
+}

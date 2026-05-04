@@ -95,6 +95,18 @@
             "description":"Бинд для установки размера описанию TextPrompt'а. Параметры: TextPrompt:TextPrompt, startYPos:UDim(Позиция начала описания). Должно вернуть самую нижнюю точку y(UDim)",
             "canChange":false,
             "deprecated":false
+        },"MenuItemRefreshSizeBind":{
+            "type":"class",
+            "class":"Bind",
+            "description":"Бинд для установки размера MenuItem. Параметры: MenuItem:MenuItem. Не забывай про GuiSize.MenuItemYSize. Должно вернуть XOffset(number)",
+            "canChange":false,
+            "deprecated":false
+        },"MenuItemRefreshPositionBind":{
+            "type":"class",
+            "class":"Bind",
+            "description":"Бинд для установки позиции MenuItem. Параметры: MenuItem:MenuItem,YPosition:UDim, pos:number(позиция в Parent:GetChildren). Должно вернуть Y(UDim) -- Y после этого обьекта",
+            "canChange":false,
+            "deprecated":false
         }
     }, "methods":{
         "New":{
