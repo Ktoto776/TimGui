@@ -31,6 +31,11 @@
             "description":"Находится ли курсор на этом меню",
             "canChange":true,
             "deprecated":false
+        },"MaxXSizeForMenu":{
+            "type":"UDim",
+            "description":"X размер для всего меню обьекта, при смене меняет MaxXSize всем children",
+            "canChange":true,
+            "deprecated":false
         }
     }, 
     "methods":{
@@ -66,6 +71,24 @@
                 }
             ],
             "return":[], 
+            "deprecated":false
+        },"FindFirstChild":{
+            "description":"Ищет ребёнка по имени",
+            "args":[
+                {
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Имя ребёнка",
+                    "required":true
+                }
+            ],
+            "return":[
+                {
+                    "name":"result",
+                    "type":"table",
+                    "description":"array: {MenuItem, ...}"
+                }
+            ], 
             "deprecated":false
         }
     }, 

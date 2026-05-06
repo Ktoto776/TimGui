@@ -1073,6 +1073,12 @@ local function CreateMenuObject(Menu)
         for k,v in children do
             res[k] = v
         end return res
+    end function Menu:FindFirstChild(Name:string)
+        for k,v in children do
+            if v.Name==Name then
+                return v
+            end
+        end
     end
     local refreshing,nextRefresh = false,false
     local function refreshPosition()
@@ -1120,9 +1126,14 @@ local function CreateMenuObject(Menu)
         Menu.MouseOnThisMenu = true
     end) MenuFrame.MouseLeave:Connect(function()
         Menu.MouseOnThisMenu = false
-    end)
-    onMenuNewChild[Menu] = function(child)
+    end) Menu.MaxXSizeForMenu = UDim.new(0.5,0)
+    Menu:GetPropertyChangedEvent("MaxXSizeForMenu"):Connect(function()
+        for k,v in children do
+            v.MaxXSize = Menu.MaxXSizeForMenu
+        end
+    end) onMenuNewChild[Menu] = function(child)
         if not child then child = Classes:CreateMenuItem() end
+        child.MaxXSize = Menu.MaxXSizeForMenu
         table.insert(children,child) child.Position = #children
     end onMenuChildParentChanged[Menu] = function(child)
         if not child then child = Classes:CreateMenuItem() end
@@ -1200,6 +1211,7 @@ function Classes:CreateMenuItem(Name:string,Title:{[string]:string}|string?)
     MenuItemId += 1
     MenuItem.Id = MenuItemId
     MenuItem:SetReadOnly("Id")
+    MenuItem.MaxXSize = UDim.new(0.5,0)
     local SColors = Classes:CreateSpecialColors()
     MenuItem.SpecialColors = SColors
     MenuItem:SetReadOnly("SpecialColors")
@@ -1245,6 +1257,8 @@ function Classes:CreateMenuItem(Name:string,Title:{[string]:string}|string?)
         MenuItem:RefreshSize()
     end) GuiSize:GetPropertyChangedEvent("MenuItemYSize"):Connect(function()
         MenuItem:RefreshSize()
+    end) MenuItem:GetPropertyChangedEvent("MaxXSize"):Connect(function()
+        MenuItem:RefreshSize()
     end)
     MenuItem:GetPropertyChangedEvent("Parent"):Connect(function()
         logger:debug("MenuItem",`Parent of {MenuItem.ClassName} '{Name}' changed!`)
@@ -1270,8 +1284,19 @@ end MenuItemRefreshSizeBind:Bind(function(MenuItem)
     logger:debug("MenuItemRefreshSizeBind",`Updating Size for {MenuItem.Name}[{MenuItem.ClassName}]`)
     local Frame = MenuItem.Frame
     if Frame then
-        Frame.Size = UDim2.new(1,0,0,GuiSize.MenuItemYSize)
-        return 50
+        local TextObject:TextLabel|TextButton? = MenuItem.TextObject
+        if TextObject then
+            local GetTextBoundsParams = Instance.new("GetTextBoundsParams")
+            GetTextBoundsParams.Width = MenuGUI.AbsoluteSize.X*MenuItem.MaxXSize.Scale+MenuItem.MaxXSize.Offset
+            GetTextBoundsParams.Font = TextObject.FontFace
+            GetTextBoundsParams.RichText = TextObject.RichText
+            GetTextBoundsParams.Text = TextObject.Text
+            GetTextBoundsParams.Size = TextObject.TextSize
+            local offset = TextService:GetTextBoundsAsync(GetTextBoundsParams)
+            Frame.Size = UDim2.new(1,0,0,offset.Y+1)
+            return offset.X
+        else Frame.Size = UDim2.new(1,0,0,GuiSize.MenuItemYSize)
+        end
     end return 0
 end) MenuItemRefreshPositionBind:Bind(function(MenuItem,pos:UDim,k)
     if not MenuItem then logger:critical_error("MenuItemRefreshPositionBind","MenuItem is incorrect") MenuItem = Classes:CreateMenuItem() end
@@ -1290,11 +1315,53 @@ end) UIS.InputBegan:Connect(function(event)
     elseif event.UserInputType==Enum.UserInputType.Keyboard then
         MenuCloseEvent:Fire(true)
     end
-end)
+end) function Classes:CreateMenuButton(Name:string,Title:{[string]:string}|string?)
+    local Item = Classes:CreateMenuItem(Name,Title)
+    Item:AddClassName("MenuButton")
+    local Button = Instance.new("TextButton",Item.Frame)
+    Button.Size = UDim2.new(1,0,1,0)
+    Button.TextWrapped = true
+    Button.TextXAlignment = Enum.TextXAlignment.Left
+    Button.TextSize = GuiSize.MenuItemYSize
+    GuiSize:GetPropertyChangedEvent("MenuItemYSize"):Connect(function()
+        Button.TextSize = GuiSize.MenuItemYSize
+        Item:RefreshSize()
+    end) Item.Frame.BackgroundTransparency = 1
+    local SColors = Classes:CreateSpecialColors()
+    SColors:GetColorChangedSignal("MenuItemBackgroundColor"):Connect(function()
+        Button.BackgroundColor3 = SColors:GetColor("MenuItemBackgroundColor")
+    end) Button.BackgroundColor3 = SColors:GetColor("MenuItemBackgroundColor")
+    SColors:GetColorChangedSignal("MenuItemTextColor"):Connect(function()
+        Button.TextColor3 = SColors:GetColor("MenuItemTextColor")
+    end) Button.TextColor3 = SColors:GetColor("MenuItemTextColor")
+    Item.Title.TranslateValueChanged:Connect(function()
+        Button.Text = Item.Title:Translate()
+        Item:RefreshSize()
+    end) Button.Text = Item.Title:Translate()
+    Item.Button = Button
+    Item:SetReadOnly("Button")
+    Item.TextObject = Button
+    Item:SetReadOnly("TextObject")
+    Item:RefreshSize()
+    local Activated = Instance.new("BindableEvent")
+    Item.Activated = Activated
+    Item:SetReadOnly("Activated")
+    Item.CloseMenuOnActivated = true
+    function Item:EmulateActivate()
+        if Item.CloseMenuOnActivated then
+            local parent:{Close:(self:any)->()} = Item.Parent
+            if parent then
+                parent:Close()
+            end
+        end Activated:Fire()
+    end Button.Activated:Connect(function()
+        Item:EmulateActivate()
+    end) return Item
+end
 
 local Menu = Classes:CreateMenu()
-Classes:CreateMenuItem("1").Parent = Menu
-Classes:CreateMenuItem("2").Parent = Menu
+Classes:CreateMenuButton("1234567890 test test test test test test test test test test test test test test").Parent = Menu
+Classes:CreateMenuButton("Working button in menu").Parent = Menu
 Classes:CreateMenuItem("3").Parent = Menu
 local two = Classes:CreateMenuItem("4") two.Parent = Menu
 local one = Classes:CreateMenuItem("5") one.Parent = Menu

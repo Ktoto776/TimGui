@@ -60,6 +60,11 @@
             "description":"Bind для установки позиции обьекта. Работает как в Binder.MenuItemRefreshPositionBind",
             "canChange":false,
             "deprecated":false
+        },"MaxXSize":{
+            "type":"UDim",
+            "description":"Максимальный размер X",
+            "canChange":false,
+            "deprecated":false
         }
     }, "methods":{
         "RefreshPosition":{
@@ -75,17 +80,6 @@
         }
     }, 
     "events":{
-        "ExampleEvent":{
-            "description":"",
-            "type":"RBXScriptEvent",
-            "args":[
-                {
-                    "name":"nothing",
-                    "type":"",
-                    "description":"IDK"
-                }
-            ],
-            "deprecated":false
-        }
+        
     }
 }
