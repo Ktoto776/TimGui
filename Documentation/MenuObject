@@ -33,7 +33,7 @@
             "deprecated":false
         },"MaxXSizeForMenu":{
             "type":"UDim",
-            "description":"X размер для всего меню обьекта, при смене меняет MaxXSize всем children",
+            "description":"Максимальный X размер для всего меню обьекта, при смене меняет MaxXSize всем children",
             "canChange":true,
             "deprecated":false
         }
@@ -90,19 +90,99 @@
                 }
             ], 
             "deprecated":false
+        },"CreateMenuItem":{ 
+            "description":"Создаёт menu item с parent = этому MenuObject",
+            "args":[
+                {
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Название",
+                    "required":true
+                },{
+                    "name":"Title",
+                    "type":"string | Translator | table",
+                    "description":"Заголовок(имя которое видит пользователь)",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"class",
+                    "class":"MenuItem",
+                    "description":"Класс MenuItem"
+                }
+            ],"deprecated":false
+        },"CreateMenuButton":{ 
+            "description":"Создаёт menu button с parent = этому MenuObject",
+            "args":[
+                {
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Название",
+                    "required":true
+                },{
+                    "name":"Title",
+                    "type":"string | Translator | table",
+                    "description":"Заголовок(имя которое видит пользователь)",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"class",
+                    "class":"MenuButton",
+                    "description":"Класс MenuButton"
+                }
+            ],"deprecated":false
+        },"CreateMenuText":{ 
+            "description":"Создаёт menu text с parent = этому MenuObject",
+            "args":[
+                {
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Название",
+                    "required":true
+                },{
+                    "name":"Title",
+                    "type":"string | Translator | table",
+                    "description":"Заголовок(имя которое видит пользователь)",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"class",
+                    "class":"MenuText",
+                    "description":"Класс MenuText"
+                }
+            ],"deprecated":false
         }
     }, 
     "events":{
-        "ExampleEvent":{
-            "description":"",
-            "type":"RBXScriptEvent",
-            "args":[
-                {
-                    "name":"nothing",
-                    "type":"",
-                    "description":"IDK"
+        "ChildAdded":{
+            "description":"Запускается когда добавлен новый ребёнок",
+            "type":"TEvent.Event",
+            "args":[{
+                    "name":"child",
+                    "type":"MenuItem",
+                    "description":"MenuItem который теперь в этом меню"
                 }
             ],
+            "deprecated":false
+        },"ChildRemoved":{
+            "description":"Запускается когда убран ребёнок",
+            "type":"TEvent.Event",
+            "args":[{
+                    "name":"child",
+                    "type":"MenuItem",
+                    "description":"MenuItem который теперь не в этом меню"
+                }
+            ],
+            "deprecated":false
+        },"MenuRefreshed":{
+            "description":"Запускается когда позиции обьектов в меню обновились",
+            "type":"RBXScriptSignal",
+            "args":[],
             "deprecated":false
         }
     }

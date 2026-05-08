@@ -5,32 +5,12 @@
     "writeSameMode":true,
     "deprecated":false,
     "properties":{
-        
-    }, "methods":{
-        "SetPosition":{
-            "description":"Устанавливает позицию меню(обычно игнорирует GuiInsets)",
-            "args":[{
-                    "name":"Position",
-                    "type":"UDim2",
-                    "description":"Позиция",
-                    "required":true
-                }
-            ],"return":[], 
+        "Position":{
+            "type":"UDim2",
+            "description":"Позиция меню",
+            "canChange":true,
             "deprecated":false
         }
-    }, 
-    "events":{
-        "ExampleEvent":{
-            "description":"",
-            "type":"RBXScriptEvent",
-            "args":[
-                {
-                    "name":"nothing",
-                    "type":"",
-                    "description":"IDK"
-                }
-            ],
-            "deprecated":false
-        }
-    }
+    }, "methods":{}, 
+    "events":{}
 }

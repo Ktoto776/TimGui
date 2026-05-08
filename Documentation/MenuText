@@ -1,0 +1,21 @@
+{
+    "description":"Текст в меню",
+    "type":"class",
+    "classes":["TClass","MenuItem","MenuText"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "TextLabel":{
+            "type":"TextLabel",
+            "description":"Основной TextLabel этого меню обьекта",
+            "canChange":false,
+            "deprecated":false
+        },"TextObject":{
+            "type":"TextLabel",
+            "description":"Обьект соддержащий текст(здесь - TextLabel)",
+            "canChange":false,
+            "deprecated":false
+        }
+    }, "methods":{}, 
+    "events":{}
+}

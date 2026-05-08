@@ -130,6 +130,21 @@
             "description":"Цвет текста кнопки отмены на окне(обычно промтах)",
             "canChange":true,
             "deprecated":false
+        },"MenuBackgroundTextColor":{
+            "type":"Color3",
+            "description":"Цвет фона MenuItem в Menu",
+            "canChange":true,
+            "deprecated":false
+        },"MenuItemTextColor":{
+            "type":"Color3",
+            "description":"Цвет текста MenuItem в Menu",
+            "canChange":true,
+            "deprecated":false
+        },"MenuTextTextColor":{
+            "type":"Color3",
+            "description":"Цвет текста MenuText в Menu",
+            "canChange":true,
+            "deprecated":false
         }
     }, "methods":{}, 
     "events":{}

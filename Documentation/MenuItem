@@ -65,6 +65,11 @@
             "description":"Максимальный размер X",
             "canChange":false,
             "deprecated":false
+        },"Visible":{
+            "type":"boolean",
+            "description":"Видно ли этот обьект меню",
+            "canChange":true,
+            "deprecated":false
         }
     }, "methods":{
         "RefreshPosition":{

@@ -584,6 +584,9 @@ Colors.ConfigButtonSelectedBackground = Color3.fromRGB(50,75,100)
 --Menu------------------------------
 Colors.MenuItemBackgroundColor = Color3.new(0.15,0.15,0.25)
 Colors.MenuItemTextColor = Color3.new(1,1,1)
+Colors.MenuTextTextColor = Color3.new(0.8,0.8,0.8)
+Colors.MenuToggleEnabledColor = Color3.new(0.25,1,0.25)
+Colors.MenuToggleDisabledColor = Color3.new(1,0.25,0.25)
 Colors.Default = Colors:GetPreset()
 -- #FIND_POINT GuiSize
 local GuiSize = Classes:CreatePreset()
@@ -642,10 +645,12 @@ GuiSize.ConfigsCfgCornerRadius = UDim.new(0.5,0)
 GuiSize.ConfigsTitleSize = UDim2.new(1,0,0.1,0)
 -- Menu --------------------------
 GuiSize.MenuItemYSize = 25
+GuiSize.MenuItemTextSize = 25
+GuiSize.MenuTextTextSize = 20
 GuiSize.Default = GuiSize:GetPreset()
 function TimGui:GetFrameGuiPosition(opened:boolean?)
     if opened==nil then opened = TimGui.Opened end
-    local position = UDim2.new(GuiSize.XPosition,GuiSize.YPosition)--GuiSize.HeaderSize)
+    local position = UDim2.new(GuiSize.XPosition,GuiSize.YPosition)
     if opened then
         position -= UDim2.new(UDim.new(),GuiSize.Height)
     end return position
@@ -1057,7 +1062,6 @@ State.Saying:Load({ -- #LANG_REQUIRED
 }) local MenuGUI = Instance.new("ScreenGui",STGui.Parent)
 MenuGUI.DisplayOrder = STGui.DisplayOrder+1
 MenuGUI.Name = "TimGui_Menu"
-MenuGUI.IgnoreGuiInset = true
 TimGui.MenuScreenGui = MenuGUI
 table.insert(TimGuiReadOnly,"MenuScreenGui")
 local onMenuNewChild,onMenuChildParentChanged = {},{}
@@ -1081,26 +1085,29 @@ local function CreateMenuObject(Menu)
         end
     end
     local refreshing,nextRefresh = false,false
+    local MenuRefreshed = Instance.new("BindableEvent")
+    Menu.MenuRefreshed = MenuRefreshed.Event
+    Menu:SetReadOnly("MenuRefreshed")
     local function refreshPosition()
         if refreshing then
             nextRefresh = true
             return
         end refreshing = true
         logger:debug("Menu","Refreshing Menu Objects Positions")
-        table.sort(children,function(a,b) print(a.Name,b.Name)
+        table.sort(children,function(a,b)
             if a.Position~=b.Position then
                 return a.Position<b.Position
             else return a.Id<b.Id
             end
         end) local yPos = UDim.new(0,0)
         local xMaxOffset = 0
-        print("LOLOOLOLO",-1)
-        for k,v in children do print("LOLOOLOLO",v.Name)
+        for k,v in children do
             yPos = v.SpecialRefreshPositionBind:Run(v,yPos,k)
             if (tonumber(v.XSizeOffset)or 0)>xMaxOffset then
                 xMaxOffset = v.XSizeOffset
             end
         end Menu.MenuSize = UDim2.new(UDim.new(0,xMaxOffset+1),yPos)
+        MenuRefreshed:Fire()
         RunService.RenderStepped:Wait()
         refreshing = false
         if nextRefresh then
@@ -1120,9 +1127,7 @@ local function CreateMenuObject(Menu)
     Menu:GetPropertyChangedEvent("MenuSize"):Connect(function()
         MenuFrame.Size = Menu.MenuSize
     end) Menu.MouseOnThisMenu = false
-    Menu:GetPropertyChangedEvent("MouseOnThisMenu"):Connect(function()
-        print(Menu.MouseOnThisMenu)
-    end) MenuFrame.MouseEnter:Connect(function()
+    MenuFrame.MouseEnter:Connect(function()
         Menu.MouseOnThisMenu = true
     end) MenuFrame.MouseLeave:Connect(function()
         Menu.MouseOnThisMenu = false
@@ -1131,16 +1136,24 @@ local function CreateMenuObject(Menu)
         for k,v in children do
             v.MaxXSize = Menu.MaxXSizeForMenu
         end
-    end) onMenuNewChild[Menu] = function(child)
+    end) local ChildAdded = Classes:CreateTEvent()
+    local ChildRemoved = Classes:CreateTEvent()
+    Menu.ChildAdded = ChildAdded.Event
+    Menu.ChildRemoved = ChildRemoved.Event
+    Menu:SetReadOnly("ChildAdded")
+    Menu:SetReadOnly("ChildRemoved")
+    onMenuNewChild[Menu] = function(child)
         if not child then child = Classes:CreateMenuItem() end
         child.MaxXSize = Menu.MaxXSizeForMenu
         table.insert(children,child) child.Position = #children
+        ChildAdded:Fire(child)
     end onMenuChildParentChanged[Menu] = function(child)
         if not child then child = Classes:CreateMenuItem() end
         local pos = table.find(children,child)
         if pos then
             table.remove(children,pos)
             refreshPosition()
+            ChildRemoved:Fire(child)
         end
     end Menu.Opened = false
     local openedWithMethod = false
@@ -1170,18 +1183,47 @@ local function CreateMenuObject(Menu)
         if ignoreFocus or not Menu.MouseOnThisMenu then
             Menu:Close()
         end
-    end)
+    end) function Menu:CreateMenuItem(Name:string,Title:{[string]: string} | string?)
+        local item = Classes:CreateMenuItem(Name,Title)
+        item.Parent = Menu
+        return item
+    end function Menu:CreateMenuButton(Name:string,Title:{[string]: string} | string?)
+        local item = Classes:CreateMenuButton(Name,Title)
+        item.Parent = Menu
+        return item
+    end function Menu:CreateMenuText(Name:string,Title:{[string]: string} | string?)
+        local item = Classes:CreateMenuText(Name,Title)
+        item.Parent = Menu
+        return item
+    end function Menu:CreateMenuToggle(Name:string,Title:{[string]: string} | string?)
+        local item = Classes:CreateMenuToggle(Name,Title)
+        item.Parent = Menu
+        return item
+    end
     return Menu
 end
 function Classes:CreateMenu()
     local Menu = CreateMenuObject()
     Menu:AddClassName("Menu")
     Menu.MenuFrame.Parent = MenuGUI
-    function Menu:SetPosition(Position:UDim2)
-        Menu.MenuFrame.Position = Position
-    end Menu.OpenBind:Bind(function(Position:UDim2)
-        Menu:SetPosition(Position)
-        return true
+    Menu.Position = UDim2.new(0,0,0,0)
+    Menu:GetPropertyChangedEvent("Position"):Connect(function()
+        local PosWithSize = Menu.Position+Menu.MenuSize
+        local ScAbsSize = MenuGUI.AbsoluteSize
+        local AbsolutePosWS = Vector2.new(PosWithSize.X.Scale+PosWithSize.X.Offset/ScAbsSize.X,PosWithSize.Y.Scale+PosWithSize.Y.Offset/ScAbsSize.Y)
+        local XAnchor,YAnchor = 0,0
+        if AbsolutePosWS.X>1 then
+            XAnchor = 1
+        else XAnchor = 0
+        end if AbsolutePosWS.Y>1 then
+            YAnchor = 1
+        else YAnchor = 0
+        end Menu.MenuFrame.AnchorPoint = Vector2.new(XAnchor,YAnchor)
+        Menu.MenuFrame.Position = Menu.Position
+    end) Menu.OpenBind:Bind(function(Position:UDim2)
+        if Position then
+            Menu.Position = Position
+        end return true
     end)
     return Menu
 end local MenuItemId = 0
@@ -1239,6 +1281,10 @@ function Classes:CreateMenuItem(Name:string,Title:{[string]:string}|string?)
         end
     end MenuItem:RefreshPosition()
     SpecialRefreshPositionBind.OnBinded:Connect(function()
+        MenuItem:RefreshPosition()
+    end) MenuItem.Visible = true
+    MenuItem:GetPropertyChangedEvent("Visible"):Connect(function()
+        Frame.Visible = MenuItem.Visible
         MenuItem:RefreshPosition()
     end)
     local SpecialRefreshSizeBind = Classes:CreateBind()
@@ -1300,6 +1346,7 @@ end MenuItemRefreshSizeBind:Bind(function(MenuItem)
     end return 0
 end) MenuItemRefreshPositionBind:Bind(function(MenuItem,pos:UDim,k)
     if not MenuItem then logger:critical_error("MenuItemRefreshPositionBind","MenuItem is incorrect") MenuItem = Classes:CreateMenuItem() end
+    if not MenuItem.Visible then return pos end
     logger:debug("MenuItemRefreshPositionBind",`Updating Position for {MenuItem.Name}[{MenuItem.ClassName}]`)
     MenuItem.Frame.Position = UDim2.new(UDim.new(0,0),pos)
     return pos+MenuItem.Frame.Size.Y
@@ -1315,26 +1362,27 @@ end) UIS.InputBegan:Connect(function(event)
     elseif event.UserInputType==Enum.UserInputType.Keyboard then
         MenuCloseEvent:Fire(true)
     end
-end) function Classes:CreateMenuButton(Name:string,Title:{[string]:string}|string?)
+end) function Classes:CreateMenuButton(Name:string,Title:{[string]:string}|string?,disableTextColorChanged:boolean?)
     local Item = Classes:CreateMenuItem(Name,Title)
     Item:AddClassName("MenuButton")
     local Button = Instance.new("TextButton",Item.Frame)
     Button.Size = UDim2.new(1,0,1,0)
     Button.TextWrapped = true
     Button.TextXAlignment = Enum.TextXAlignment.Left
-    Button.TextSize = GuiSize.MenuItemYSize
-    GuiSize:GetPropertyChangedEvent("MenuItemYSize"):Connect(function()
-        Button.TextSize = GuiSize.MenuItemYSize
+    Button.TextSize = GuiSize.MenuItemTextSize
+    GuiSize:GetPropertyChangedEvent("MenuItemTextSize"):Connect(function()
+        Button.TextSize = GuiSize.MenuItemTextSize
         Item:RefreshSize()
     end) Item.Frame.BackgroundTransparency = 1
     local SColors = Classes:CreateSpecialColors()
     SColors:GetColorChangedSignal("MenuItemBackgroundColor"):Connect(function()
         Button.BackgroundColor3 = SColors:GetColor("MenuItemBackgroundColor")
     end) Button.BackgroundColor3 = SColors:GetColor("MenuItemBackgroundColor")
-    SColors:GetColorChangedSignal("MenuItemTextColor"):Connect(function()
-        Button.TextColor3 = SColors:GetColor("MenuItemTextColor")
-    end) Button.TextColor3 = SColors:GetColor("MenuItemTextColor")
-    Item.Title.TranslateValueChanged:Connect(function()
+    if not disableTextColorChanged then
+        SColors:GetColorChangedSignal("MenuItemTextColor"):Connect(function()
+            Button.TextColor3 = SColors:GetColor("MenuItemTextColor")
+        end) Button.TextColor3 = SColors:GetColor("MenuItemTextColor")
+    end Item.Title.TranslateValueChanged:Connect(function()
         Button.Text = Item.Title:Translate()
         Item:RefreshSize()
     end) Button.Text = Item.Title:Translate()
@@ -1344,7 +1392,7 @@ end) function Classes:CreateMenuButton(Name:string,Title:{[string]:string}|strin
     Item:SetReadOnly("TextObject")
     Item:RefreshSize()
     local Activated = Instance.new("BindableEvent")
-    Item.Activated = Activated
+    Item.Activated = Activated.Event
     Item:SetReadOnly("Activated")
     Item.CloseMenuOnActivated = true
     function Item:EmulateActivate()
@@ -1357,16 +1405,55 @@ end) function Classes:CreateMenuButton(Name:string,Title:{[string]:string}|strin
     end Button.Activated:Connect(function()
         Item:EmulateActivate()
     end) return Item
+end function Classes:CreateMenuText(Name:string,Title:{[string]:string}|string?)
+    local Item = Classes:CreateMenuItem(Name,Title)
+    Item:AddClassName("MenuText")
+    local TextLabel = Instance.new("TextLabel",Item.Frame)
+    TextLabel.Size = UDim2.new(1,0,1,0)
+    TextLabel.TextWrapped = true
+    TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+    TextLabel.TextSize = GuiSize.MenuTextTextSize
+    GuiSize:GetPropertyChangedEvent("MenuItemTextSize"):Connect(function()
+        TextLabel.TextSize = GuiSize.MenuTextTextSize
+        Item:RefreshSize()
+    end) TextLabel.BackgroundTransparency = 1
+    local SColors = Classes:CreateSpecialColors()
+    SColors:GetColorChangedSignal("MenuTextTextColor"):Connect(function()
+        TextLabel.TextColor3 = SColors:GetColor("MenuTextTextColor")
+    end) TextLabel.TextColor3 = SColors:GetColor("MenuTextTextColor")
+    Item.Title.TranslateValueChanged:Connect(function()
+        TextLabel.Text = Item.Title:Translate()
+        Item:RefreshSize()
+    end) TextLabel.Text = Item.Title:Translate()
+    Item.TextLabel = TextLabel
+    Item:SetReadOnly("Button")
+    Item.TextObject = TextLabel
+    Item:SetReadOnly("TextObject")
+    Item:RefreshSize()
+    return Item
+end function Classes:CreateMenuToggle(Name:string,Title:{[string]:string}|string?)
+    local Item = Classes:CreateMenuButton(Name,Title,true)
+    Item:AddClassName("MenuButton")
+    local SColors = Item.SpecialColors
+    Item.CloseMenuOnActivated = false
+    Item.Value = false
+    local function UpdateColor()
+        if Item.Value then
+            Item.Button.TextColor3 = SColors:GetColor("MenuToggleEnabledColor")
+        else Item.Button.TextColor3 = SColors:GetColor("MenuToggleDisabledColor")
+        end
+    end UpdateColor()
+    SColors:GetColorChangedSignal("MenuToggleEnabledColor"):Connect(function()
+        if Item.Value then UpdateColor() end
+    end) SColors:GetColorChangedSignal("MenuToggleDisabledColor"):Connect(function()
+        if not Item.Value then UpdateColor() end
+    end) Item:GetPropertyChangedEvent("Value"):Connect(function()
+        UpdateColor()
+    end) Item.Activated:Connect(function()
+        Item.Value = not Item.Value
+    end) return Item
 end
 
-local Menu = Classes:CreateMenu()
-Classes:CreateMenuButton("1234567890 test test test test test test test test test test test test test test").Parent = Menu
-Classes:CreateMenuButton("Working button in menu").Parent = Menu
-Classes:CreateMenuItem("3").Parent = Menu
-local two = Classes:CreateMenuItem("4") two.Parent = Menu
-local one = Classes:CreateMenuItem("5") one.Parent = Menu
-print("LOLOOLOLO",two.Name)
-Menu:Open(UDim2.new(0,LocalMouse.X,0,LocalMouse.Y))
 State.SayEnabled = true
 State.Saying:Load({ -- #LANG_REQUIRED
     ru="Загрузка ядра [Создание GUI классов]...",
@@ -1592,8 +1679,18 @@ local function TGuiObjectClass(Name:string,Title:string|{string}?,Parent:any?,Ob
     end) Frame.Name = Object.GlobalName
     Object.Frame = Frame
     Object:SetReadOnly("Frame")
-    Object.Menu = {}
+    local Menu = Classes:CreateMenu()
+    Object.Menu = Menu
     Object:SetReadOnly("Menu")
+    local OpenMenuBind = Classes:CreateBind()
+    OpenMenuBind:Bind(function(...)
+        Menu:Open(UDim2.new(0,LocalMouse.X,0,LocalMouse.Y))
+        return true
+    end) Object.OpenMenuBind = OpenMenuBind
+    function Object:OpenMenu()
+        OpenMenuBind:Run()
+    end
+    Object:SetReadOnly("OpenMenuBind")
     local SBind = Classes:CreateBind()
     SBind:Bind(function(...)
         return SizeBind:Run(...)
@@ -1699,7 +1796,7 @@ local function TGuiObjectClass(Name:string,Title:string|{string}?,Parent:any?,Ob
     end)
     return Object
 end
-local function CreateButtonForTGuiObject(TGuiObject)
+local function CreateButtonForTGuiObject(TGuiObject,DisableAutoUpdateTextColor:boolean)
     if type(TGuiObject)~="table" or TGuiObject.__type~="TClass" or not TGuiObject:IsA("TGuiObject") then
         logger:critical_error("TGuiObject is incorrect") TGuiObject=TGuiObjectClass() 
     end TGuiObject:AddClassName("ButtonObject")
@@ -1716,13 +1813,30 @@ local function CreateButtonForTGuiObject(TGuiObject)
     TGuiObject.SpecialColors:GetColorChangedSignal("ButtonBackground"):Connect(function()
         Button.BackgroundColor3 = TGuiObject.SpecialColors:GetColor("ButtonBackground")
     end) Button.BackgroundColor3 = TGuiObject.SpecialColors:GetColor("ButtonBackground")
-    TGuiObject.SpecialColors:GetColorChangedSignal("TextColor"):Connect(function()
-        Button.TextColor3 = TGuiObject.SpecialColors:GetColor("TextColor")
-    end) Button.TextColor3 = TGuiObject.SpecialColors:GetColor("TextColor")
-    Button.TextScaled = true
+    if not DisableAutoUpdateTextColor then
+        TGuiObject.SpecialColors:GetColorChangedSignal("TextColor"):Connect(function()
+            Button.TextColor3 = TGuiObject.SpecialColors:GetColor("TextColor")
+        end) Button.TextColor3 = TGuiObject.SpecialColors:GetColor("TextColor")
+    end Button.TextScaled = true
     TGuiObject.UICorner.Parent = Button
     TGuiObject.Button = Button
     TGuiObject:SetReadOnly("Button")
+    TGuiObject.OpenMenuFromButtonObject = true
+    TGuiObject.Menu:CreateMenuText("Just menu",{
+        ru="ЭТО МЕНЮ ОБЬЕКТА",
+        en="THIS MENU FOR OBJECT"
+    }) TGuiObject.Menu:CreateMenuButton("TestButton",{
+        ru="А ЭТО КНОПОЧКА",
+        en="AND THIS IS BUTTON"
+    }) TGuiObject.Menu:CreateMenuToggle("TestToggle",{
+        ru="А ЕЩЁ ТУТ ЕСТЬ ПЕРЕКЛЮЧАТЕЛЬ",
+        en="AND ALSO THIS IS TOGGLE"
+    })
+    Button.MouseButton2Click:Connect(function()
+        if TGuiObject.OpenMenuFromButtonObject then
+            TGuiObject:OpenMenu()
+        end
+    end)
     local Activated = Instance.new("BindableEvent")
     TGuiObject.Activated = Activated.Event
     Button.Activated:Connect(function()
@@ -2083,7 +2197,7 @@ function GuiObjects:CreateToggle(Name:string,Title:string|{[string]:string}?,Par
     if type(Parent)=="function" then func=Parent Parent=nil end
     logger:debug("GuiObjects:CreateButton","Creating new button '"..Name.."'")
     local Button = TGuiObjectClass(Name,Title,Parent)
-    Button = CreateButtonForTGuiObject(Button)
+    Button = CreateButtonForTGuiObject(Button,true)
     Button:AddClassName("Toggle")
     Button.Type = "Toggle"
     Button:SetReadOnly("Type")
@@ -2112,20 +2226,14 @@ function GuiObjects:CreateToggle(Name:string,Title:string|{[string]:string}?,Par
         return RefreshColorValueBind:Run(...)
     end) local refreshing = false
     local function refreshValueColor(NotAnimate:boolean,async:boolean)
-        if not refreshing or async then
-            logger:debug("Toggle","Refresh color for Toggle '"..Button.Name.."'")
-            refreshing = true
-            SpecialRefreshColorValueBind:Run(Button,not NotAnimate and GuiAnimations.EnableTextColorForToggleAnimation)
-            refreshing = false
-        end
+        logger:debug("Toggle","Refresh color for Toggle '"..Button.Name.."'")
+        SpecialRefreshColorValueBind:Run(Button,not NotAnimate and GuiAnimations.EnableTextColorForToggleAnimation)
     end SpecialRefreshColorValueBind.OnBinded:Connect(refreshValueColor)
     RefreshColorValueBind.OnBinded:Connect(refreshValueColor)
     Button.SpecialColors:GetColorChangedSignal("ToggleTrue"):Connect(function()
         if Button.Value then refreshValueColor() end
     end) Button.SpecialColors:GetColorChangedSignal("ToggleFalse"):Connect(function()
         if not Button.Value then refreshValueColor() end
-    end) Button.Button:GetPropertyChangedSignal("TextColor3"):Connect(function()
-        refreshValueColor(true)
     end) refreshValueColor(true)
     function Button:RefreshTextColorFromValue(NotAnimate:boolean)
         return refreshValueColor(NotAnimate,true)
@@ -2134,7 +2242,7 @@ function GuiObjects:CreateToggle(Name:string,Title:string|{[string]:string}?,Par
         if Button.Value then
             EnabledEvent:Fire()
         else DisabledEvent:Fire()
-        end refreshValueColor(false,true)
+        end refreshValueColor()
     end) if type(func)=="function" then
         Button.Changed:Connect(function()
             func(Button)
@@ -2692,8 +2800,9 @@ RefreshColorValueBind:Bind(function(Toggle,Animate:boolean)
         LastTween = TweenService:Create(Toggle.Button,GuiAnimations.TextColorForToggleTI,{TextColor3=color})
         LastTween:Play()
         LastToggleTweens[Toggle] = LastTween
-        LastTween.Completed:Wait()
-        LastToggleTweens[Toggle] = nil
+        LastTween.Completed:Once(function()
+            LastToggleTweens[Toggle] = nil
+        end)
     else Toggle.Button.TextColor3 = color
     end return true
 end)
@@ -2758,8 +2867,8 @@ SequenceCreateObject:Bind(function(Seq,Name:string,Position:number)
             dragDetector.DragUDim2 = UDim2.new(0,0,0,0)
         end local SOGS = GuiSize.SequenceObjectGrabSize
         local grabSize = UDim.new(0,SOGS.Offset+SOGS.Scale*button.AbsoluteSize.Y)
-        grabSize = UDim2.new(grabSize,grabSize)
-        Grab.Size = grabSize
+        Grab.Size = UDim2.new(grabSize,grabSize)
+        TextLabel.Size = UDim2.new(UDim.new(1,0)-grabSize,UDim.new(1,0))
     end GuiSize:GetPropertyChangedEvent("SequenceObjectSize"):Connect(refresh)
     refresh() buttonResult.Button = button
     GuiSize:GetPropertyChangedEvent("SequenceObjectGrabSize"):Connect(refresh)

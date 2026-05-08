@@ -214,10 +214,9 @@
                     "description":"Заголовок(имя которое видит пользователь)",
                     "required":false
                 },{
-                    "name":"Parent",
-                    "type":"class",
-                    "class":"Menu",
-                    "description":"Родитель этого обьекта",
+                    "name":"disableTextColorChanged",
+                    "type":"boolean",
+                    "description":"Включено ли изменение цвета текста",
                     "required":false
                 }
             ],
@@ -226,6 +225,50 @@
                     "type":"class",
                     "class":"MenuItem",
                     "description":"Класс MenuItem"
+                }
+            ],"deprecated":false
+        },"CreateMenuButton":{ 
+            "description":"Создаёт menu button",
+            "args":[
+                {
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Название",
+                    "required":true
+                },{
+                    "name":"Title",
+                    "type":"string | Translator | table",
+                    "description":"Заголовок(имя которое видит пользователь)",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"class",
+                    "class":"MenuButton",
+                    "description":"Класс MenuButton"
+                }
+            ],"deprecated":false
+        },"CreateMenuText":{ 
+            "description":"Создаёт menu text",
+            "args":[
+                {
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Название",
+                    "required":true
+                },{
+                    "name":"Title",
+                    "type":"string | Translator | table",
+                    "description":"Заголовок(имя которое видит пользователь)",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"class",
+                    "class":"MenuText",
+                    "description":"Класс MenuText"
                 }
             ],"deprecated":false
         }

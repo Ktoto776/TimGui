@@ -155,6 +155,16 @@
             "description":"Размер Y MenuItem'а",
             "canChange":true,
             "deprecated":false
+        },"MenuItemTextSize":{
+            "type":"number",
+            "description":"Размер текста MenuItem'а",
+            "canChange":true,
+            "deprecated":false
+        },"MenuTextTextSize":{
+            "type":"number",
+            "description":"Размер текста MenuText'а",
+            "canChange":true,
+            "deprecated":false
         }
     }, "methods":{}, 
     "events":{}

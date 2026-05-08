@@ -85,7 +85,7 @@
     "events":{
         "ChildAdded":{
             "description":"Запускается когда добавлен новый ребёнок",
-            "type":"RBXScriptEvent",
+            "type":"TEvent.Event",
             "args":[{
                     "name":"child",
                     "type":"TGuiObject",
@@ -95,7 +95,7 @@
             "deprecated":false
         },"ChildRemoved":{
             "description":"Запускается когда убран ребёнок",
-            "type":"RBXScriptEvent",
+            "type":"TEvent.Event",
             "args":[{
                     "name":"child",
                     "type":"TGuiObject",

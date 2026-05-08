@@ -62,7 +62,7 @@
         },"TextColorForToggle":{
             "type":"class",
             "class":"Bind",
-            "description":"Бинд для (анимации) смены цвета в Toggle в зависимости от значения. Должен ждать конца анимации. Параметры: Toggle:TTogle, enableAnimate:boolean--стоит ли анимировать(если false просто резкая смена цвета)",
+            "description":"Бинд для (анимации) смены цвета в Toggle в зависимости от значения. Параметры: Toggle:TTogle, enableAnimate:boolean--стоит ли анимировать(если false просто резкая смена цвета)",
             "canChange":false,
             "deprecated":false
         },"RefreshTextBoxSizes":{

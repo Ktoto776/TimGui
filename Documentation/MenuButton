@@ -1,5 +1,5 @@
 {
-    "description":"Пустой (не) класс, не существует и нужен чтоб облегчить мне жизн",
+    "description":"Кнопка в меню.",
     "type":"class",
     "classes":["TClass","MenuItem","MenuButton"],
     "writeSameMode":true,

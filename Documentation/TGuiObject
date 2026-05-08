@@ -51,9 +51,15 @@
             "canChange":true,
             "deprecated":false
         },"Menu":{
-            "type":"table",
-            "description":"Массив с функциями из меню обьекта",
-            "canChange":true,
+            "type":"Menu",
+            "description":"Menu этой кнопки",
+            "canChange":false,
+            "deprecated":false
+        },"OpenMenuBind":{
+            "type":"class",
+            "class":"Bind",
+            "description":"Бинд для замены :OpenMenu()",
+            "canChange":false,
             "deprecated":false
         },"Type":{
             "type":"table",
@@ -127,6 +133,11 @@
                     "description":"Успешно ли было запущено"
                 }
             ], "deprecated":false
+        },"OpenMenu":{
+            "description":"Открывает меню этого обьекта",
+            "args":[],
+            "return":[], 
+            "deprecated":false
         }
     }, 
     "events":{

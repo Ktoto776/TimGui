@@ -10,6 +10,11 @@
             "description":"Кнопка.",
             "canChange":false,
             "deprecated":false
+        },"OpenMenuFromButtonObject":{
+            "type":"boolean",
+            "description":"Включено ли открытие меню через кнопку(ПК - правая кнопка мыши, Телефоны - зажатие)",
+            "canChange":false,
+            "deprecated":false
         }
     }, 
     "methods":{
