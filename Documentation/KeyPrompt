@@ -1,0 +1,99 @@
+{
+    "description":"Класс KeyPrompt, чтобы спрашивать клавишу у пользователя на ПК.",
+    "type":"class",
+    "classes":["TClass","ConfigObject","TWindow","Prompt","KeyPrompt"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "RunArgs":[],
+    "InputArgs":[
+        {
+            "name":"Key",
+            "type":"class",
+            "class":"TKey",
+            "description":"Данные кнопки которой нажал пользователь"
+        }
+    ],
+    "properties":{
+        "Buttons":{
+            "type":"Frame",
+            "description":"Frame в котором находятся кнопки 'подтвердить' и 'отменить'",
+            "canChange":false,
+            "deprecated":false
+        },"ConfirmButton":{
+            "type":"TextButton",
+            "description":"TextButton кнопки подтверждения(берёт текст из .ConfirmText)",
+            "canChange":false,
+            "deprecated":false
+        },"ConfirmText":{
+            "type":"class",
+            "class":"Translator",
+            "description":"Текст для кнопки подтверждения",
+            "canChange":false,
+            "deprecated":false
+        },"DescriptionLabel":{
+            "type":"TextLabel",
+            "description":"TextLabel описания",
+            "canChange":true,
+            "deprecated":false
+        },"DescriptionTextSize":{
+            "type":"number",
+            "description":"Размер текста описания",
+            "canChange":true,
+            "deprecated":false
+        },"SpecialDescriptionSizeBind":{
+            "type":"class",
+            "class":"Bind",
+            "description":"Bind для установки размера описанию. См Binder.TextPromptDescriptionSizeBind",
+            "canChange":true,
+            "deprecated":false
+        },"Value":{
+            "type":"TKey",
+            "description":"То что нажал пользователь",
+            "canChange":true,
+            "deprecated":false
+        },"TextLabel":{
+            "type":"TextLabel",
+            "description":"Основной TextLabel с выводом какая кнопка была нажата",
+            "canChange":false,
+            "deprecated":false
+        },"CancelButton":{
+            "type":"TextButton",
+            "description":"TextButton для отмены",
+            "canChange":false,
+            "deprecated":false
+        },"CancelText":{
+            "type":"class",
+            "class":"Translator",
+            "description":"Текст для кнопки отмены",
+            "canChange":false,
+            "deprecated":false
+        },"NoneKeyText":{
+            "type":"class",
+            "class":"Translator",
+            "description":"Текст если кнопка не выбрана",
+            "canChange":false,
+            "deprecated":false
+        },"KeyText":{
+            "type":"class",
+            "class":"Translator",
+            "description":"Текст если кнопка выбрана, %KEY% - выбранная кнопка",
+            "canChange":false,
+            "deprecated":false
+        },"AlreadyUsingInGameText":{
+            "type":"class",
+            "class":"Translator",
+            "description":"Подсказка если выбранная кнопка используется в игре",
+            "canChange":false,
+            "deprecated":false
+        }
+    }, 
+    "methods":{}, 
+    "events":{
+        "OnSizeRefreshed":{
+            "description":"Запускается когда обновился размер(описания и тд) и позиции",
+            "type":"RBXScriptEvent",
+            "args":[],
+            "deprecated":false
+        }
+    }
+}

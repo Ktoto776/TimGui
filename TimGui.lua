@@ -248,12 +248,12 @@ function Classes:CreateTEvent()
         event.BEvent:Fire(argId)
     end function event.Event:Connect(callback)
         if type(callback)~="function" then logger:critical_error("TEvent:Connect","Callback is incorrect.") end
-        event.BEvent.Event:Connect(function(id)
+        return event.BEvent.Event:Connect(function(id)
             callback(table.unpack(args[id]))
         end)
     end function event.Event:Once(callback)
         if type(callback)~="function" then logger:critical_error("TEvent:Connect","Callback is incorrect.") end
-        event.BEvent.Event:Once(function(id)
+        return event.BEvent.Event:Once(function(id)
             callback(table.unpack(args[id]))
         end)
     end function event.Event:Wait()
@@ -578,6 +578,7 @@ Colors.OnTWindowConfirmButtonColor = Color3.new(0.2,0.7,0.3)
 Colors.OnTWindowConfirmButtonTextColor = Color3.new(1,1,1)
 Colors.OnTWindowCancelButtonColor = Color3.new(0.7,0.2,0.3)
 Colors.OnTWindowCancelButtonTextColor = Color3.new(1,1,1)
+Colors.OnTWindowHintTextColor = Color3.new(0.75,0.75,0.75)
 --Configs --------------------------
 Colors.ConfigsSeparationColor = Color3.new(0,0,0)
 Colors.ConfigButtonSelectedBackground = Color3.fromRGB(50,75,100)
@@ -636,6 +637,9 @@ GuiSize.ConfirmBoxPromptSize = UDim2.new(0.8,0,0,50)
 GuiSize.ConfirmPromptButtonsSize = UDim2.new(0.8,0,0,50)
 GuiSize.ConfirmPromptXAnchor = 0.5
 GuiSize.ConfirmPromptDescriptionTextSize = 15
+--KeyPrompt
+GuiSize.TextKeyPromptSize = UDim2.new(0.8,0,0,100)
+GuiSize.NotifyKeyPromptSize = UDim2.new(1,0,0,50)
 -- ConfigWindow -------------
 GuiSize.ConfigsSeparatorSize = UDim.new(0,1)
 GuiSize.ConfigsWindowConfigsSize = UDim.new(0,30)
@@ -3470,6 +3474,10 @@ HideArrowAnimation:Bind(function(Win:table)
     end return true
 end)
 -- #FIND_POINT Prompts --------------------------
+State.Saying:Load{ -- #LANG_REQUIRED
+    ru="Загузка ядра: Загрузка Класса запросов",
+    en="Loading core: Loading Prompts class"
+}
 local Prompts = Classes:CreateTClass()
 TimGui.Prompts = Prompts
 table.insert(TimGuiReadOnly,"Prompts")
@@ -3656,6 +3664,9 @@ function Prompts:CreateTextPrompt(Name:string,Title:string | {[string]: string}?
     Prompt.SpecialColors:GetColorChangedSignal("OnTWindowTextColor"):Connect(function()
         Descript.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowTextColor")
     end) Descript.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowTextColor")
+    Prompt.OnRun:Connect(function()
+        TextBox.Text = ""
+    end)
     return Prompt
 end local function DefaultPromptDescSizeF(Prompt,YPos:UDim)
     if not Prompt then logger:critical_error("Prompt is incorrect") Prompt=Prompts:CreateTextPrompt() end
@@ -3788,7 +3799,385 @@ function Prompts:CreateConfirmationPrompt(Name:string,Title:string | {[string]: 
     end) Descript.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowTextColor")
     return Prompt
 end ConfirmationPromptDescriptionSizeBind:Bind(DefaultPromptDescSizeF)
+-- KeyBinding ---------------------------------------------
+local KeyBinding = Classes:CreateTClass()
+KeyBinding:AddClassName("KeyBinding")
+TimGui.KeyBinding = KeyBinding
+table.insert(TimGuiReadOnly,"KeyBinding")
+local KeyEvent = Classes:CreateTEvent()
+KeyBinding.KeyEvent = KeyEvent.Event
+KeyBinding:SetReadOnly("KeyEvent")
+local SpecialKeyEvent = Classes:CreateTEvent()
+KeyBinding.SpecialKeyEvent = SpecialKeyEvent.Event
+KeyBinding:SetReadOnly("SpecialKeyEvent")
+local SpecialKeys = {
+    LeftCTRL=Enum.KeyCode.LeftControl,
+    RightCTRL=Enum.KeyCode.RightControl,
+    LeftShift=Enum.KeyCode.LeftShift,
+    RightShift=Enum.KeyCode.RightShift,
+    LeftAlt=Enum.KeyCode.LeftAlt,
+    RightAlt=Enum.KeyCode.RightAlt,
+} ---UIS:IsKeyDown(Enum.KeyCode.LeftControl)
+local SpecialKeyName = {
+    ["1"]=Enum.KeyCode.One,
+    ["2"]=Enum.KeyCode.Two,
+    ["3"]=Enum.KeyCode.Three,
+    ["4"]=Enum.KeyCode.Four,
+    ["5"]=Enum.KeyCode.Five,
+    ["6"]=Enum.KeyCode.Six,
+    ["7"]=Enum.KeyCode.Seven,
+    ["8"]=Enum.KeyCode.Eight,
+    ["9"]=Enum.KeyCode.Nine,
+    ["0"]=Enum.KeyCode.Zero,
+    K1=Enum.KeyCode.KeypadOne,
+    K2=Enum.KeyCode.KeypadTwo,
+    K3=Enum.KeyCode.KeypadThree,
+    K4=Enum.KeyCode.KeypadFour,
+    K5=Enum.KeyCode.KeypadFive,
+    K6=Enum.KeyCode.KeypadSix,
+    K7=Enum.KeyCode.KeypadSeven,
+    K8=Enum.KeyCode.KeypadEight,
+    K9=Enum.KeyCode.KeypadNine,
+    K0=Enum.KeyCode.KeypadZero,
+    KEnter=Enum.KeyCode.KeypadEnter,
+    KDivide=Enum.KeyCode.KeypadDivide,
+    KPeriod=Enum.KeyCode.KeypadPeriod,
+    KMultiply=Enum.KeyCode.KeypadMultiply,
+    KMinus=Enum.KeyCode.KeypadMinus,
+    KPlus=Enum.KeyCode.KeypadPlus,
+    KEquals=Enum.KeyCode.KeypadEquals,
+} local MouseKeyNames = {"LeftMB","RightMB","MiddleMB"}
+local function CreateTKey(KeyCode:Enum.KeyCode,holding:{[string]:boolean},KeyName:string)
+    local TKey = Classes:CreateTClass()
+    TKey:AddClassName("TKey")
+    TKey.IsKeyboardKey = KeyCode~=Enum.KeyCode.Unknown
+    TKey.MouseKey = table.find(MouseKeyNames,KeyName) or 0
+    TKey.IsMouseKey = TKey.MouseKey~=0
+    TKey.KeyName = KeyName
+    TKey.KeyCode = KeyCode
+    TKey.Holding = holding
+    TKey:SetReadOnly("IsKeyboardKey")
+    TKey:SetReadOnly("IsMouseKey")
+    TKey:SetReadOnly("KeyName")
+    TKey:SetReadOnly("KeyCode")
+    TKey:SetReadOnly("MouseKey")
+    TKey:SetReadOnly("Holding")
+    local Name = KeyName
+    for k,v in holding do
+        if v then
+            Name = k.." + "..Name
+        end
+    end TKey.Name = Name
+    TKey:SetReadOnly("Name")
+    return TKey
+end local function tableFind(t,v)
+    for k,vv in t do
+        if vv==v then
+            return k
+        end
+    end
+end function KeyBinding:GetKeyNameFromKeyCode(KeyCode:Enum.KeyCode)
+    if typeof(KeyCode)~="EnumItem" then logger:critical_error("KeyBinding:CreateKeyboardKey","KeyCode is incorrect. Expected EnumItem") end
+    if KeyCode.EnumType~=Enum.KeyCode then logger:critical_error("KeyBinding:CreateKeyboardKey","KeyCode is incorrect. Expected Enum.KeyCode") end
+    local specKeyName = tableFind(SpecialKeyName,KeyCode)
+    if specKeyName then
+        return specKeyName
+    else specKeyName = tableFind(SpecialKeys,KeyCode)
+        if specKeyName then
+            return specKeyName
+        end
+    end return KeyCode.Name
+end KeyBinding.EventsEnabled = true
+KeyBinding.NextBlocked = false
+local BeganEvent = Classes:CreateTEvent()
+KeyBinding.Began = BeganEvent.Event
+KeyBinding:SetReadOnly("Began")
+local EndedEvent = Classes:CreateTEvent()
+KeyBinding.Ended = EndedEvent.Event
+KeyBinding:SetReadOnly("Ended")
+local KeyBeganEvent = {}
+local KeyEndedEvent = {}
+local function OnKeyChangedState(Key,gpe)
+    if tableFind(SpecialKeys,Key.KeyCode) then
+        SpecialKeyEvent:Fire(Key,gpe)
+    else local holding = {}
+        for k,v in pairs(SpecialKeys) do
+            holding[k] = UIS:IsKeyDown(v)
+        end local KeyName = KeyBinding:GetKeyNameFromKeyCode(Key.KeyCode)
+        if Key.KeyCode==Enum.KeyCode.Unknown then
+            if Key.UserInputType==Enum.UserInputType.MouseButton1 then
+                KeyName = MouseKeyNames[1]
+            elseif Key.UserInputType==Enum.UserInputType.MouseButton2 then
+                KeyName = MouseKeyNames[2]
+            elseif Key.UserInputType==Enum.UserInputType.MouseButton3 then
+                KeyName = MouseKeyNames[3]
+            else return
+            end
+        end local TKey = CreateTKey(Key.KeyCode,holding,KeyName)
+        KeyEvent:Fire(TKey,gpe,Key)
+        if KeyBinding.NextBlocked then
+            KeyBinding.NextBlocked = false
+        elseif KeyBinding.EventsEnabled then
+            local event
+            if Key.UserInputState==Enum.UserInputState.Begin then
+                BeganEvent:Fire(TKey,gpe)
+                event = KeyBeganEvent[TKey.KeyName]
+            elseif Key.UserInputState==Enum.UserInputState.End then
+                EndedEvent:Fire(TKey,gpe)
+                event = KeyEndedEvent[TKey.KeyName]
+            end if event then 
+                event:Fire(TKey,gpe)
+            end
+        end
+    end
+end UIS.InputBegan:Connect(OnKeyChangedState)
+UIS.InputEnded:Connect(OnKeyChangedState)
+function KeyBinding:GetKeyBeganEvent(KeyName)
+    local event = KeyBeganEvent[KeyName]
+    if not event then
+        event = Classes:CreateTEvent()
+        KeyBeganEvent[KeyName] = event
+    end return event.Event
+end function KeyBinding:GetKeyEndedEvent(KeyName)
+    local event = KeyEndedEvent[KeyName]
+    if not event then
+        event = Classes:CreateTEvent()
+        KeyEndedEvent[KeyName] = event
+    end return event.Event
+end
+function KeyBinding:CreateKeyboardKey(KeyCode:Enum.KeyCode,holding:{[string]:boolean}?)
+    if typeof(KeyCode)~="EnumItem" then logger:critical_error("KeyBinding:CreateKeyboardKey","KeyCode is incorrect. Expected EnumItem") end
+    if KeyCode.EnumType~=Enum.KeyCode then logger:critical_error("KeyBinding:CreateKeyboardKey","KeyCode is incorrect. Expected Enum.KeyCode") end
+    if type(holding)~="table" then holding = {} end
+    return CreateTKey(KeyCode,holding,KeyBinding:GetKeyNameFromKeyCode(KeyCode))
+end  function KeyBinding:CreateMouseKey(MouseCode:number,holding:{[string]:boolean}?)
+    if type(MouseCode)~="number" then logger:critical_error("KeyBinding:CreateMouseKey","MouseCode is incorrect. Expected number") end
+    if MouseCode<1 or MouseCode>#MouseKeyNames then logger:critical_error("KeyBinding:CreateMouseKey","MouseCode is incorrect. Expected number range(need be 1-"..#MouseKeyNames..")") end
+    if type(holding)~="table" then holding = {} end
+    return CreateTKey(Enum.KeyCode.Unknown,holding,table.find(MouseKeyNames,MouseCode))
+end
+local KeyPromptDescriptionSizeBind = Classes:CreateBind()
+Binder.KeyPromptDescriptionSizeBind = KeyPromptDescriptionSizeBind
+Binder:SetReadOnly("KeyPromptDescriptionSizeBind")
+function Prompts:CreateKeyPrompt(Name:string,Title:string | {[string]: string}?,Description:string | {[string]: string}?,disableDefaultConfigSettingsRefresh:boolean?)
+    local Prompt = Classes:CreatePrompt("Key",Name,Title,Description,disableDefaultConfigSettingsRefresh)
+    Prompt:AddClassName("KeyPrompt")
+    local TextLabel = Instance.new("TextLabel",Prompt.Frame)
+    TextLabel.TextScaled = true
+    TextLabel.Text = ""
+    Prompt.TextLabel = TextLabel
+    Prompt:SetReadOnly("TextLabel")
+    Prompt.OnClosed:Connect(function()
+        if Prompt.Running then
+            Prompt:EmulateInput()
+        end
+    end) local inputed = false
+    local noneKeyTranslator = Classes:CreateTranslator("Confirm")
+    noneKeyTranslator:Load{ --#LANG_REQUIRED
+        ru="Нажми любую кнопку",
+        en="Press any key"
+    }  Prompt.NoneKeyText = noneKeyTranslator
+    Prompt:SetReadOnly("NoneKeyText")
+    local KeyTranslator = Classes:CreateTranslator("Confirm")
+    KeyTranslator:Load{ --#LANG_REQUIRED
+        ru="Выбранная кнопка: %KEY%",
+        en="Selected key: %KEY%"
+    }  Prompt.KeyText = KeyTranslator
+    Prompt:SetReadOnly("KeyText")
+    local function updateText()
+        if not inputed then
+            TextLabel.Text = noneKeyTranslator:Translate()
+        else TextLabel.Text = string.gsub(KeyTranslator:Translate(),"%%KEY%%",Prompt.Value.Name)
+        end
+    end noneKeyTranslator.TranslateValueChanged:Connect(function()
+        if not inputed then updateText() end
+    end) noneKeyTranslator.TranslateValueChanged:Connect(function()
+        if inputed then updateText() end
+    end) Prompt.Value = KeyBinding:CreateKeyboardKey(Enum.KeyCode.Unknown)
+    Prompt:GetPropertyChangedEvent("Value"):Connect(function()
+        inputed = true updateText()
+    end)
+    local Descript = Instance.new("TextLabel",Prompt.Frame)
+    Descript.Text = Prompt.Description:Translate()
+    Descript.Name = "Description"
+    Prompt.DescriptionSize = GuiSize.TextPromptDescriptionTextSize
+    Prompt:GetPropertyChangedEvent("DescriptionSize"):Connect(function()
+        Descript.TextSize = Prompt.DescriptionSize
+    end) Descript.TextSize = Prompt.DescriptionSize
+    Descript.BackgroundTransparency = 1
+    Descript.TextWrapped = true
+    Prompt.DescriptionLabel = Descript
+    Prompt:SetReadOnly("DescriptionLabel")
+    local SpecDescriptionSizeBind = Classes:CreateBind()
+    SpecDescriptionSizeBind:Bind(function(...)
+        return TextPromptDescriptionSizeBind:Run(...)
+    end) Prompt.SpecialDescriptionSizeBind = SpecDescriptionSizeBind
+    Prompt:SetReadOnly("SpecialDescriptionSizeBind")
+    local Buttons = Instance.new("Frame",Prompt.Frame)
+    Buttons.Name = "Buttons"
+    Buttons.BackgroundTransparency = 1
+    Prompt.Buttons = Buttons
+    Prompt:SetReadOnly("Buttons")
+    local confirmButton = Instance.new("TextButton",Buttons)
+    confirmButton.Name = "Confirm"
+    confirmButton.AnchorPoint = Vector2.new(1,0)
+    confirmButton.Position = UDim2.new(1,0,0,0)
+    confirmButton.Size = UDim2.new(0.5,0,1,0)
+    confirmButton.TextScaled = true
+    confirmButton.Activated:Connect(function()
+        Prompt:EmulateInput(Prompt.Value)
+    end) Prompt.ConfirmButton = confirmButton
+    Prompt:SetReadOnly("ConfirmButton")
+    local confirmTranslator = Classes:CreateTranslator("Confirm")
+    confirmTranslator:Load{ --#LANG_REQUIRED
+        ru="Подтвердить",
+        en="Confirm"
+    } confirmTranslator.TranslateValueChanged:Connect(function()
+        confirmButton.Text = confirmTranslator:Translate()
+    end) confirmButton.Text = confirmTranslator:Translate()
+    Prompt.ConfirmText = confirmTranslator
+    Prompt:SetReadOnly("ConfirmText")
+    Prompt.SpecialColors:GetColorChangedSignal("OnTWindowConfirmButtonColor"):Connect(function()
+        confirmButton.BackgroundColor3 = Prompt.SpecialColors:GetColor("OnTWindowConfirmButtonColor")
+    end) confirmButton.BackgroundColor3 = Prompt.SpecialColors:GetColor("OnTWindowConfirmButtonColor")
+    Prompt.SpecialColors:GetColorChangedSignal("OnTWindowConfirmButtonTextColor"):Connect(function()
+        confirmButton.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowConfirmButtonTextColor")
+    end) confirmButton.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowConfirmButtonTextColor")
+    local cancelButton = Instance.new("TextButton",Buttons)
+    cancelButton.Name = "Cancel"
+    cancelButton.Size = UDim2.new(0.5,0,1,0)
+    cancelButton.TextScaled = true
+    cancelButton.Activated:Connect(function()
+        Prompt:EmulateInput()
+    end) Prompt.CancelButton = cancelButton
+    Prompt:SetReadOnly("CancelButton")
+    local cancelTranslator = Classes:CreateTranslator("Cancel")
+    cancelTranslator:Load{ --#LANG_REQUIRED
+        ru="Отменить",
+        en="Cancel"
+    } cancelTranslator.TranslateValueChanged:Connect(function()
+        cancelButton.Text = cancelTranslator:Translate()
+    end) cancelButton.Text = cancelTranslator:Translate()
+    Prompt.SpecialColors:GetColorChangedSignal("OnTWindowCancelButtonColor"):Connect(function()
+        cancelButton.BackgroundColor3 = Prompt.SpecialColors:GetColor("OnTWindowCancelButtonColor")
+    end) cancelButton.BackgroundColor3 = Prompt.SpecialColors:GetColor("OnTWindowCancelButtonColor")
+    Prompt.SpecialColors:GetColorChangedSignal("OnTWindowCancelButtonTextColor"):Connect(function()
+        cancelButton.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowCancelButtonTextColor")
+    end) cancelButton.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowCancelButtonTextColor")
+    Prompt.CancelText = cancelTranslator
+    Prompt:SetReadOnly("CancelText")
+    Buttons.BackgroundTransparency = 1
+    local Notify = Instance.new("TextLabel",Prompt.Frame)
+    Notify.TextScaled = true
+    Notify.Text = ""
+    Notify.BackgroundTransparency = 1
+    Prompt.SpecialColors:GetColorChangedSignal("OnTWindowHintTextColor"):Connect(function()
+        Notify.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowHintTextColor")
+    end) Notify.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowHintTextColor")
+    local SizeRefreshed = Instance.new("BindableEvent")
+    Prompt.OnSizeRefreshed = SizeRefreshed.Event
+    Prompt:SetReadOnly("OnSizeRefreshed")
+    local function refreshSize()
+        local YPos:UDim = GuiSize.PromptYIndent
+        local xAnch = GuiSize.TextPromptXAnchor
+        TextLabel.Position = UDim2.new(UDim.new(xAnch,0),YPos)
+        TextLabel.AnchorPoint = Vector2.new(xAnch,0)
+        TextLabel.Size = GuiSize.TextKeyPromptSize
+        YPos += TextLabel.Size.Y
+        Notify.Position = UDim2.new(UDim.new(xAnch,0),YPos)
+        Notify.AnchorPoint = Vector2.new(xAnch,0)
+        Notify.Size = GuiSize.NotifyKeyPromptSize
+        YPos += Notify.Size.Y
+        YPos = SpecDescriptionSizeBind:Run(Prompt,YPos)
+        if typeof(YPos)=="UDim" then
+            Buttons.Position = UDim2.new(UDim.new(xAnch,0),YPos)
+            Buttons.Size = GuiSize.TextPromptButtonsSize
+            Buttons.AnchorPoint = Vector2.new(xAnch,0)
+            YPos += Buttons.Size.Y
+            Prompt.Size = UDim2.new(Prompt.Size.X,YPos+GuiSize.PromptYIndent)
+        end SizeRefreshed:Fire()
+    end refreshSize()
+    TextPromptDescriptionSizeBind.OnBinded:Connect(refreshSize)
+    SpecDescriptionSizeBind.OnBinded:Connect(refreshSize)
+    GuiSize:GetPropertyChangedEvent("NotifyKeyPromptSize"):Connect(refreshSize)
+    GuiSize:GetPropertyChangedEvent("PromptYIndent"):Connect(refreshSize)
+    GuiSize:GetPropertyChangedEvent("TextPromptXAnchor"):Connect(refreshSize)
+    GuiSize:GetPropertyChangedEvent("TextPromptButtonsSize"):Connect(refreshSize)
+    GuiSize:GetPropertyChangedEvent("TextBoxPromptSize"):Connect(refreshSize)
+    Prompt.Description.TranslateValueChanged:Connect(function()
+        Descript.Text = Prompt.Description:Translate()
+        refreshSize()
+    end)
+    Prompt.SpecialColors:GetColorChangedSignal("OnTWindowTextBoxBackgroundColor"):Connect(function()
+        TextLabel.BackgroundColor3 = Prompt.SpecialColors:GetColor("OnTWindowTextBoxBackgroundColor")
+    end) TextLabel.BackgroundColor3 = Prompt.SpecialColors:GetColor("OnTWindowTextBoxBackgroundColor")
+    Prompt.SpecialColors:GetColorChangedSignal("OnTWindowTextBoxTextColor"):Connect(function()
+        TextLabel.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowTextBoxTextColor")
+    end) TextLabel.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowTextBoxTextColor")
+    Prompt.SpecialColors:GetColorChangedSignal("OnTWindowTextColor"):Connect(function()
+        Descript.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowTextColor")
+    end) Descript.TextColor3 = Prompt.SpecialColors:GetColor("OnTWindowTextColor")
+    local MouseTwiceTranslator = Classes:CreateTranslator("Confirm")
+    MouseTwiceTranslator:Load{ --#LANG_REQUIRED
+        ru="Нажми на эту же кнопку мыши, чтобы подтвердить",
+        en="Click the same mouse button to confirm"
+    }  Prompt.ClickMouseTwiceText = MouseTwiceTranslator
+    Prompt:SetReadOnly("ClickMouseTwiceText")
+    local GPE = true
+    local GPETranslator = Classes:CreateTranslator("Confirm")
+    GPETranslator:Load{ --#LANG_REQUIRED
+        ru="Выбранная кнопка используется в игре",
+        en="Selected key is already using in game"
+    }  Prompt.AlreadyUsingInGameText = GPETranslator
+    Prompt:SetReadOnly("AlreadyUsingInGameText")
+    GPETranslator.TranslateValueChanged:Connect(function()
+        if GPE then
+            Notify.Text = GPETranslator:Translate()
+        end
+    end) local KeyEvent
+    Prompt.OnRun:Connect(function()
+        inputed = false
+        updateText()
+        local lastMouse
+        KeyEvent = KeyBinding.KeyEvent:Connect(function(TKey,gpe,Input:InputObject)
+            if TKey.IsMouseKey then
+                if Input.UserInputState~=Enum.UserInputState.End then return end
+                gpe = false
+                if lastMouse and lastMouse.Name==TKey.Name then
+                    task.wait()
+                    Prompt.Value = TKey 
+                    Notify.Text = ""
+                    lastMouse = nil
+                else lastMouse = TKey
+                    Notify.Text = MouseTwiceTranslator:Translate()
+                    task.delay(1.5,function()
+                        if lastMouse==TKey then
+                            Notify.Text = ""
+                            lastMouse = nil
+                        end
+                    end)
+                end
+            else if lastMouse then
+                    Notify.Text = ""
+                    lastMouse = nil
+                end Prompt.Value = TKey 
+            end GPE = gpe
+            if gpe then
+                Notify.Text = GPETranslator:Translate()
+            elseif not TKey.IsMouseKey then
+                Notify.Text = ""
+            end
+        end)
+    end) Prompt.RunStopped:Connect(function()
+        if KeyEvent then KeyEvent:Disconnect() end
+    end)
+    return Prompt
+end
 -- #FIND_POINT Configs Window ------------------
+State.Saying:Load{ -- #LANG_REQUIRED
+    ru="Загузка ядра: Загрузка конфигураций",
+    en="Loading core: Loading Configurations"
+}
 local ConfigsWindow = Classes:CreateTWindow("Configs",{ --LANG_REQUIRED
     ru="Конфигурации",
     en="Configurations",

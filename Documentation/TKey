@@ -1,0 +1,46 @@
+{
+    "description":"Класс - кнопка, нужен для получения нажатой кнопки",
+    "type":"class",
+    "classes":["TClass","TKey"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "IsKeyboardKey":{
+            "type":"boolean",
+            "description":"Эта кнопка клавиатуры?",
+            "canChange":false,
+            "deprecated":false
+        },"IsMouseKey":{
+            "type":"boolean",
+            "description":"Эта кнопка мыши?",
+            "canChange":false,
+            "deprecated":false
+        },"KeyName":{
+            "type":"string",
+            "description":"Имя кнопки например A/1/KEnter/K1(K1 - Keypad One)/LeftMB(LeftMB-Left Mouse Button)",
+            "canChange":false,
+            "deprecated":false
+        },"KeyCode":{
+            "type":"Enum.KeyCode",
+            "description":"KeyCode этой кнопки",
+            "canChange":false,
+            "deprecated":false
+        },"MouseKey":{
+            "type":"number",
+            "description":"Цифра кнопки на мыши(если это не кнопка мыши - 0), работает как в роблоксе 1-Левая,2-Правая,3-Колёсико",
+            "canChange":false,
+            "deprecated":false
+        },"Holding":{
+            "type":"table",
+            "description":"Словарь типо {LeftCTRL:boolean}",
+            "canChange":false,
+            "deprecated":false
+        },"Name":{
+            "type":"string",
+            "description":"Полное имя, типо: LeftCTRL + T",
+            "canChange":false,
+            "deprecated":false
+        }
+    }, "methods":{}, 
+    "events":{}
+}

@@ -34,6 +34,12 @@
             "description":"Создания prompt окна(для того чтобы, что нибудь спросить у пользователя)",
             "canChange":false,
             "deprecated":false
+        },"KeyBinding":{
+            "type":"class",
+            "class":"KeyBinding",
+            "description":"Класс для созадния Привязок к кнопкам, тоесть Key binds",
+            "canChange":false,
+            "deprecated":false
         },"GuiObjects":{
             "type":"class",
             "class":"GUIArchitecture",

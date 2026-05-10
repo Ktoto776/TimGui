@@ -1,0 +1,180 @@
+{
+    "description":"Класс для создания привязок к кнопкам и находится в TimGui.KeyBinding",
+    "type":"class",
+    "classes":["TClass","KeyBinding"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "EventsEnabled":{
+            "type":"boolean",
+            "description":"Если false, то не реагирует на нажатие кнопки",
+            "canChange":true,
+            "deprecated":false
+        },"NextBlocked":{
+            "type":"boolean",
+            "description":"Если true, то блокирует следующее нажатие кнопки. Служит, чтобы автокликеры не вызывали KeyBind'ы",
+            "canChange":true,
+            "deprecated":false
+        }
+    }, "methods":{
+        "GetKeyNameFromKeyCode":{
+            "description":"Возвращает имя ключа по KeyCode",
+            "args":[{
+                    "name":"KeyCode",
+                    "type":"Enum.KeyCode",
+                    "description":"Код ключа",
+                    "required":true
+                }
+            ],"return":[
+                {
+                    "name":"KeyName",
+                    "type":"string",
+                    "description":"Имя ключа"
+                }
+            ], 
+            "deprecated":false
+        },"CreateKeyboardKey":{
+            "description":"Создаёт ключ клавиатуры",
+            "args":[{
+                    "name":"KeyCode",
+                    "type":"Enum.KeyCode",
+                    "description":"Код ключа",
+                    "required":true
+                }, {
+                    "name":"Holding",
+                    "type":"table",
+                    "description":"Названия (специальных) кнопок которые задерживаются",
+                    "required":false
+                }
+            ],"return":[
+                {
+                    "name":"Key",
+                    "type":"TKey",
+                    "description":"Результат"
+                }
+            ], 
+            "deprecated":false
+        },"CreateMouseKey":{
+            "description":"Создаёт ключ мыши",
+            "args":[{
+                    "name":"MouseCode",
+                    "type":"number",
+                    "description":"Кнопка мыши от 1 до 3(включительно)",
+                    "required":true
+                }, {
+                    "name":"Holding",
+                    "type":"table",
+                    "description":"Названия (специальных) кнопок которые задерживаются",
+                    "required":false
+                }
+            ],"return":[
+                {
+                    "name":"Key",
+                    "type":"TKey",
+                    "description":"Результат"
+                }
+            ], 
+            "deprecated":false
+        },"GetKeyBeganEvent":{
+            "description":"Возвращает TEvent.Event для этой кнопки",
+            "args":[{
+                    "name":"KeyName",
+                    "type":"string",
+                    "description":"Имя кнопки",
+                    "required":true
+                }
+            ],"return":[
+                {
+                    "name":"Event",
+                    "type":"TEvent.Event",
+                    "description":"Запускается если эта кнопка нажата. Запускает с параметрами как в KeyBinding.Ended/KeyBinded.Began"
+                }
+            ], 
+            "deprecated":false
+        },"GetKeyEndedEvent":{
+            "description":"Возвращает TEvent.Event для этой кнопки",
+            "args":[{
+                    "name":"KeyName",
+                    "type":"string",
+                    "description":"Имя кнопки",
+                    "required":true
+                }
+            ],"return":[
+                {
+                    "name":"Event",
+                    "type":"TEvent.Event",
+                    "description":"Запускается если эта кнопка разжата. Запускает с параметрами как в KeyBinding.Ended/KeyBinded.Began"
+                }
+            ], 
+            "deprecated":false
+        }
+    }, 
+    "events":{
+        "KeyEvent":{
+            "description":"Event, запускаемый когда кнопка нажата/отжата (Игнорирует NextBlocked и EventsEnabled)",
+            "type":"TEvent.Event",
+            "args":[
+                {
+                    "name":"Key",
+                    "type":"class",
+                    "class":"TKey",
+                    "description":"Ключ для нажатой кнопки"
+                },{
+                    "name":"GPE",
+                    "type":"boolean",
+                    "description":"Game Process Event, то есть используется ли для кнопка роблоксом"
+                },{
+                    "name":"input",
+                    "type":"InputObject",
+                    "description":"InputObject как из UIS.InputChanged"
+                }
+            ],
+            "deprecated":false
+        }, "SpecialKeyEvent":{
+            "description":"Event, запускаемый когда специальная кнопка нажата/отжата(Специальная кнопка типо Alt/Ctrl/Shift)(Игнорирует NextBlocked и EventsEnabled)",
+            "type":"TEvent.Event",
+            "args":[
+                {
+                    "name":"input",
+                    "type":"InputObject",
+                    "description":"InputObject как из UIS.InputChanged"
+                },{
+                    "name":"GPE",
+                    "type":"boolean",
+                    "description":"Game Process Event, то есть используется ли для кнопка роблоксом"
+                }
+            ],
+            "deprecated":false
+        }, "Began":{
+            "description":"Event, запускаемый когда кнопка нажата",
+            "type":"TEvent.Event",
+            "args":[
+                {
+                    "name":"Key",
+                    "type":"TKey",
+                    "description":"TKey нажатой кнопки"
+                },{
+                    "name":"GPE",
+                    "type":"boolean",
+                    "description":"Game Process Event, то есть используется ли для кнопка роблоксом"
+                }
+            ],
+            "deprecated":false
+        }, "Ended":{
+            "description":"Event, запускаемый когда кнопка отжата",
+            "type":"TEvent.Event",
+            "args":[
+                {
+                    "name":"Key",
+                    "type":"TKey",
+                    "description":"TKey нажатой кнопки"
+                },{
+                    "name":"GPE",
+                    "type":"boolean",
+                    "description":"Game Process Event, то есть используется ли для кнопка роблоксом"
+                }
+            ],
+            "deprecated":false
+        }
+    }
+}
