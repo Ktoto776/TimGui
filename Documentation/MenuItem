@@ -82,6 +82,11 @@
             "args":[],
             "return":[], 
             "deprecated":false
+        },"Destroy":{
+            "description":"Удаляет обьект",
+            "args":[],
+            "return":[], 
+            "deprecated":false
         }
     }, 
     "events":{

@@ -13,11 +13,30 @@ local DefaultConfig = {
     },
     Objects={},
     Saves={},
-    ScriptSaves={}
+    ScriptSaves={},
+    Keybinds={
+        Keybinders={},
+        Keybinds={}
+    }
 } local config = table.clone(DefaultConfig)
 local onConfigChanged = Instance.new("BindableEvent")
 local onLoadConfigEvent = Instance.new("BindableEvent")
 local onConfigSettingsChanged = Instance.new("BindableEvent")
+-- Removing previous instance
+if _G.TimGui~=nil then
+    if type(_G.TimGui)=="table" then
+        warn("Removing previous instance")
+        if type(_G.TimGui.Exit)=="function" then
+            _G.TimGui:Exit()
+            else if _G.TimGui.ScreenGui then
+                _G.TimGui.ScreenGui:Destroy()
+            end if _G.TimGui.MenuScreenGui then
+                _G.TimGui.MenuScreenGui:Destroy()
+            end
+        end
+    else _G.TimGui = nil
+    end
+end
 -- CODE
 local UIS = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
@@ -105,6 +124,7 @@ else TimGui.LanguagePreferences = {"en","ru"}
 end table.insert(TimGuiReadOnly,"LanguagePreferences")
 function TimGui:SetLanguagePreferences(Langs:{string})
     if type(Langs)~="table" then error("LanguagePreference is incorrect! Expected array.") end
+    if TimGui.Closed then return end
     local LangsP = {}
     for _,v in Langs do
         if SupportedLanguages[v] then
@@ -261,13 +281,15 @@ function Classes:CreateTEvent()
         return table.unpack(args[id])
     end return event
 end
-function Classes:CreateTClass(rawClass:{any?}?,meta:{any}?,writeSameModeExclude:{string}?)
+function Classes:CreateTClass(rawClass:{any?}?,meta:{any}?,writeSameModeExclude:boolean|{string}?)
     if type(rawClass)~="table" then rawClass={} end
+    local writeSameMode = true
+    if type(writeSameModeExclude)~="table" then writeSameMode=writeSameModeExclude~=true writeSameModeExclude = nil end
     local classReadOnly = {"OnPropertyChanged"}
     local onPropertyChangeEvent = Instance.new("BindableEvent")
     local onPropertyChangeEvents = {}
     local classNames = {"TClass"}
-    local class = GetClassMetatable("TClass",rawClass,classReadOnly,true,meta,function(k, old, new)
+    local class = GetClassMetatable("TClass",rawClass,classReadOnly,writeSameMode,meta,function(k, old, new)
         onPropertyChangeEvent:Fire(k)
         if onPropertyChangeEvents[k] then
             onPropertyChangeEvents[k]:Fire()
@@ -343,7 +365,7 @@ end local function TableToRBXValue(v,returnOrigin)
 end
 function Classes:CreatePreset(clearOnLoad:boolean,raw:{[any]:any?}?)
     if type(raw)~="table" then raw = {} end
-    local Preset = Classes:CreateTClass(raw)
+    local Preset = Classes:CreateTClass(raw,nil,clearOnLoad)
     Preset:AddClassName("Preset")
     local PresetRefresh = Instance.new("BindableEvent")
     Preset.Default = {}
@@ -360,8 +382,7 @@ function Classes:CreatePreset(clearOnLoad:boolean,raw:{[any]:any?}?)
                     raw[k]=nil
                 end
             end
-        end
-        Preset.PresetName = tostring(preset.PresetName or "Unknown")
+        end Preset.PresetName = tostring(preset.PresetName or "Unknown")
         for k,v in preset do
             if k=="PresetName" then continue end
             if k=="Default" then continue end
@@ -545,6 +566,8 @@ Colors.HeaderBackgroundColor = Color3.new(0.15, 0.15, 0.3)
 Colors.MainBackgroundColor = Color3.new(0.15, 0.15, 0.3)
 Colors.GroupsBackgroundColor = Color3.new(0.15, 0.15, 0.25)
 Colors.ButtonBackground = Color3.fromRGB(50,50,100)
+Colors.ButtonOnButtonBackground = Color3.fromRGB(65,65,125)
+Colors.ButtonOnButtonMain = Color3.new(1,1,1)
 Colors.ErrorColor = Color3.new(1,0.3,0.3)
 --Types -------------------------
 Colors.GroupOpenArrowColor = Color3.new(1,1,1)
@@ -651,6 +674,13 @@ GuiSize.ConfigsTitleSize = UDim2.new(1,0,0.1,0)
 GuiSize.MenuItemYSize = 25
 GuiSize.MenuItemTextSize = 25
 GuiSize.MenuTextTextSize = 20
+-- Keybinder ---------------------
+GuiSize.KeybindYSize = UDim.new(0,35)
+GuiSize.KeybindCornerRadius = UDim.new(0.35,0)
+GuiSize.KeybindButtonsCornerRadius = UDim.new(0.35,0)
+GuiSize.KeybinderScrollBarThickness = 6
+GuiSize.KeybinderTitleSize = UDim2.new(1,0,0,40)
+GuiSize.KeybinderButtonsYSize = UDim.new(0,30)
 GuiSize.Default = GuiSize:GetPreset()
 function TimGui:GetFrameGuiPosition(opened:boolean?)
     if opened==nil then opened = TimGui.Opened end
@@ -671,6 +701,8 @@ Assets.GroupOpenArrow = "rbxassetid://16341277046"
 Assets.SequenceOpenArrow = "rbxassetid://122258968574937"
 Assets.HideTWindow = "rbxassetid://122258968574937"
 Assets.CloseTWindow = "rbxassetid://107936050082953"
+Assets.DeleteKeybindObject = "rbxassetid://107936050082953"
+Assets.AddKeybind = "rbxassetid://120597765063106"
 Assets.Loading = "rbxasset://textures/DarkThemeLoadingCircle.png"
 Assets.Default = Assets:GetPreset()
 -- #FIND_POINT GuiAnimations
@@ -802,6 +834,8 @@ end
 TimGui.OnOpened:Connect(function(new:boolean)
     GuiAnimations:ArrowRotateAnimation(new)
     GuiAnimations:OpenAnimation(new)
+end) OnExitEvent.Event:Connect(function()
+    STGui:Destroy()
 end)
 -- #FIND_POINT Header + GUI Header
 local Header = Classes:CreatePreset()
@@ -1064,6 +1098,7 @@ State.Saying:Load({ -- #LANG_REQUIRED
     uk="Завантаження ядря [Створення меню]...",
     en="Loading core [Creating menu]..."
 }) local MenuGUI = Instance.new("ScreenGui",STGui.Parent)
+OnExitEvent.Event:Connect(function() MenuGUI:Destroy() end)
 MenuGUI.DisplayOrder = STGui.DisplayOrder+1
 MenuGUI.Name = "TimGui_Menu"
 TimGui.MenuScreenGui = MenuGUI
@@ -1076,12 +1111,15 @@ local function CreateMenuObject(Menu)
         Menu = Classes:CreateTClass()
     end Menu:AddClassName("MenuObject")
     local children = {}
+    local Destroyed = false
     function Menu:GetChildren()
+        if Destroyed then return {} end
         local res = {}
         for k,v in children do
             res[k] = v
         end return res
     end function Menu:FindFirstChild(Name:string)
+        if Destroyed then return end
         for k,v in children do
             if v.Name==Name then
                 return v
@@ -1093,6 +1131,7 @@ local function CreateMenuObject(Menu)
     Menu.MenuRefreshed = MenuRefreshed.Event
     Menu:SetReadOnly("MenuRefreshed")
     local function refreshPosition()
+        if Destroyed then return end
         if refreshing then
             nextRefresh = true
             return
@@ -1121,6 +1160,7 @@ local function CreateMenuObject(Menu)
     end Menu.MenuSize = UDim2.new(0,0,0,0)
     function Menu:RefreshMenuSize()
         logger:debug("Menu","Refreshing Menu size")
+        refreshPosition()
     end function Menu:RefreshMenuPosition()
         refreshPosition()
     end local MenuFrame = Instance.new("Frame")
@@ -1183,11 +1223,33 @@ local function CreateMenuObject(Menu)
         openedWithMethod = false
         Menu.Opened = false
         CloseBind:Run()
-    end MenuCloseEvent.Event:Connect(function(ignoreFocus)
+    end local MenuCancelled = Instance.new("BindableEvent")
+    Menu.MenuCancelled = MenuCancelled.Event
+    Menu:SetReadOnly("MenuCancelled")
+    MenuCloseEvent.Event:Connect(function(ignoreFocus)
         if ignoreFocus or not Menu.MouseOnThisMenu then
             Menu:Close()
+            MenuCancelled:Fire()
         end
-    end) function Menu:CreateMenuItem(Name:string,Title:{[string]: string} | string?)
+    end) local OnDestroy = Instance.new("BindableEvent")
+    Menu.Destroyed = OnDestroy.Event
+    Menu:SetReadOnly("Destroyed")
+    function Menu:Destroy()
+        if Destroyed then return end
+        Destroyed = true
+        if Menu.Opened then
+            Menu:Close()
+            Menu.Opened = false
+            MenuCancelled:Fire()
+        end Menu:SetReadOnly("Opened")
+        OnDestroy:Fire()
+        onMenuNewChild[Menu] = nil
+        onMenuChildParentChanged[Menu] = nil
+        for k,v in children do
+            v:Destroy()
+        end MenuFrame:Destroy()
+    end
+    function Menu:CreateMenuItem(Name:string,Title:{[string]: string} | string?)
         local item = Classes:CreateMenuItem(Name,Title)
         item.Parent = Menu
         return item
@@ -1328,7 +1390,16 @@ function Classes:CreateMenuItem(Name:string,Title:{[string]:string}|string?)
             Frame.Parent = nil
             oldParent = nil
         end
-    end) return MenuItem
+    end) local OnDestroy = Instance.new("BindableEvent")
+    MenuItem.Destroyed = OnDestroy.Event
+    MenuItem:SetReadOnly("Destroyed")
+    function MenuItem:Destroy()
+        MenuItem.Parent = nil
+        MenuItem:SetReadOnly("Parent")
+        OnDestroy:Fire()
+        Frame:Destroy()
+    end
+    return MenuItem
 end MenuItemRefreshSizeBind:Bind(function(MenuItem)
     if not MenuItem then logger:critical_error("MenuItemRefreshSizeBind","MenuItem is incorrect") MenuItem = Classes:CreateMenuItem() end
     logger:debug("MenuItemRefreshSizeBind",`Updating Size for {MenuItem.Name}[{MenuItem.ClassName}]`)
@@ -1586,7 +1657,7 @@ local function MakeGUIArchitectureClass(raw:{any?}?)
     end) RefreshingBind.OnBinded:Connect(function()
         logger:debug("GUIArchitecture","new refresh bind! Refreshing.")
         GUIArchitecture:RefreshGroup()
-    end) GUIArchitecture:GetPropertyChangedEvent("GroupFrame"):COnnect(function()
+    end) GUIArchitecture:GetPropertyChangedEvent("GroupFrame"):Connect(function()
         for _,v in children do
             v.Frame.Parent = GUIArchitecture.GroupFrame
         end
@@ -1640,6 +1711,7 @@ local function TGuiObjectClass(Name:string,Title:string|{string}?,Parent:any?,Ob
         Object.ConfigSaveName = "Destroyed"
         Object:SetReadOnly("ConfigSavingEnabled")
         Object:SetReadOnly("ConfigSaveName")
+        Object.Menu:Destroy()
     end -- TGuiObject Special colors
     local SpecialColors = Classes:CreateSpecialColors()
     Object.SpecialColors = SpecialColors
@@ -1979,6 +2051,22 @@ function Classes:AddConfigObject(TObject,ConfigSaveName:string?,otherClassesSavi
         end
     end
     return TObject
+end --#FIND_POINT Keybinding in TGuiObjects
+local function MakeKeybindingForTGuiObject(Object)
+    if not Object then Object = TGuiObjectClass() end
+    Object:AddClassName("GuiKeybindingObject")
+    Object.Keybinder = TimGui.KeyBinding:CreateKeybinder(Object.Name,Object.Title)
+    Object.KeybindingEnabled = true
+    Object:SetReadOnly("Keybinder")
+    local KButton = Object.Menu:CreateMenuButton("Keybinding",{ --#LANG_REQUIRED
+        ru="Привязка к клавише",
+        en="Keybinding"
+    }) KButton.Activated:Connect(function()
+        Object.Keybinder.Opened = true
+    end) Object.Destroying:Connect(function()
+        Object.Keybinder:Destroy()
+    end)
+    return Object
 end
 -- #FIND_POINT TGroups
 local GlobalOpenedGroup
@@ -2179,6 +2267,7 @@ function GuiObjects:CreateButton(Name:string,Title:string|{[string]:string}?,Par
     if type(Parent)=="function" then func=Parent Parent=nil end
     logger:debug("GuiObjects:CreateButton","Creating new button '"..Name.."'")
     local Button = TGuiObjectClass(Name,Title,Parent)
+    Button = MakeKeybindingForTGuiObject(Button)
     Button = CreateButtonForTGuiObject(Button)
     Button:AddClassName("TButton")
     Button.Type = "Button"
@@ -2187,7 +2276,15 @@ function GuiObjects:CreateButton(Name:string,Title:string|{[string]:string}?,Par
         Button.Activated:Connect(function()
             func(Button)
         end)
-    end return Button
+    end Button.Keybinder.Event:Connect(function(event:string)
+        if event=="activate" then
+            Button:Activate()
+        end
+    end) Button.Keybinder:AddEventType("activate",{ --#LANG_REQUIRED
+        ru="Активировать",
+        en="Activate"
+    })
+    return Button
 end
 -- #FIND_POINT TToggle
 local RefreshColorValueBind = Classes:CreateBind()
@@ -2201,6 +2298,7 @@ function GuiObjects:CreateToggle(Name:string,Title:string|{[string]:string}?,Par
     if type(Parent)=="function" then func=Parent Parent=nil end
     logger:debug("GuiObjects:CreateButton","Creating new button '"..Name.."'")
     local Button = TGuiObjectClass(Name,Title,Parent)
+    Button = MakeKeybindingForTGuiObject(Button)
     Button = CreateButtonForTGuiObject(Button,true)
     Button:AddClassName("Toggle")
     Button.Type = "Toggle"
@@ -2213,8 +2311,24 @@ function GuiObjects:CreateToggle(Name:string,Title:string|{[string]:string}?,Par
         task.wait() if not Button:GetReadOnly("DefaultValue") then
             Button.DefaultValue = Button.Value
         end
-    end)
-    local ChangedEvent = Instance.new("BindableEvent")
+    end) Button.Keybinder.Event:Connect(function(EventType)
+        if EventType=="change" then
+            Button.Value = not Button.Value
+        elseif EventType=="true" then
+            Button.Value = true
+        elseif EventType=="false" then
+            Button.Value = false
+        end
+    end) Button.Keybinder:AddEventType("change",{ --#LANG_REQUIRED
+        ru="Переключить",
+        en="Toggle"
+    }) Button.Keybinder:AddEventType("true",{ --#LANG_REQUIRED
+        ru="Включить",
+        en="Enable"
+    }) Button.Keybinder:AddEventType("false",{ --#LANG_REQUIRED
+        ru="Выключить",
+        en="Disable"
+    }) local ChangedEvent = Instance.new("BindableEvent")
     local EnabledEvent = Instance.new("BindableEvent")
     local DisabledEvent = Instance.new("BindableEvent")
     Button.Changed = ChangedEvent.Event
@@ -3169,10 +3283,12 @@ function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?,disab
     local focusingZIndexEnabled = false
     WindowFrame.DescendantAdded:Connect(function(Inst:GuiObject)
         if Inst:IsA("GuiObject") then
-            local order = (Window.DisplayOrder-1)*2
-            if FocusedWindow==Window and focusingZIndexEnabled then
-                order += 1
-            end Inst.ZIndex += order
+            if Inst.ZIndex~=WindowFrame.ZIndex then
+                local order = (Window.DisplayOrder-1)*2
+                if FocusedWindow==Window and focusingZIndexEnabled then
+                    order += 1
+                end Inst.ZIndex += order
+            end
         end
     end) task.spawn(function()
         task.wait() focusingZIndexEnabled = true
@@ -3516,6 +3632,7 @@ function Classes:CreatePrompt(PromptType:string,Name:string,Title: string | {[st
     Prompt.RunStopped = RunStopped.Event
     Prompt:SetReadOnly("RunStopped")
     function Prompt:Run(...)
+        if Prompt.Opened then Prompt:EmulateInput() end
         Prompt.Opened = true
         Prompt.Running = true
         OnRunned:Fire(...)
@@ -3856,6 +3973,8 @@ local function CreateTKey(KeyCode:Enum.KeyCode,holding:{[string]:boolean},KeyNam
     TKey.KeyName = KeyName
     TKey.KeyCode = KeyCode
     TKey.Holding = holding
+    TKey.IsEmpty = not (TKey.IsMouseKey or TKey.IsKeyboardKey)
+    TKey:SetReadOnly("IsEmpty")
     TKey:SetReadOnly("IsKeyboardKey")
     TKey:SetReadOnly("IsMouseKey")
     TKey:SetReadOnly("KeyName")
@@ -3897,6 +4016,7 @@ KeyBinding.Ended = EndedEvent.Event
 KeyBinding:SetReadOnly("Ended")
 local KeyBeganEvent = {}
 local KeyEndedEvent = {}
+local KeyChangedEvent = {}
 local function OnKeyChangedState(Key,gpe)
     if tableFind(SpecialKeys,Key.KeyCode) then
         SpecialKeyEvent:Fire(Key,gpe)
@@ -3927,23 +4047,33 @@ local function OnKeyChangedState(Key,gpe)
                 event = KeyEndedEvent[TKey.KeyName]
             end if event then 
                 event:Fire(TKey,gpe)
-            end
+            end local eventChng = KeyChangedEvent[TKey.KeyName]
+            if eventChng then eventChng:Fire(TKey,gpe,Key) end
         end
     end
 end UIS.InputBegan:Connect(OnKeyChangedState)
 UIS.InputEnded:Connect(OnKeyChangedState)
-function KeyBinding:GetKeyBeganEvent(KeyName)
+function KeyBinding:GetKeyBeganEvent(KeyName:string)
     local event = KeyBeganEvent[KeyName]
     if not event then
         event = Classes:CreateTEvent()
         KeyBeganEvent[KeyName] = event
     end return event.Event
-end function KeyBinding:GetKeyEndedEvent(KeyName)
+end function KeyBinding:GetKeyEndedEvent(KeyName:string)
     local event = KeyEndedEvent[KeyName]
     if not event then
         event = Classes:CreateTEvent()
         KeyEndedEvent[KeyName] = event
     end return event.Event
+end function KeyBinding:GetKeyEvent(KeyName:string)
+    if type(KeyName)~="string" then logger:critical_error("KeyBinding:GetKeyEvent","KeyName is incorrect. expected string") end
+    local event = KeyChangedEvent[KeyName]
+    if not event then
+        event = Classes:CreateTEvent()
+        KeyChangedEvent[KeyName] = event
+    end return event.Event
+end function KeyBinding:CreateEmptyTKey()
+    return CreateTKey(Enum.KeyCode.Unknown,{},"Unknown")
 end
 function KeyBinding:CreateKeyboardKey(KeyCode:Enum.KeyCode,holding:{[string]:boolean}?)
     if typeof(KeyCode)~="EnumItem" then logger:critical_error("KeyBinding:CreateKeyboardKey","KeyCode is incorrect. Expected EnumItem") end
@@ -3993,7 +4123,7 @@ function Prompts:CreateKeyPrompt(Name:string,Title:string | {[string]: string}?,
         if not inputed then updateText() end
     end) noneKeyTranslator.TranslateValueChanged:Connect(function()
         if inputed then updateText() end
-    end) Prompt.Value = KeyBinding:CreateKeyboardKey(Enum.KeyCode.Unknown)
+    end) Prompt.Value = KeyBinding:CreateEmptyTKey()
     Prompt:GetPropertyChangedEvent("Value"):Connect(function()
         inputed = true updateText()
     end)
@@ -4123,7 +4253,7 @@ function Prompts:CreateKeyPrompt(Name:string,Title:string | {[string]: string}?,
         en="Click the same mouse button to confirm"
     }  Prompt.ClickMouseTwiceText = MouseTwiceTranslator
     Prompt:SetReadOnly("ClickMouseTwiceText")
-    local GPE = true
+    local GPE = false
     local GPETranslator = Classes:CreateTranslator("Confirm")
     GPETranslator:Load{ --#LANG_REQUIRED
         ru="Выбранная кнопка используется в игре",
@@ -4135,11 +4265,19 @@ function Prompts:CreateKeyPrompt(Name:string,Title:string | {[string]: string}?,
             Notify.Text = GPETranslator:Translate()
         end
     end) local KeyEvent
+    local EventsHasBeenDisabled = false
+    Prompt.DisableOtherInputsWhenRunning = true
     Prompt.OnRun:Connect(function()
+        Prompt.Value = KeyBinding:CreateEmptyTKey()
+        GPE = false Notify.Text = ""
+        task.wait()
         inputed = false
         updateText()
         local lastMouse
-        KeyEvent = KeyBinding.KeyEvent:Connect(function(TKey,gpe,Input:InputObject)
+        if Prompt.DisableOtherInputsWhenRunning then
+            EventsHasBeenDisabled = KeyBinding.EventsEnabled
+            KeyBinding.EventsEnabled = false
+        end KeyEvent = KeyBinding.KeyEvent:Connect(function(TKey,gpe,Input:InputObject)
             if TKey.IsMouseKey then
                 if Input.UserInputState~=Enum.UserInputState.End then return end
                 gpe = false
@@ -4170,8 +4308,482 @@ function Prompts:CreateKeyPrompt(Name:string,Title:string | {[string]: string}?,
         end)
     end) Prompt.RunStopped:Connect(function()
         if KeyEvent then KeyEvent:Disconnect() end
+        if EventsHasBeenDisabled then
+            KeyBinding.EventsEnabled = true
+        end
     end)
     return Prompt
+end local KeybindStatesAndTranslate = { --#LANG_REQUIRED
+    Change={
+        ru="При нажатии или отпуске",
+        en="On pressed or released"
+    },Begin={
+        ru="При нажатии",
+        en="On pressed"
+    },End={
+        ru="При отпуске",
+        en="On released"
+    }
+}
+local function CreateKeybindBase(writeSameModeExclude:{string})
+    local Keybind = Classes:CreateTClass(nil,nil,writeSameModeExclude)
+    Keybind:AddClassName("BaseKeybind")
+    Keybind.Key = KeyBinding:CreateEmptyTKey()
+    local Event = Instance.new("BindableEvent")
+    Keybind.Event = Event.Event
+    function Keybind:Emulate()
+        Event:Fire()
+    end local connect
+    Keybind.IgnoreExtraSpecialKeys = true
+    function Keybind:CompareWithOtherTKey(TKey)
+        if not Classes:IsA(TKey,"TKey") then logger:critical_error("BaseKeybind:CompareWithOtherTKey","TKey is incorrect. Expected TKey") end
+        local Names = TKey.Name==Keybind.Key.Name
+        if not Names then
+            local KeyNames = TKey.KeyName==Keybind.Key.KeyName
+            if KeyNames and Keybind.IgnoreExtraSpecialKeys then
+                for k,v in Keybind.Key.Holding do
+                    if not(v and TKey.Holding[k]) then
+                        return false
+                    end
+                end return true
+            end return false
+        else return true
+        end
+    end Keybind.State = "End"
+    Keybind:GetPropertyChangedEvent("Key"):Connect(function()
+        if connect then connect:Disconnect() end
+        connect = KeyBinding:GetKeyEvent(Keybind.Key.KeyName):Connect(function(TKey,gpe,Input:InputObject)
+            local StateCompare = Keybind.State=="Change"
+            if Keybind.State=="End" then StateCompare=Input.UserInputState==Enum.UserInputState.End end
+            if Keybind.State=="Begin" then StateCompare=Input.UserInputState==Enum.UserInputState.Begin end
+            if StateCompare and Keybind:CompareWithOtherTKey(TKey) then
+                Event:Fire(Input,gpe)
+            end
+        end)
+    end) Keybind.Type = ""
+    return Keybind
+end
+local OnNewChildInKeybinder,OnChildRemovedInKeybinder = {},{}
+local KeybindObjectID = 0
+function KeyBinding:CreateKeybindObject()
+    local KObject = CreateKeybindBase({"Parent"})
+    KObject:AddClassName("KeybindObject")
+    KObject.Position = 0
+    KeybindObjectID += 1
+    KObject.Id = KeybindObjectID
+    KObject:SetReadOnly("Id")
+    local oldParent
+    local SColors = Classes:CreateSpecialColors()
+    KObject.SpecialColors = SColors
+    KObject:SetReadOnly("SpecialColors")
+    local Frame = Instance.new("Frame")
+    SColors:GetColorChangedSignal("ButtonBackground"):Connect(function()
+        Frame.BackgroundColor3 = SColors:GetColor("ButtonBackground")
+    end) Frame.BackgroundColor3 = SColors:GetColor("ButtonBackground")
+    local UICorner = Instance.new("UICorner",Frame)
+    KObject.UICorner = UICorner
+    KObject:SetReadOnly("UICorner")
+    local DeleteButton = Instance.new("ImageButton",Frame)
+    DeleteButton.Name = "Delete"
+    DeleteButton.AnchorPoint = Vector2.new(1,0.5)
+    Assets:GetPropertyChangedEvent("DeleteKeybindObject"):Connect(function()
+        DeleteButton.Image = Assets.DeleteKeybindObject
+    end) DeleteButton.Image = Assets.DeleteKeybindObject
+    SColors:GetColorChangedSignal("ButtonOnButtonBackground"):Connect(function()
+        DeleteButton.BackgroundColor3 = SColors:GetColor("ButtonOnButtonBackground")
+    end) DeleteButton.BackgroundColor3 = SColors:GetColor("ButtonOnButtonBackground")
+    SColors:GetColorChangedSignal("ButtonOnButtonMain"):Connect(function()
+        DeleteButton.ImageColor3 = SColors:GetColor("ButtonOnButtonMain")
+    end) DeleteButton.ImageColor3 = SColors:GetColor("ButtonOnButtonMain")
+    DeleteButton.Activated:Connect(function()
+        KObject:Destroy()
+    end) local Destroyed = Instance.new("BindableEvent")
+    KObject.Destroyed = Destroyed.Event
+    KObject:SetReadOnly("Destroyed")
+    function KObject:Destroy()
+        KObject.Parent = nil
+        KObject:SetReadOnly("Parent")
+        Frame:Destroy()
+        Destroyed:Fire()
+    end KObject.DeleteButton = DeleteButton
+    KObject:SetReadOnly("DeleteButton")
+    local DeleteCorner = Instance.new("UICorner",DeleteButton)
+    GuiSize:GetPropertyChangedEvent("KeybindCornerRadius"):Connect(function()
+        UICorner.CornerRadius = GuiSize.KeybindCornerRadius
+    end) UICorner.CornerRadius = GuiSize.KeybindCornerRadius
+    KObject:GetPropertyChangedEvent("Parent"):Connect(function()
+        if oldParent then
+            local f = OnChildRemovedInKeybinder[oldParent]
+            if f then f(KObject) end
+        end if Classes:IsA(KObject.Parent,"Keybinder") then
+            oldParent = KObject.Parent
+            local f = OnNewChildInKeybinder[KObject.Parent]
+            if f then f(KObject) end
+            Frame.Parent = KObject.Parent.KeybindsScroll
+        else oldParent = nil
+            Frame.Parent = nil
+        end
+    end) local yScale = 0.875
+    local ValuesScale = 0.32
+    local ValuesFrame = Instance.new("Frame",Frame)
+    ValuesFrame.Name = "ValuesFrame"
+    ValuesFrame.BackgroundTransparency = 1
+    ValuesFrame.AnchorPoint = Vector2.new(0,0.5)
+    local ValueButtons = {}
+    local function CreateButton(DefTranslator)
+        local HoverTranslator = Classes:CreateTranslator("...")
+        local Button = Instance.new("TextButton",ValuesFrame)
+        Button.Size = UDim2.new(ValuesScale,0,1,0)
+        Button.TextScaled = true
+        local focused = false
+        local function refreshText()
+            if focused then
+                Button.Text = HoverTranslator:Translate()
+            else Button.Text = HoverTranslator.Selected or HoverTranslator:Translate().."?"
+            end
+        end Button.MouseEnter:Connect(function()
+            focused = true refreshText()
+        end) Button.MouseLeave:Connect(function()
+            focused = false refreshText()
+        end) HoverTranslator.TranslateValueChanged:Connect(refreshText)
+        HoverTranslator:GetPropertyChangedEvent("Selected"):Connect(refreshText)
+        if DefTranslator then
+            DefTranslator.TranslateValueChanged:Connect(function()
+                HoverTranslator.Selected = DefTranslator:Translate()
+            end)
+        end refreshText() 
+        table.insert(ValueButtons,{Button,Instance.new("UICorner",Button)})
+        return Button,HoverTranslator
+    end local SetKey,SetKeyHoverTranslator = CreateButton()
+    SetKey.Name = "SetKey"
+    SetKey.Activated:Connect(function()
+        if oldParent then
+            local Key = oldParent:AskKey({
+                ru="Выбери новую клавишу.",
+                en="Select new key."
+            }) if Key then 
+                KObject.Key = Key
+            end
+        end
+    end) KObject:GetPropertyChangedEvent("Key"):Connect(function()
+        local Key = KObject.Key
+        if not Key.IsEmpty then
+            SetKeyHoverTranslator.Selected = Key.Name
+        else SetKeyHoverTranslator.Selected = nil
+        end
+    end)
+    SetKeyHoverTranslator:Load{ --#LANG_REQUIRED
+        ru="Клавиша",
+        en="Key"
+    } local StateTranslator = Classes:CreateTranslator("")
+    local StateButton,StateHoverTranslator = CreateButton(StateTranslator)
+    StateButton.Name = "State"
+    StateButton.Position = UDim2.new(0.5,0,0,0)
+    StateButton.AnchorPoint = Vector2.new(0.5,0)
+    local StateMenu = Classes:CreateMenu()
+    local Objects = {}
+    local selectedStateButton
+    local selectedState = StateMenu:CreateMenuButton("Selected",StateTranslator)
+    selectedState.Position = 0
+    for k,v in KeybindStatesAndTranslate do
+        local menuButton = StateMenu:CreateMenuButton(k,v)
+        Objects[k] = menuButton
+        if KObject.State==k then
+            selectedStateButton = menuButton
+            menuButton.Visible = false
+            StateTranslator:Load(v)
+        end menuButton.Activated:Connect(function()
+            selectedStateButton.Visible = true
+            KObject.State = k
+            selectedStateButton = menuButton
+            menuButton.Visible = false
+            StateTranslator:Load(v)
+        end)
+    end StateButton.Activated:Connect(function()
+        local Abs = StateButton.AbsolutePosition
+        StateMenu:Open(UDim2.new(0,Abs.X,0,Abs.Y))
+    end) StateHoverTranslator:Load{ --#LANG_REQUIRED
+        ru="Состояние нажатия",
+        en="Click state"
+    }
+    local TypeButton,TypeTranslator = CreateButton()
+    TypeButton.Name = "Type"
+    TypeButton.Position = UDim2.new(1,0,0,0)
+    TypeButton.AnchorPoint = Vector2.new(1,0)
+    TypeButton.Activated:Connect(function()
+        if oldParent then
+            local Abs = TypeButton.AbsolutePosition
+            local eventType = oldParent:AskEventType(UDim2.new(0,Abs.X,0,Abs.Y),KObject.Type)
+            if eventType then
+                KObject.Type = eventType
+            end
+        end
+    end) local updaterLangEvent
+    local function updateEventType()
+        if Classes:IsA(KObject.Parent,"Keybinder") then
+            local Translator = KObject.Parent:GetEventTypeTitle(KObject.Type)
+            if Translator then
+                TypeTranslator.Selected = Translator:Translate()
+            else TypeTranslator.Selected = nil
+            end
+        end
+    end KObject:GetPropertyChangedEvent("Parent"):Connect(function()
+        if updaterLangEvent then updaterLangEvent:Disconnect() end
+        print(11111)
+        if Classes:IsA(KObject.Parent,"Keybinder") then
+            updateEventType() print(22222)
+            updaterLangEvent = KObject.Parent.EventTypeTranslateRefresh:Connect(function(name)
+                if name==KObject.Type then
+                    updateEventType()
+                end
+            end)
+        end
+    end) KObject:GetPropertyChangedEvent("Type"):Connect(updateEventType)
+    TypeTranslator:Load{ --#LANG_REQUIRED
+        ru="Тип запуск",
+        en="Run type"
+    }
+    local function refreshValuesColors()
+        for k,v in ValueButtons do
+            v[1].BackgroundColor3 = SColors:GetColor("ButtonOnButtonBackground")
+            v[1].TextColor3 = SColors:GetColor("ButtonOnButtonMain")
+        end
+    end refreshValuesColors()
+    SColors:GetColorChangedSignal("ButtonOnButtonBackground"):Connect(refreshValuesColors)
+    SColors:GetColorChangedSignal("ButtonOnButtonMain"):Connect(refreshValuesColors)
+    local function cornerRefresh()
+        DeleteCorner.CornerRadius = GuiSize.KeybindButtonsCornerRadius
+        for k,v in ValueButtons do
+            v[2].CornerRadius = GuiSize.KeybindButtonsCornerRadius
+        end
+    end cornerRefresh()
+    GuiSize:GetPropertyChangedEvent("KeybindButtonsCornerRadius"):Connect(cornerRefresh)
+    local function refreshSize()
+        Frame.Size = UDim2.new(UDim.new(1,0),GuiSize.KeybindYSize)
+        local AbsFSize = Frame.AbsoluteSize.Y
+        local ButtonAbsSize = AbsFSize*yScale
+        local AbsIndent = AbsFSize-ButtonAbsSize
+        DeleteButton.Size = UDim2.new(0,ButtonAbsSize,0,ButtonAbsSize)
+        DeleteButton.Position = UDim2.new(1,-AbsIndent/2,0.5,0)
+        ValuesFrame.Size = UDim2.new(1,-AbsFSize-AbsIndent,yScale,0)
+        ValuesFrame.Position = UDim2.new(0,AbsIndent,0.5,0)
+    end refreshSize()
+    GuiSize:GetPropertyChangedEvent("KeybindYSize"):Connect(refreshSize)
+    KObject.Frame = Frame
+    KObject:SetReadOnly("Frame")
+    return KObject
+end
+function KeyBinding:CreateKeybinder(Name:string,Title:string|{[string]:string}?,disableDefaultConfigSettingsForWindow:boolean)
+    if type(Name)~="string" then logger:critical_error("KeyBinding:CreateKeybinder","Name is incorrect, expected string") end
+    if type(Title)~="table" then
+        Title = Classes:CreateTranslator(Title or "")
+    else if Title.__type~="TClass" then
+            local oldTitle = Title
+            Title = Classes:CreateTranslator("")
+            Title:Load(oldTitle)
+        elseif not Title:IsA("Translator") then
+            Title = Classes:CreateTranslator("")
+        end
+    end
+    local Keybinder = Classes:CreateTClass()
+    Keybinder:AddClassName("Keybinder")
+    Keybinder.Name = Name
+    Keybinder:SetReadOnly("Name")
+    local Window = Classes:CreateTWindow(Name..".KeyBinder",{ --#LANG_REQUIRED
+        ru="Привязывание к клавишам",
+        en="Key binder"
+    },disableDefaultConfigSettingsForWindow)
+    local SColors = Window.SpecialColors
+    Keybinder.SpecialColors = SColors
+    Keybinder:SetReadOnly("SpecialColors")
+    Keybinder.Title = Title
+    Keybinder:SetReadOnly("Title")
+    Keybinder.Window = Window
+    Keybinder:SetReadOnly("Window")
+    local TitleText = Instance.new("TextLabel",Window.Frame)
+    TitleText.Name = "Title"
+    TitleText.TextScaled = true
+    TitleText.BackgroundTransparency = 1
+    Window.SpecialColors:GetColorChangedSignal("OnTWindowTextColor"):Connect(function()
+        TitleText.TextColor3 = Window.SpecialColors:GetColor("OnTWindowTextColor")
+    end) TitleText.TextColor3 = Window.SpecialColors:GetColor("OnTWindowTextColor")
+    Keybinder.TitleLabel = Title.Text
+    Keybinder:SetReadOnly("Keybinder")
+    local KeybindsScroll = Instance.new("ScrollingFrame",Window.Frame)
+    KeybindsScroll.Name = "Keybinds"
+    Instance.new("UIListLayout",KeybindsScroll).Name = "This will changed in future updates!"
+    KeybindsScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    KeybindsScroll.CanvasSize = UDim2.new(0,0,0,0)
+    KeybindsScroll.BackgroundTransparency = 1
+    GuiSize:GetPropertyChangedEvent("KeybinderScrollBarThickness"):Connect(function()
+        KeybindsScroll.ScrollBarThickness = GuiSize.KeybinderScrollBarThickness
+    end) KeybindsScroll.ScrollBarThickness = GuiSize.KeybinderScrollBarThickness
+    Keybinder.KeybindsScroll = KeybindsScroll
+    Keybinder:SetReadOnly("KeybindsScroll")
+    local selectedEventType = Instance.new("BindableEvent")
+    local EventTypeTranslateRefresh = Instance.new("BindableEvent")
+    Keybinder.EventTypeTranslateRefresh = EventTypeTranslateRefresh.Event
+    Keybinder:SetReadOnly("EventTypeTranslateRefresh")
+    local EventTypesMenu = Classes:CreateMenu()
+    local SelectedEventTypeName
+    local EventTypesMenuSelected = EventTypesMenu:CreateMenuButton("_selected_","...")
+    EventTypesMenuSelected.Activated:Connect(function()
+        selectedEventType:Fire()
+    end) EventTypesMenu:GetPropertyChangedEvent("Opened"):Connect(function()
+        if not EventTypesMenu.Opened then
+            task.wait() --CANCEL selecting, hah 1st comment
+            selectedEventType:Fire()
+        end
+    end)
+    local EventTypes:{{
+        Name:string,Translator:{[string]:string},MenuObject:any
+    }} = {} local EventTypesFromName = {}
+    Keybinder.DefaultType = ""
+    function Keybinder:AddEventType(name:string,Title:{[string]:string}|string?)
+        if type(name)~="string" then logger:critical_error("Keybinder:AddEventType","Name is incorrect, expected string") end
+        if EventTypesFromName[name] or name=="_selected_" then logger:critical_error("Keybinder:AddEventType",`Event "{name}" is already exists.`) end
+        if type(Title)~="table" then
+            Title = Classes:CreateTranslator(Title or name)
+        else if Title.__type~="TClass" then
+                local oldTitle = Title
+                Title = Classes:CreateTranslator(name)
+                Title:Load(oldTitle)
+            elseif not Title:IsA("Translator") then
+                Title = Classes:CreateTranslator(name)
+            end
+        end local EventType = {}
+        EventType.Name = name
+        EventType.Translator = Title
+        local MenuButton = EventTypesMenu:CreateMenuButton(name,Title)
+        EventType.MenuButton = MenuButton
+        EventTypesFromName[name]=EventType
+        if #EventTypes==0 then
+            Keybinder.DefaultType = name
+        end table.insert(EventTypes,EventType)
+        MenuButton.Activated:Connect(function()
+            selectedEventType:Fire(name)
+        end) EventType.TranslateListener = Title.TranslateValueChanged:Connect(function()
+            if SelectedEventTypeName==name then
+                EventTypesMenuSelected.Title:Load(Title:GetPreset())
+            end EventTypeTranslateRefresh:Fire(name)
+        end)
+    end function Keybinder:GetEventTypeTitle(name:string)
+        if type(name)~="string" then logger:critical_error("Keybinder:GetEventTypeTitle","Name is incorrect, expected string") end
+        if EventTypesFromName[name] then
+            return EventTypesFromName[name].Translator
+        end
+    end local selectedTypeMenuButton
+    function Keybinder:AskEventType(Position:UDim2,selected:string)
+        if EventTypesMenu.Opened then
+            selectedEventType:Fire()
+            EventTypesMenu:Close()
+            task.wait()
+        end SelectedEventTypeName = selected
+        local selectedType = EventTypesFromName[selected]
+        if selectedTypeMenuButton then
+            selectedTypeMenuButton.Visible = true
+        end if selectedType then
+            selectedTypeMenuButton = selectedType.MenuButton
+            selectedTypeMenuButton.Visible = false
+            EventTypesMenuSelected.Title:Load(selectedType.Translator:GetPreset())
+        else EventTypesMenuSelected.Visible = false
+        end EventTypesMenu:Open(Position)
+        return selectedEventType.Event:Wait()
+    end local Event = Classes:CreateTEvent()
+    Keybinder.Event = Event.Event
+    Keybinder:SetReadOnly("Event")
+    local Keybinds = {}
+    local KeybindsConnects = {}
+    OnNewChildInKeybinder[Keybinder] = function(KObject)
+        table.insert(Keybinds,KObject)
+        KObject.Position = #Keybinds
+        KObject.Type = Keybinder.DefaultType
+        KeybindsConnects[KObject] = KObject.Event:Connect(function(InputObject,GPE)
+            Event:Fire(KObject.Type,KObject,InputObject,GPE)
+        end) Keybinder:RefreshPositions()
+    end OnChildRemovedInKeybinder[Keybinder] = function(KObject)
+        table.remove(Keybinds,table.find(Keybinds,KObject))
+        if KeybindsConnects[KObject] then KeybindsConnects[KObject]:Disconnect() end
+        Keybinder:RefreshPositions()
+    end local Buttons = Instance.new("Frame",Window.Frame)
+    Buttons.Name = "Buttons"
+    Buttons.BackgroundTransparency = 1
+    Buttons.AnchorPoint = Vector2.new(0,1)
+    Buttons.Position = UDim2.new(0,0,1,0)
+    Keybinder.Buttons = Buttons
+    Keybinder:SetReadOnly("Buttons")
+    local NewKeybindButton = Instance.new("ImageButton",Buttons)
+    NewKeybindButton.Name = "NewKeybind"
+    NewKeybindButton.Position = UDim2.new(1,0,0,0)
+    NewKeybindButton.AnchorPoint = Vector2.new(1,0)
+    SColors:GetColorChangedSignal("ButtonBackground"):Connect(function()
+        NewKeybindButton.BackgroundColor3 = SColors:GetColor("ButtonBackground")
+    end) NewKeybindButton.BackgroundColor3 = SColors:GetColor("ButtonBackground")
+    SColors:GetColorChangedSignal("TextColor"):Connect(function()
+        NewKeybindButton.ImageColor3 = SColors:GetColor("TextColor")
+    end) NewKeybindButton.ImageColor3 = SColors:GetColor("TextColor")
+    Assets:GetPropertyChangedEvent("AddKeybind"):Connect(function()
+        NewKeybindButton.Image = Assets.AddKeybind
+    end) NewKeybindButton.Image = Assets.AddKeybind
+    local NewKCorner = Instance.new("UICorner",NewKeybindButton)
+    NewKeybindButton.Activated:Connect(function()
+        Keybinder:CreateKeybind()
+    end) function Keybinder:CreateKeybind()
+        local KObject = KeyBinding:CreateKeybindObject()
+        KObject.Parent = Keybinder
+        return KObject
+    end
+    local function refreshCorners()
+        NewKCorner.CornerRadius = GuiSize.KeybindButtonsCornerRadius
+    end refreshCorners()
+    GuiSize:GetPropertyChangedEvent("KeybindButtonsCornerRadius"):Connect(refreshCorners)
+    local function RefreshPosition()
+        local YPos = UDim.new(0,0)
+        TitleText.Visible = Title:Translate()~=""
+        if TitleText.Visible then
+            TitleText.Size = GuiSize.KeybinderTitleSize
+            YPos += TitleText.Size.Y
+        end KeybindsScroll.Size = UDim2.new(UDim.new(1,0),UDim.new(1,0)-YPos-GuiSize.KeybinderButtonsYSize)
+        KeybindsScroll.Position = UDim2.new(UDim.new(0,0),YPos)
+        Buttons.Size = UDim2.new(UDim.new(1,0),GuiSize.KeybinderButtonsYSize)
+        Window.Size = UDim2.new(0.25,100,0.5,0)
+        local AbsFSize = Buttons.AbsoluteSize.Y
+        NewKeybindButton.Size = UDim2.new(0,AbsFSize,0,AbsFSize)
+    end RefreshPosition()
+    STGui:GetAttributeChangedSignal("AbsoluteSize"):Connect(RefreshPosition)
+    GuiSize:GetPropertyChangedEvent("KeybindYSize"):Connect(RefreshPosition)
+    GuiSize:GetPropertyChangedEvent("KeybinderTitleSize"):Connect(RefreshPosition)
+    Title.TranslateValueChanged:Connect(function()
+        TitleText.Text = Title:Translate()
+        RefreshPosition()
+    end) TitleText.Text = Title:Translate()
+    function Keybinder:RefreshPositions()
+        table.sort(Keybinds,function(a,b)
+            if a.Position~=b.Position then
+                return a.Position<b.Position
+            else return a.Id<b.Id
+            end
+        end) for k,v in Keybinds do
+            v.Frame.LayoutOrder = k
+        end
+    end Keybinder.Opened = false
+    Keybinder:GetPropertyChangedEvent("Opened"):Connect(function()
+        Window.Opened = Keybinder.Opened
+    end) local Prompt = Prompts:CreateKeyPrompt("Keybinder."..Name,Title,"...",true)
+    Prompt.ConfigSavingEnabled = false
+    function Keybinder:AskKey(Desc:{[string]:string})
+        if type(Desc)~="table" then logger:critical_error("Keybinder:AskKey","Description is incorrect(expected table)") end
+        Prompt:Move(Window.WindowFrame.Position, Vector2.new(0.5,0.5))
+        Prompt.Description:Load(Desc)
+        return Prompt:Run()
+    end Window.Opened = false
+    Window:GetPropertyChangedEvent("Opened"):Connect(function()
+        Keybinder.Opened = Window.Opened
+    end) function Keybinder:Destroy()
+        Window:Destroy()
+        EventTypesMenu:Destroy()
+    end
+    return Keybinder
 end
 -- #FIND_POINT Configs Window ------------------
 State.Saying:Load{ -- #LANG_REQUIRED
@@ -4571,7 +5183,7 @@ local testG = Groups:CreateGroup("Te",{
     en="Test",
     ru="Тест"
 })
-testG:CreateText("Tittle",{
+testG:CreateText("Title",{
     en="Testing saving objects in config:",
     ru="Тест сохранения в конфиг:"
 })
@@ -4598,11 +5210,9 @@ State:ResetToDefault()
         choose(было askYN),свои кнопки(на Translator если не дали то Да или Нет) можно добавить :Run() или :Ask() или :Choose()
             и классы чтоб можно было менять уже запущенный
         notify(было print), также на Translator и с классами
-        часы, и чтоб можно было кастомить например добавить фпс
     Новое:
         Как Dev Инструмент смотреть иерархию, тоесть проводник, и показывать ошибки(например когда кнопка в глобальных группах и из-за этого не отображается)
-        TextBoxPrompt, промпт где спросить юзера написать текста
-        NumberPrompt тоже что и выше, только с цифрами
+        NumberPrompt промпт где спросить юзера написать цифры
         Сделать NumberRange TGuiObject
         Сделать Color3 TGuiObject
         Чтобы сами читы можно было двигать

@@ -1,7 +1,7 @@
 {
     "type":"class",
     "class":"TClasses",
-    "description":"Класс TClasses для создания своих классов",
+    "description":"Класс TClasses, предназначен для создания своих классов",
     "deprecated":false,
     "properties":{},
     "methods":{
@@ -47,6 +47,16 @@
                     "name":"rawData",
                     "type":"table",
                     "description":"Сырая таблица",
+                    "required":false
+                },{
+                    "name":"metatable",
+                    "type":"table",
+                    "description":"Мета-таблица, ставится поверх стандартной у TClass'ов",
+                    "required":false
+                },{
+                    "name":"writeSameModeExclude",
+                    "type":"boolean | table",
+                    "description":"Таблица с исключениями для записывания только одинаковых типов, если true полностью отключает функцию",
                     "required":false
                 }
             ],

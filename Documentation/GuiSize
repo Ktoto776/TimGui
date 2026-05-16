@@ -165,6 +165,36 @@
             "description":"Размер текста MenuText'а",
             "canChange":true,
             "deprecated":false
+        },"KeybindYSize":{
+            "type":"UDim",
+            "description":"Y размер Keybind в Keybinder",
+            "canChange":true,
+            "deprecated":false
+        },"KeybindCornerRadius":{
+            "type":"UDim",
+            "description":"Радиус скругления Keybind",
+            "canChange":true,
+            "deprecated":false
+        },"KeybindButtonsCornerRadius":{
+            "type":"UDim",
+            "description":"Радиус скругления кнопок внутри Keybind",
+            "canChange":true,
+            "deprecated":false
+        },"KeybinderScrollBarThickness":{
+            "type":"number",
+            "description":"Толщина ScrollBar'а в Keybinder'е",
+            "canChange":true,
+            "deprecated":false
+        },"KeybinderTitleSize":{
+            "type":"UDim2",
+            "description":"Размер заголовка в Keybinder'е",
+            "canChange":true,
+            "deprecated":false
+        },"KeybinderButtonsYSize":{
+            "type":"UDim",
+            "description":"Y Размер нижних кнопок в Keybinder'е",
+            "canChange":true,
+            "deprecated":false
         }
     }, "methods":{}, 
     "events":{}

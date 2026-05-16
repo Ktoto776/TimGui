@@ -1,0 +1,51 @@
+{
+    "description":"Часть для других классов связанных с кейбндами",
+    "type":"class",
+    "classes":["TClass","BaseKeybind"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "State":{
+            "type":"string",
+            "description":"Нужный статус. Могут быть: \"Begin\",\"End\",\"Change\". Change - когда и Begin и End. По умолчанию End",
+            "canChange":true,
+            "deprecated":false
+        },"Type":{
+            "type":"string",
+            "description":"Тип бинда, нужен чтобы группировать бинды по действиям(где названия придумываешь ты сам).По умолчанию \"\"",
+            "canChange":true,
+            "deprecated":false
+        },"Key":{
+            "type":"class",
+            "class":"TKey",
+            "description":"Сам ключ, если Enum.KeyCode.Unknown -> значит не выбран",
+            "canChange":true,
+            "deprecated":false
+        }
+    }, "methods":{
+        "Emulate":{
+            "description":"Эмулирует нажатие и запускает .Event",
+            "args":[],
+            "return":[], 
+            "deprecated":false
+        }
+    }, 
+    "events":{
+        "Event":{
+            "description":"Обычный эвент, который запускается при нажатии кнопки установленной в BaseKeybind",
+            "type":"RBXScriptEvent",
+            "args":[
+                {
+                    "name":"Input",
+                    "type":"InputObject?",
+                    "description":"InputObject этого нажатия. nil-если был эмулирован"
+                },{
+                    "name":"GPE",
+                    "type":"boolean?",
+                    "description":"Game Processed Event, используется ли в игре? nil-если был эмулирован"
+                }
+            ],
+            "deprecated":false
+        }
+    }
+}

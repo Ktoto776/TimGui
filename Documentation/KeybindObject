@@ -1,0 +1,57 @@
+{
+    "description":"Кейбинд предназначенный специально для Keybinder",
+    "type":"class",
+    "classes":["TClass","BaseKeybind","KeybindObject"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "Position":{
+            "type":"number",
+            "description":"Позиция",
+            "canChange":true,
+            "deprecated":false
+        },"Id":{
+            "type":"number",
+            "description":"Уникальный Id KeybindObject'а, ставится при создании",
+            "canChange":false,
+            "deprecated":false
+        },"Parent":{
+            "type":"class?",
+            "class":"Keybinder?",
+            "description":"Родитель обьекта, может быть nil",
+            "canChange":true,
+            "deprecated":false
+        },"Frame":{
+            "type":"Frame",
+            "description":"Основной Frame",
+            "canChange":false,
+            "deprecated":false
+        },"UICorner":{
+            "type":"UICorner",
+            "description":"UICorner, для скругления углов для .Frame",
+            "canChange":false,
+            "deprecated":false
+        },"SpecialColors":{
+            "type":"class",
+            "class":"SpecialColors",
+            "description":"Специальные цвета этому обьекту",
+            "canChange":false,
+            "deprecated":false
+        }
+    }, "methods":{
+        "Destroy":{
+            "description":"Удаляет обьект",
+            "args":[],
+            "return":[], 
+            "deprecated":false
+        }
+    }, 
+    "events":{
+        "Destroyed":{
+            "description":"Запускается когда обьект удалён",
+            "type":"RBXScriptEvent",
+            "args":[],
+            "deprecated":false
+        }
+    }
+}

@@ -17,7 +17,25 @@
             "deprecated":false
         }
     }, 
-    "methods":{}, 
+    "methods":{
+        "Run":{
+            "description":"Запускает Prompt, спрашивая что либо у пользователя",
+            "args":[{
+                    "name":"InputArgs",
+                    "type":"...",
+                    "description":"Входные данные, разные от типа промпта",
+                    "required":true
+                }
+            ],"return":[
+                {
+                    "name":"OutputArgs",
+                    "type":"...?",
+                    "description":"Выходные данные, если было отменено, то всё nil.(Так если вызвать 2 раза :Run() первый засчитает за отмену и вернёт nil)"
+                }
+            ], 
+            "deprecated":false
+        }
+    }, 
     "events":{
         "OnInput":{
             "description":"Запускается если произошёл Input или был запущен :EmulateInput(...)",

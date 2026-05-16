@@ -156,6 +156,11 @@
                     "description":"Класс MenuText"
                 }
             ],"deprecated":false
+        },"Destroy":{
+            "description":"Удаляет обьект",
+            "args":[],
+            "return":[], 
+            "deprecated":false
         }
     }, 
     "events":{
@@ -181,6 +186,11 @@
             "deprecated":false
         },"MenuRefreshed":{
             "description":"Запускается когда позиции обьектов в меню обновились",
+            "type":"RBXScriptSignal",
+            "args":[],
+            "deprecated":false
+        },"MenuCancelled":{
+            "description":"Запускается когда меню было отменено, тоесть последний клик был не по меню, из-за чего меню закрылось",
             "type":"RBXScriptSignal",
             "args":[],
             "deprecated":false

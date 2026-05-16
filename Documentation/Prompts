@@ -41,7 +41,7 @@
             "args":[{
                     "name":"Name",
                     "type":"string",
-                    "description":"Имя группы",
+                    "description":"Имя промпта",
                     "required":true
                 },{
                     "name":"Title",
@@ -66,7 +66,37 @@
                     "description":"Текстовый промпт"
                 }
             ], "deprecated":false
-        } 
+        },"CreateKeyPrompt":{
+            "description":"Создаёт промпт для выбора кнопки",
+            "args":[{
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Имя промпта",
+                    "required":true
+                },{
+                    "name":"Title",
+                    "type":"string | Translator | {langCode=string}",
+                    "description":"Название которое видит пользователь, если nil берёт из Name, string-только англ",
+                    "required":false
+                },{
+                    "name":"Description",
+                    "type":"string | Translator | {langCode=string}",
+                    "description":"Описание промпта",
+                    "required":false
+                },{
+                    "name":"disableDefaultConfigSettingsRefresh",
+                    "type":"boolean",
+                    "description":"Выключены ли стандартные настройки сохранения",
+                    "required":false
+                }
+            ],
+            "return":[{
+                    "name":"response",
+                    "type":"KeyPrompt",
+                    "description":"Промпт для выбора кнопки"
+                }
+            ], "deprecated":false
+        }
     }, 
     "events":{}
 }

@@ -15,6 +15,11 @@
             "description":"Эта кнопка мыши?",
             "canChange":false,
             "deprecated":false
+        },"IsEmpty":{
+            "type":"boolean",
+            "description":"Пустой ли TKey(тоесть, пользователь не может повторить этот TKey?)",
+            "canChange":false,
+            "deprecated":false
         },"KeyName":{
             "type":"string",
             "description":"Имя кнопки например A/1/KEnter/K1(K1 - Keypad One)/LeftMB(LeftMB-Left Mouse Button)",

@@ -30,6 +30,16 @@
             "description":"rbxassetid:// на стрелочку статуса TSequence",
             "canChange":true,
             "deprecated":false
+        },"DeleteKeybindObject":{
+            "type":"string",
+            "description":"rbxassetid:// на значок удаления Keybind'а",
+            "canChange":true,
+            "deprecated":false
+        },"AddKeybind":{
+            "type":"string",
+            "description":"rbxassetid:// на значок создания Keybind'а",
+            "canChange":true,
+            "deprecated":false
         }
     }, "methods":{}, 
     "events":{}

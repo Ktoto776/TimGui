@@ -15,6 +15,12 @@
             "description":"Если true, то блокирует следующее нажатие кнопки. Служит, чтобы автокликеры не вызывали KeyBind'ы",
             "canChange":true,
             "deprecated":false
+        },"SpecialColors":{
+            "type":"class",
+            "class":"SpecialColors",
+            "description":"Специальные цвета, связаны с специальными цветами у окна",
+            "canChange":false,
+            "deprecated":false
         }
     }, "methods":{
         "GetKeyNameFromKeyCode":{
@@ -107,6 +113,61 @@
                 }
             ], 
             "deprecated":false
+        },"GetKeyEvent":{
+            "description":"Возвращает TEvent.Event для этой кнопки",
+            "args":[{
+                    "name":"KeyName",
+                    "type":"string",
+                    "description":"Имя кнопки",
+                    "required":true
+                }
+            ],"return":[
+                {
+                    "name":"Event",
+                    "type":"TEvent.Event",
+                    "description":"Запускается если эта кнопка нажата или разжата. Запускает с параметрами как в KeyBinding.KeyEvent"
+                }
+            ], 
+            "deprecated":false
+        },"CreateKeybinder":{
+            "description":"Возвращает TEvent.Event для этой кнопки",
+            "args":[{
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Имя кейбиндеру+окна, в которое сохраняются данные. Если нету ставит настройки сохранения на false",
+                    "required":false
+                },{
+                    "name":"disableDefaultConfigSettingsForWindow",
+                    "type":"boolean",
+                    "description":"Выключены ли стандартные настройки сохранения для окна",
+                    "required":false
+                }
+            ],"return":[
+                {
+                    "name":"result",
+                    "type":"class",
+                    "class":"Keybinder",
+                    "description":"Запускается если эта кнопка разжата. Запускает с параметрами как в KeyBinding.Ended/KeyBinded.Began"
+                }
+            ], 
+            "deprecated":false
+        },"CreateKeybindObject":{
+            "description":"Создаёт KeybindObject(и должен использоваться в Keybinder'е)",
+            "args":[],
+            "return":[
+                {
+                    "name":"result",
+                    "type":"class",
+                    "class":"KeybindObject",
+                    "description":"Созданные KeybindObject"
+                }
+            ], 
+            "deprecated":false
+        },"RefreshPositions":{
+            "description":"Обновляет позиции в Keybinder'е",
+            "args":[],
+            "return":[], 
+            "deprecated":false
         }
     }, 
     "events":{
@@ -122,7 +183,7 @@
                 },{
                     "name":"GPE",
                     "type":"boolean",
-                    "description":"Game Process Event, то есть используется ли для кнопка роблоксом"
+                    "description":"Game Processed Event, то есть используется ли для кнопка роблоксом"
                 },{
                     "name":"input",
                     "type":"InputObject",
@@ -141,7 +202,7 @@
                 },{
                     "name":"GPE",
                     "type":"boolean",
-                    "description":"Game Process Event, то есть используется ли для кнопка роблоксом"
+                    "description":"Game Processed Event, то есть используется ли для кнопка роблоксом"
                 }
             ],
             "deprecated":false
@@ -156,7 +217,7 @@
                 },{
                     "name":"GPE",
                     "type":"boolean",
-                    "description":"Game Process Event, то есть используется ли для кнопка роблоксом"
+                    "description":"Game Processed Event, то есть используется ли для кнопка роблоксом"
                 }
             ],
             "deprecated":false
@@ -171,7 +232,7 @@
                 },{
                     "name":"GPE",
                     "type":"boolean",
-                    "description":"Game Process Event, то есть используется ли для кнопка роблоксом"
+                    "description":"Game Processed Event, то есть используется ли для кнопка роблоксом"
                 }
             ],
             "deprecated":false

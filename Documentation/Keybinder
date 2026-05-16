@@ -1,0 +1,192 @@
+{
+    "description":"Класс Keybinder, нужен для назначения клавиш(одно или несколько) с разными режимами",
+    "type":"class",
+    "classes":["TClass","Keybinder"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "Name":{
+            "type":"string",
+            "description":"Имя keybinder'а, задаётся только при создании",
+            "canChange":false,
+            "deprecated":false
+        },"Title":{
+            "type":"class",
+            "class":"TClass",
+            "description":"Название окна",
+            "canChange":false,
+            "deprecated":false
+        },"Window":{
+            "type":"class",
+            "class":"TWindow",
+            "description":"Окно keybinder'а",
+            "canChange":false,
+            "deprecated":false
+        },"KeybindsScroll":{
+            "type":"ScrollingFrame",
+            "description":"Основной ScrollingFrame в котором находятся keybind'ы",
+            "canChange":false,
+            "deprecated":false
+        },"TitleLabel":{
+            "type":"TextLabel",
+            "description":"TextLabel, содержащий Title",
+            "canChange":false,
+            "deprecated":false
+        },"Buttons":{
+            "type":"Frame",
+            "description":"Frame с кнопками",
+            "canChange":false,
+            "deprecated":false
+        },"DeleteButton":{
+            "type":"ImageButton",
+            "description":"ImageButton для удаления бинда",
+            "canChange":false,
+            "deprecated":false
+        },"Opened":{
+            "type":"boolean",
+            "description":"Открыто ли окно",
+            "canChange":true,
+            "deprecated":false
+        },"DefaultType":{
+            "type":"string",
+            "description":"EventType по умолчанию",
+            "canChange":true,
+            "deprecated":false
+        }
+    }, "methods":{
+        "CreateKeybind":{
+            "description":"Создаёт KeybindObject с .Parent в этом binder'е",
+            "args":[],
+            "return":[
+                {
+                    "name":"result",
+                    "type":"class",
+                    "class":"KeybindObject",
+                    "description":"KeybindObject с .Parent в этом binder'е"
+                }
+            ], 
+            "deprecated":false
+        },"AskKey":{
+            "description":"Создаёт KeybindObject с .Parent в этом binder'е",
+            "args":[
+                {
+                    "name":"Description",
+                    "type":"table",
+                    "description":"Описание,которое видит пользователь, для выбора ключа. Таблица где ключ- код языка, а значение перевод({\"en\":\"English\",\"ru\":\"Русский\"})",
+                    "required":true
+                }
+            ],
+            "return":[
+                {
+                    "name":"result",
+                    "type":"class",
+                    "class":"TKey",
+                    "description":"Ключ(кнопка), которую выбрал пользователь"
+                }
+            ], 
+            "deprecated":false
+        },"AddEventType":{
+            "description":"Добавляет EventType в Keybinder",
+            "args":[
+                {
+                    "name":"name",
+                    "type":"string",
+                    "description":"Имя эвента, которое будет участвоваться в .Event",
+                    "required":true
+                },{
+                    "name":"title",
+                    "type":"string | {[string]:string} | Translator",
+                    "description":"Заголовок(или имя), которое видит пользователь",
+                    "required":false
+                }
+            ],
+            "return":[], 
+            "deprecated":false
+        },"GetEventTypeTitle":{
+            "description":"Возвращает заголовок EventType'а",
+            "args":[
+                {
+                    "name":"name",
+                    "type":"string",
+                    "description":"Имя эвента, которое будет участвоваться в .Event",
+                    "required":true
+                }
+            ],
+            "return":[
+                {
+                    "name":"Title",
+                    "type":"class",
+                    "class":"Translator",
+                    "description":"Заголовок(или имя), которое видит пользователь для этого EventType"
+                }
+            ], 
+            "deprecated":false
+        },"AskEventType":{
+            "description":"Спрашивает у пользователя EventType этого Keybinder'а",
+            "args":[
+                {
+                    "name":"Position",
+                    "type":"UDim2",
+                    "description":"В какой позиции показать меню выбора",
+                    "required":true
+                },{
+                    "name":"selected",
+                    "type":"string",
+                    "description":"Выбранный EventType(чтобы он был в начале списка)",
+                    "required":false
+                }
+            ],
+            "return":[
+                {
+                    "name":"EventType",
+                    "type":"string?",
+                    "description":"EventType, которое выбрал пользователь. nil-если пользователь отменил или выбрал, то что уже стоит"
+                }
+            ], 
+            "deprecated":false
+        },"Destroy":{
+            "description":"Удаляет обьект",
+            "args":[],
+            "return":[], 
+            "deprecated":false
+        }
+    }, 
+    "events":{
+        "Event":{
+            "description":"Эвент, который запускается при запуске любого BaseKeybind.Event в ребёнке этого Keybinder",
+            "type":"TEvent.Event",
+            "args":[
+                {
+                    "name":"EventType",
+                    "type":"string",
+                    "description":"Тип кейбинда/эвента(EventType), нужен для группировки кейбиндеров по группам(из BaseKeybind.Type)"
+                },{
+                    "name":"Keybind",
+                    "type":"class",
+                    "class":"KeybindObject",
+                    "description":"Обьект кейбиндера, относящийся и тот который был запущен"
+                },{
+                    "name":"Input",
+                    "type":"InputObject?",
+                    "description":"InputObject который запущен в BaseKeybind.Event. nil-если был эмулирован"
+                },{
+                    "name":"GPE",
+                    "type":"boolean",
+                    "description":"Game Processed Event, используется ли в игре? nil-если был эмулирован"
+                }
+            ],
+            "deprecated":false
+        },"EventTypeTranslateRefresh":{
+            "description":"Эвент, который запускается если изменился перевод заголовка какого либо EventType",
+            "type":"RBXScriptSignal",
+            "args":[
+                {
+                    "name":"EventType",
+                    "type":"string",
+                    "description":"EventType который был изменён"
+                }
+            ],
+            "deprecated":false
+        }
+    }
+}

@@ -145,6 +145,16 @@
             "description":"Цвет текста MenuText в Menu",
             "canChange":true,
             "deprecated":false
+        },"ButtonOnButtonBackground":{
+            "type":"Color3",
+            "description":"Цвет кнопки в кнопке",
+            "canChange":true,
+            "deprecated":false
+        },"ButtonOnButtonMain":{
+            "type":"Color3",
+            "description":"Цвет чего либо(текста, картинки и тд) кнопки в кнопки",
+            "canChange":true,
+            "deprecated":false
         }
     }, "methods":{}, 
     "events":{}
