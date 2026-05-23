@@ -52,6 +52,21 @@
             "description":"EventType по умолчанию",
             "canChange":true,
             "deprecated":false
+        },"AutosaveEnabled":{
+            "type":"boolean",
+            "description":"Включено ли автосохранение, если оно выключено через конфиг, а тут true, то сохраняться не будет?",
+            "canChange":true,
+            "deprecated":false
+        },"SaveEnabled":{
+            "type":"boolean",
+            "description":"Включено ли сохранение, если оно выключено через конфиг, а тут true, то сохраняться не будет?",
+            "canChange":true,
+            "deprecated":false
+        },"SavingDisabledByName":{
+            "type":"boolean",
+            "description":"Выключено ли сохранение изза того, что имя уже используется?",
+            "canChange":false,
+            "deprecated":false
         }
     }, "methods":{
         "CreateKeybind":{
@@ -63,6 +78,79 @@
                     "type":"class",
                     "class":"KeybindObject",
                     "description":"KeybindObject с .Parent в этом binder'е"
+                }
+            ], 
+            "deprecated":false
+        },"LoadFromConfig":{
+            "description":"Загружает Keybinds из config",
+            "args":[],
+            "return":[
+                {
+                    "name":"success",
+                    "type":"boolean",
+                    "description":"Успешно ли загружено?"
+                }
+            ], 
+            "deprecated":false
+        },"SaveToConfig":{
+            "description":"Сохраняет Keybinds в config",
+            "args":[],
+            "return":[
+                {
+                    "name":"success",
+                    "type":"boolean",
+                    "description":"Успешно ли сохранено?"
+                }
+            ], 
+            "deprecated":false
+        },"GetKeybindsTable":{
+            "description":"Возвращает таблицу Keybind'ов этого Keybinder'а, чтобы сохранять её своими способами",
+            "args":[],
+            "return":[
+                {
+                    "name":"Keybinds",
+                    "type":"table",
+                    "description":"Таблица с данными всех Keybind'ов"
+                }
+            ], 
+            "deprecated":false
+        },"LoadKeybindsTable":{
+            "description":"Загружает из таблицы Keybind'ов",
+            "args":[
+                {
+                    "name":"Keybinds",
+                    "type":"table",
+                    "description":"Таблица с Keybinds",
+                    "required":true
+                }
+            ],
+            "return":[
+                {
+                    "name":"success",
+                    "type":"boolean",
+                    "description":"Успешно ли загружено?"
+                }
+            ], 
+            "deprecated":false
+        },"GetKeybinds":{
+            "description":"Возвращает все Keybind'ы этого Keybinder'а",
+            "args":[],
+            "return":[
+                {
+                    "name":"Keybinds",
+                    "type":"table",
+                    "description":"Таблица с Keybind'ами"
+                }
+            ], 
+            "deprecated":false
+        },"GetEventNames":{
+            "description":"Возвращает таблицу с именами эвентов",
+            "args":[],
+            "return":[
+                {
+                    "name":"EventNames",
+                    "type":"{string}",
+                    "description":"Таблица с именами достп=упных эвентов"
                 }
             ], 
             "deprecated":false
@@ -146,6 +234,11 @@
             "deprecated":false
         },"Destroy":{
             "description":"Удаляет обьект",
+            "args":[],
+            "return":[], 
+            "deprecated":false
+        },"Save":{
+            "description":"Сохраняет Keybinder(тоесть всего принадлежащие Keybind'ы), если включено через конфиг и Keybinder.SaveEnabled==true",
             "args":[],
             "return":[], 
             "deprecated":false

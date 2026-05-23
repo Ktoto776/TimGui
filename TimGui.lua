@@ -9,7 +9,8 @@ local DefaultConfig = {
         AutoSaveKeybinds=true,
         AutoSaveValues=true,
         AutoSaveWindows=true,
-        SaveWindows=true
+        SaveWindows=true,
+        SaveKeybinds=true
     },
     Objects={},
     Saves={},
@@ -1542,7 +1543,7 @@ GuiObjects:AddClassName("GuiObjects")
 TimGui.GuiObjects = GuiObjects
 table.insert(TimGuiReadOnly,"GuiObjects")
 -- #FIND_POINT GUIArchitecture
-local onNewChildListeners,onDescendantChangedListeners,onAncestorChanged = {},{},{}
+local onNewChildListeners,onDescendantChangedListeners = {},{}
 local writeSameModeExcludeForTGuiObjects = {"Parent"}
 local VisibleBind = Classes:CreateBind()
 Binder.VisibleBind = VisibleBind
@@ -1919,7 +1920,7 @@ local function CreateButtonForTGuiObject(TGuiObject,DisableAutoUpdateTextColor:b
         Activated:Fire()
     end) function TGuiObject:Activate()
         if destroyed then return end
-        logger:info("ButtonObject: "..TGuiObject.Name.."["..TGuiObject.ClassName.."]","Emulating Activated event.")
+        logger:debug("ButtonObject: "..TGuiObject.Name.."["..TGuiObject.ClassName.."]","Emulating Activated event.")
         Activated:Fire()
     end TGuiObject:SetReadOnly("Activated")
     return TGuiObject
@@ -2342,8 +2343,7 @@ function GuiObjects:CreateToggle(Name:string,Title:string|{[string]:string}?,Par
     Button:SetReadOnly("SpecialTextColorForToggle")
     SpecialRefreshColorValueBind:Bind(function(...)
         return RefreshColorValueBind:Run(...)
-    end) local refreshing = false
-    local function refreshValueColor(NotAnimate:boolean,async:boolean)
+    end) local function refreshValueColor(NotAnimate:boolean,async:boolean)
         logger:debug("Toggle","Refresh color for Toggle '"..Button.Name.."'")
         SpecialRefreshColorValueBind:Run(Button,not NotAnimate and GuiAnimations.EnableTextColorForToggleAnimation)
     end SpecialRefreshColorValueBind.OnBinded:Connect(refreshValueColor)
@@ -3018,12 +3018,13 @@ end Saves:SetReadOnly("BaseDir")
 local ScriptDataPath = Saves.BaseDir.."ScriptData/"
 local GlobalSavesPath = Saves.BaseDir.."Saves/"
 local ConfigsPath = Saves.BaseDir.."Configs/"
+local PackagesPath = Saves.BaseDir.."Packages/"
 local SavesIsSupported,err = pcall(function()
     logger:info("Testing saves")
     makefolder(Saves.BaseDir)
 	makefolder(GlobalSavesPath)
 	makefolder(ConfigsPath)
-    makefolder(ScriptDataPath)
+    makefolder(PackagesPath)
 	writefile(Saves.BaseDir.."Test","If you reading this, it means saves are working!")
 	logger:info("Saves test",readfile(Saves.BaseDir.."Test"))
     logger:debug("Saves test","Is file:"..tostring(isfile(Saves.BaseDir.."Test")))
@@ -3044,7 +3045,7 @@ end local function sanitizeFilename(name:string)
     end return sanitized
 end local SavesInstances = {}
 function Saves:GetSave(Name:string)
-    local Name = sanitizeFilename(Name)
+    Name = sanitizeFilename(Name)
     if Name then
         if SavesInstances[Name] then return SavesInstances[Name] end
         local save = Classes:CreateTClass()
@@ -3114,10 +3115,11 @@ function ControlCfg:GetConfigData(Name:string)
     Name = sanitizeFilename(Name)
     if Name and SavesIsSupported then
         local path = ConfigsPath..Name
-        if isfile(path) then
+        if isfile(path) then local data
             local s,cfg = pcall(function()
-                return HttpService:JSONDecode(readfile(path))
-            end)
+                data = readfile(path)
+                return HttpService:JSONDecode(data)
+            end) 
             if s then
                 local function loadNonError(data,def)
                     for k,v in def do
@@ -3132,6 +3134,7 @@ function ControlCfg:GetConfigData(Name:string)
                     end return data
                 end return loadNonError(cfg,table.clone(DefaultConfig))
             else logger:error("GetConfigData","Error to load "..Name..":\n"..tostring(cfg))
+                print(data)
             end
         end
     end
@@ -4505,8 +4508,15 @@ function KeyBinding:CreateKeybindObject()
     end) StateHoverTranslator:Load{ --#LANG_REQUIRED
         ru="Состояние нажатия",
         en="Click state"
-    }
-    local TypeButton,TypeTranslator = CreateButton()
+    } KObject:GetPropertyChangedEvent("State"):Connect(function()
+        local stateB = Objects[KObject.State]
+        if stateB then
+            selectedStateButton.Visible = true
+            selectedStateButton = stateB
+            stateB.Visible = false
+            StateTranslator:Load(stateB.Title:GetPreset())
+        end
+    end) local TypeButton,TypeTranslator = CreateButton()
     TypeButton.Name = "Type"
     TypeButton.Position = UDim2.new(1,0,0,0)
     TypeButton.AnchorPoint = Vector2.new(1,0)
@@ -4529,9 +4539,8 @@ function KeyBinding:CreateKeybindObject()
         end
     end KObject:GetPropertyChangedEvent("Parent"):Connect(function()
         if updaterLangEvent then updaterLangEvent:Disconnect() end
-        print(11111)
         if Classes:IsA(KObject.Parent,"Keybinder") then
-            updateEventType() print(22222)
+            updateEventType()
             updaterLangEvent = KObject.Parent.EventTypeTranslateRefresh:Connect(function(name)
                 if name==KObject.Type then
                     updateEventType()
@@ -4572,7 +4581,7 @@ function KeyBinding:CreateKeybindObject()
     KObject.Frame = Frame
     KObject:SetReadOnly("Frame")
     return KObject
-end
+end local KeybinderUsingNames = {}
 function KeyBinding:CreateKeybinder(Name:string,Title:string|{[string]:string}?,disableDefaultConfigSettingsForWindow:boolean)
     if type(Name)~="string" then logger:critical_error("KeyBinding:CreateKeybinder","Name is incorrect, expected string") end
     if type(Title)~="table" then
@@ -4589,6 +4598,9 @@ function KeyBinding:CreateKeybinder(Name:string,Title:string|{[string]:string}?,
     Keybinder:AddClassName("Keybinder")
     Keybinder.Name = Name
     Keybinder:SetReadOnly("Name")
+    local SavingDisabledByName = KeybinderUsingNames[Name] or false
+    if SavingDisabledByName then logger:warn("KeyBinding:CreateKeybinder",`Name "{Name}" is already using. Saving disabled`) end
+    KeybinderUsingNames[Name] = true
     local Window = Classes:CreateTWindow(Name..".KeyBinder",{ --#LANG_REQUIRED
         ru="Привязывание к клавишам",
         en="Key binder"
@@ -4672,6 +4684,11 @@ function KeyBinding:CreateKeybinder(Name:string,Title:string|{[string]:string}?,
         if EventTypesFromName[name] then
             return EventTypesFromName[name].Translator
         end
+    end function Keybinder:GetEventNames()
+        local names = {}
+        for k,v in EventTypes do
+            names[k] = v.Name
+        end return names
     end local selectedTypeMenuButton
     function Keybinder:AskEventType(Position:UDim2,selected:string)
         if EventTypesMenu.Opened then
@@ -4692,19 +4709,110 @@ function KeyBinding:CreateKeybinder(Name:string,Title:string|{[string]:string}?,
     end local Event = Classes:CreateTEvent()
     Keybinder.Event = Event.Event
     Keybinder:SetReadOnly("Event")
+    local SavedEvent = Classes:CreateTEvent()
+    Keybinder.Saved = SavedEvent.Event
+    Keybinder:SetReadOnly("Saved")
     local Keybinds = {}
-    local KeybindsConnects = {}
+    Keybinder.AutosaveEnabled = true
+    Keybinder.SaveEnabled = true
+    local loading = false
+    function Keybinder:GetKeybindsTable()
+        local Save = {}
+        for k,v in Keybinds do
+            local key = v.Key
+            local SavingTKey = {}
+            if key.IsKeyboardKey then
+                SavingTKey.Key = key.KeyCode.Name
+            elseif key.IsMouseKey then
+                SavingTKey.Mouse = key.MouseKey
+            end local Holding = {}
+            for kk,vv in key.Holding do
+                if vv then
+                    Holding[kk] = true
+                end
+            end SavingTKey.Hold = Holding
+            Save[k] = {
+                Key=SavingTKey,
+                Type=v.Type,
+                State=v.State,
+                IESK=v.IgnoreExtraSpecialKeys
+            }
+        end return Save
+    end local function SaveBinds(isAutosave:boolean)
+        if SavingDisabledByName or not (Keybinder.SaveEnabled and config.Settings.SaveKeybinds) then return false end
+        if isAutosave and loading and not (Keybinder.AutosaveEnabled and config.Settings.AutoSaveKeybinds) then return false end
+        config.Keybinds.Keybinders[Name] = Keybinder:GetKeybindsTable()
+        onConfigChanged:Fire()
+        return true
+    end local twoLoad
+    local function LoadBinds(isCfgLoad:boolean,Binds:{{Key:any,Type:string,State:string,IESK:boolean}})
+        if isCfgLoad and (SavingDisabledByName or (not (Keybinder.SaveEnabled and config.Settings.SaveKeybinds))) then return false end
+        if type(Binds)~="table" then return false end
+        if loading then twoLoad=Binds end
+        loading = true
+        for k,v in Keybinds do
+            v:Destroy()
+        end task.wait()
+        for k,v in Binds do
+            local bind = Keybinder:CreateKeybind()
+            bind.State = v.State
+            task.spawn(function() task.wait()
+                bind.Type = v.Type
+            end) bind.IgnoreExtraSpecialKeys = v.IESK
+            local TKey
+            if v.Key.Key then
+                local s,KeyCode = pcall(function()
+                    return Enum.KeyCode[v.Key.Key]
+                end) if s and KeyCode then
+                    TKey = KeyBinding:CreateKeyboardKey(KeyCode,v.Key.Hold)
+                end
+            elseif v.Key.Mouse then
+                TKey = KeyBinding:CreateMouseKey(v.Key.Mouse,v.Key.Hold)
+            end if not TKey then
+                TKey = KeyBinding:CreateEmptyTKey()
+            end bind.Key = TKey
+        end loading = false
+        if twoLoad then 
+            task.spawn(function()
+                local load = twoLoad twoLoad = nil
+                LoadBinds(false,load)
+            end)
+        end return true
+    end function Keybinder:LoadFromConfig()
+        return LoadBinds(true,config.Keybinds.Keybinders[Name] or {})
+    end function Keybinder:SaveToConfig()
+        return SaveBinds(false)
+    end task.spawn(function()
+        if SavingDisabledByName then return end
+        Keybinder:LoadFromConfig()
+        onLoadConfigEvent.Event:Connect(function()
+            Keybinder:LoadFromConfig()
+        end)
+    end) Keybinder.SavingDisabledByName = SavingDisabledByName
+    Keybinder:SetReadOnly("SavingDisabledByName")
+    function Keybinder:LoadKeybindsTable(Keybinds:any)
+        return LoadBinds(false,Keybinds)
+    end local KeybindsConnects = {}
     OnNewChildInKeybinder[Keybinder] = function(KObject)
         table.insert(Keybinds,KObject)
         KObject.Position = #Keybinds
         KObject.Type = Keybinder.DefaultType
-        KeybindsConnects[KObject] = KObject.Event:Connect(function(InputObject,GPE)
+        local events = {}
+        KeybindsConnects[KObject] = events
+        table.insert(events,KObject.Event:Connect(function(InputObject,GPE)
             Event:Fire(KObject.Type,KObject,InputObject,GPE)
-        end) Keybinder:RefreshPositions()
+        end)) table.insert(events,KObject.OnPropertyChanged:Connect(function()
+            if not loading then
+                SaveBinds(true)
+            end
+        end)) if not loading then
+            SaveBinds(true)
+        end Keybinder:RefreshPositions()
     end OnChildRemovedInKeybinder[Keybinder] = function(KObject)
         table.remove(Keybinds,table.find(Keybinds,KObject))
-        if KeybindsConnects[KObject] then KeybindsConnects[KObject]:Disconnect() end
-        Keybinder:RefreshPositions()
+        local events = KeybindsConnects[KObject]
+        if events then for k,v in events do v:Disconnect() end end
+        Keybinder:RefreshPositions() SaveBinds(true)
     end local Buttons = Instance.new("Frame",Window.Frame)
     Buttons.Name = "Buttons"
     Buttons.BackgroundTransparency = 1
@@ -4732,6 +4840,11 @@ function KeyBinding:CreateKeybinder(Name:string,Title:string|{[string]:string}?,
         local KObject = KeyBinding:CreateKeybindObject()
         KObject.Parent = Keybinder
         return KObject
+    end function Keybinder:GetKeybinds()
+        local ResKeybinds = {}
+        for k,v in Keybinds do
+            ResKeybinds[k] = v
+        end return ResKeybinds
     end
     local function refreshCorners()
         NewKCorner.CornerRadius = GuiSize.KeybindButtonsCornerRadius
@@ -5088,6 +5201,42 @@ function TimGui:GetTScript(ScriptName:string,allowLoadTwice:boolean?)
     TScripts[ScriptName] = TScript
     return TScript
 end
+-- #FIND_POINT PACKAGES
+local Packages = Classes:CreateTClass()
+local RawCodes = {}
+local function GetPackageCode(Name:string)
+    Name = Name..".lua"
+    local LocalPath = PackagesPath..Name
+    local isLocalPackage = SavesIsSupported and isfile(LocalPath)
+    if isLocalPackage then
+        return readfile(LocalPath)
+    else return TimGui:HttpGet("./Packages/"..Name)
+    end
+end
+function Packages:GetPackageRawCode(Name:string,dontUseCached:boolean)
+    local code = RawCodes[Name]
+    if dontUseCached or not code then
+        code = GetPackageCode(Name)
+        RawCodes[Name] = code
+    end return code
+end local PackageFirstLine = "--[[TPackage"
+function Packages:GetPackageData(Name:string)
+    local code = Packages:GetPackageRawCode(Name)
+    local FirstLine = string.gsub(string.split(code,"\n")[1]," ","")
+    local data = Classes:CreateTClass()
+    data:AddClassName("Package")
+    data.Code = code
+    data:SetReadOnly("Code")
+    data.IsPackage = string.sub(FirstLine,1,string.len(PackageFirstLine))==PackageFirstLine
+    data:SetReadOnly("IsPackage")
+    if data.IsPackage then
+        local InCodeData = string.split(code,PackageFirstLine)
+        InCodeData = string.split(InCodeData[2],"]]")[1]
+        data.Data = InCodeData
+    else data.Data = ""
+    end data:SetReadOnly("Data")
+    return data
+end logger:info(Packages:GetPackageData("NetworkEvents"))
 
 local s,Groups = pcall(function()
     local Groups = MakeGUIArchitectureClass()
@@ -5179,7 +5328,7 @@ ConfigsWindow:GetPropertyChangedEvent("Opened"):Connect(function()
     end
 end) configuratorButton.Visible = SavesIsSupported
 
-local testG = Groups:CreateGroup("Te",{
+testG = Groups:CreateGroup("Te",{
     en="Test",
     ru="Тест"
 })

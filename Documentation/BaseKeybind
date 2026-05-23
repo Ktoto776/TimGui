@@ -21,6 +21,11 @@
             "description":"Сам ключ, если Enum.KeyCode.Unknown -> значит не выбран",
             "canChange":true,
             "deprecated":false
+        },"IgnoreExtraSpecialKeys":{
+            "type":"boolean",
+            "description":"Игнорировать ли лишние Специальные ключ(ctrl/shift и др.)",
+            "canChange":true,
+            "deprecated":false
         }
     }, "methods":{
         "Emulate":{
