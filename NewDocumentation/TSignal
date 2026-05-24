@@ -1,0 +1,43 @@
+{
+    "type":"class",
+    "description":"You can create your own from TEvent(Classes:CreateTEvent())",
+    "description-ru":"Можно создать свой из TEvent(Classes:CreateTEvent())",
+    "class":"TSignal",
+    "deprecated":false,
+    "properties":{}, 
+    "methods":{
+        "Connect":{
+            "description":"",
+            "description-ru":"",
+            "deprecated":false,
+            "args":[],
+            "returns":[
+                {
+                    "name":"Connection",
+                    "type":"RBXScriptConnection",
+                    "description":"",
+                    "description-ru":""
+                }
+            ]
+        },"Once":{
+            "description":"",
+            "description-ru":"",
+            "deprecated":false,
+            "args":[],
+            "returns":[
+                {
+                    "name":"Connection",
+                    "type":"RBXScriptConnection",
+                    "description":"",
+                    "description-ru":""
+                }
+            ]
+        },"Wait":{
+            "description":"",
+            "description-ru":"",
+            "deprecated":false,
+            "args":[],
+            "returns":[]
+        }
+    }, "events":{}
+}

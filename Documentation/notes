@@ -1,5 +1,3 @@
-Ты можешь создать _G.Setup и оформить его как TimGuiSetupObject
-Object.__type - тип 
 pairs() не работает с TG обьектами. Используй типо:
     for k,v in TimGuiAnyObject do
         print(k,v)
@@ -15,22 +13,3 @@ classes:[string,...]
 Пасхалки:
     Шанс: самый не редкий - 100
     Можно установить Disabled=true у пасхалки, чтобы вырубить
-
-Глобалы которые использует TimGui:
-    makefolder(path:string) - Saves
-    writefile(path:string,data:string) - Saves
-    readfile(path:string) - Saves
-    isfile(path:string) - Saves
-    listfiles(path:string) - Saves
-    delfile(path:string) - Saves
-
-
-Saves:
-Название системных настроек TGuiSettings
-Параметры:
-    LoadedConfig: string
-    lastOpenedConfigName: string
-    LangPreferences: [string]
-
-Configs:
-Внимание: Имя не может содержать "\/:*?"<>|" и все такие символы станут пробелами

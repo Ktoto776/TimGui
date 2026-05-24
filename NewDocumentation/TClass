@@ -1,0 +1,128 @@
+{
+    "type":"class",
+    "description":"Example class",
+    "description-ru":"Пример класса",
+    "class":"TClass",
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{}, 
+    "methods":{
+        "IsA":{
+            "description":"Compares the class name with 1 parameter",
+            "description-ru":"Сравнивает имя класса с 1 параметром",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"className",
+                    "type":"string",
+                    "description":"Name of the class to compare",
+                    "description-ru":"Имя класса для сравнения",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"response",
+                    "type":"boolean",
+                    "description":"Is it a descendant of this class (or the class itself)",
+                    "description-ru":"Является ли потомком этого класса(или самим классом)"
+                }
+            ]
+        },"GetClassNames":{
+            "description":"Compares the class name with 1 parameter",
+            "description-ru":"Сравнивает имя класса с 1 параметром",
+            "deprecated":false,
+            "args":[],
+            "returns":[
+                {
+                    "name":"response",
+                    "type":"table",
+                    "description":"Array: {string,...}",
+                    "description-ru":"Массив {string,...}"
+                }
+            ]
+        },"AddClassName":{
+            "description":"Add class name",
+            "description-ru":"Добавляет имя класса",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"className",
+                    "type":"string",
+                    "description":"Class name",
+                    "description-ru":"Имя класса",
+                    "required":true
+                }
+            ],
+            "returns":[]
+        },"GetPropertyChangedEvent":{
+            "description":"An event that is triggered when a property changes",
+            "description-ru":"Получить эвент, который запускается при изменении значения",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"propertyName",
+                    "type":"string",
+                    "description":"Property name",
+                    "description-ru":"Имя свойства",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"event",
+                    "type":"RBXScriptSignal",
+                    "description":"Is it a descendant of this class (or the class itself)",
+                    "description-ru":"Эвент, который запускается при изменении значения"
+                }
+            ]
+        },"SetReadOnly":{
+            "description":"Sets the property to read-only.",
+            "description-ru":"Устанавливает свойство только для чтения",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"propertyName",
+                    "type":"string",
+                    "description":"Property name",
+                    "description-ru":"Имя свойства",
+                    "required":true
+                }
+            ],
+            "returns":[]
+        },"GetReadOnly":{
+            "description":"Returns whether the property is read-only.",
+            "description-ru":"Возвращает наличия свойства только для чтения",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"propertyName",
+                    "type":"string",
+                    "description":"Property name",
+                    "description-ru":"Имя свойства",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"event",
+                    "type":"boolean",
+                    "description":"Is there a read-only property?",
+                    "description-ru":"Установлено ли свойство только для чтения?"
+                }
+            ]
+        }
+    }, "events":{
+        "OnPropertyChanged":{
+            "type":"RBXScriptSignal",
+            "description":"Fired if the value has been changed",
+            "description-ru":"Запускается если значение было изменено",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"PropertyName",
+                    "type":"string",
+                    "description":"Property name",
+                    "description-ru":"Имя свойства"
+                }
+            ]
+        }
+    }
+}

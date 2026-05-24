@@ -1,0 +1,39 @@
+{
+    "description":"Данные пакета",
+    "type":"class",
+    "classes":["TClass","PackageData"],
+    "writeSameMode":true,
+    "deprecated":false,
+    "properties":{
+        "Code":{
+            "type":"string",
+            "description":"Сырой код пакета",
+            "canChange":false,
+            "deprecated":false
+        },"IsPackage":{
+            "type":"boolean",
+            "description":"Это TPacket?",
+            "canChange":false,
+            "deprecated":false
+        },"RawData":{
+            "type":"string",
+            "description":"Сырые данные пакета, если это не TPacket то будут ''",
+            "canChange":false,
+            "deprecated":false
+        }
+    }, "methods":{
+        "GetData":{
+            "description":"Возвращает данные пакета",
+            "args":[],
+            "return":[
+                {
+                    "name":"Data",
+                    "type":"table",
+                    "description":"Таблица с данными из пакета"
+                }
+            ], 
+            "deprecated":false
+        }
+    }, 
+    "events":{}
+}

@@ -1,0 +1,74 @@
+{
+    "type":"class",
+    "description":"Example class",
+    "description-ru":"Пример класса",
+    "class":"Example",
+    "inherited":["TClass"],
+    "deprecated":false,
+    "properties":{
+        "Example":{
+            "type":"any",
+            "description":"",
+            "description-ru":"",
+            "readonly":false,
+            "deprecated":false
+        },"ExampleClass":{
+            "type":"class",
+            "class":"TClass",
+            "description":"",
+            "description-ru":"",
+            "readonly":false,
+            "deprecated":false
+        }
+    }, "methods":{
+        "Example":{
+            "description":"",
+            "description-ru":"",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"arg",
+                    "type":"any",
+                    "description":"",
+                    "description-ru":"",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"return",
+                    "type":"any",
+                    "description":"",
+                    "description-ru":""
+                }
+            ]
+        }
+    }, "events":{
+        "ExampleE":{
+            "type":"RBXScriptSignal",
+            "description":"",
+            "description-ru":"",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"arg",
+                    "type":"any",
+                    "description":"",
+                    "description-ru":""
+                }
+            ]
+        },"ExampleTSignal":{
+            "type":"TSignal",
+            "description":"",
+            "description-ru":"",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"name",
+                    "type":"any",
+                    "description":"",
+                    "description-ru":""
+                }
+            ]
+        }
+    }
+}

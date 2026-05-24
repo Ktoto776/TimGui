@@ -5224,7 +5224,9 @@ function Packages:GetPackageData(Name:string)
     local code = Packages:GetPackageRawCode(Name)
     local FirstLine = string.gsub(string.split(code,"\n")[1]," ","")
     local data = Classes:CreateTClass()
-    data:AddClassName("Package")
+    data:AddClassName("PackageData")
+    data.Name = Name
+    data:SetReadOnly("Name")
     data.Code = code
     data:SetReadOnly("Code")
     data.IsPackage = string.sub(FirstLine,1,string.len(PackageFirstLine))==PackageFirstLine
@@ -5232,11 +5234,54 @@ function Packages:GetPackageData(Name:string)
     if data.IsPackage then
         local InCodeData = string.split(code,PackageFirstLine)
         InCodeData = string.split(InCodeData[2],"]]")[1]
-        data.Data = InCodeData
-    else data.Data = ""
-    end data:SetReadOnly("Data")
+        data.RawData = InCodeData
+        local CompilatedData = {}
+        local CompData = string.split(InCodeData,";")
+        local VData:{Name:string,Data:string}
+        for _,v in CompData do
+            local split = string.split(v,":")
+            if #split>1 then
+                if VData then
+                    CompilatedData[VData.Name] = string.match(VData.Data,"^%s*(.-)%s*$")
+                end local Data = ""
+                for k,v in split do
+                    if k==1 then continue end
+                    if k==2 then
+                        Data = Data..v
+                    else
+                        Data = Data..":"..v
+                    end
+                end VData = {
+                    Name=string.match(split[1],"^%s*(.-)%s*$"),
+                    Data=Data
+                } 
+            else local Data = ";"
+                if split[1] then
+                    Data = Data..split[1]
+                end VData.Data = VData.Data..Data
+            end
+        end CompilatedData[VData.Name] = string.match(VData.Data,"^%s*(.-)%s*$")
+        function data:GetData()
+            return table.clone(CompilatedData) :: {[string]:string}
+        end
+    else data.RawData = ""
+        function data:GetData()
+            return {}
+        end
+    end data:SetReadOnly("RawData")
     return data
-end logger:info(Packages:GetPackageData("NetworkEvents"))
+end local requiredPackages = {}
+function Packages:Require(Name:string)
+    if not requiredPackages[Name] then
+        requiredPackages[Name] = table.pack(pcall(function()
+            return loadstring(Packages:GetPackageRawCode(Name))()
+        end))
+    end local pack = requiredPackages[Name]
+    if pack[1] then
+        return requiredPackages[Name][2]
+    else logger:critical_error("Error to load package",pack[2])
+    end
+end
 
 local s,Groups = pcall(function()
     local Groups = MakeGUIArchitectureClass()
@@ -5261,7 +5306,7 @@ end) if not s then
     logger:critical_error("MAIN","Error to create Settings group: \n"..tostring(Groups))
 end
 --MAIN --------
-local s,Settings = pcall(function() 
+local s,Settings = pcall(function()
     local Settings = TimGui.Groups:CreateGroup("Settings")
     TimGui.GlobalOpenedGroup = Settings
     Settings.Opened = true
@@ -5314,17 +5359,20 @@ onLanguageChanged.Event:Connect(function()
 end)
 local configuratorButton = Settings:CreateButton("Configurator",nil,function()
     ConfigsWindow.Opened = not ConfigsWindow.Opened
-end) local configuratorTitleClosed = {--#LANG_REQUIRED
-    en="Open configurator",
-    ru="Открыть конфигуратор"
-} local configuratorTitleOpened = {--#LANG_REQUIRED
-    en="Close configurator",
-    ru="Закрыть конфигуратор"
-} configuratorButton.Title:Load(configuratorTitleClosed)
+end) local configuratorTitle = { --#LANG_REQUIRED
+    Closed = {
+        en="Open configurator",
+        ru="Открыть конфигуратор"
+    }, Opened = {
+        en="Close configurator",
+        ru="Закрыть конфигуратор"
+    }
+}
+configuratorButton.Title:Load(configuratorTitle.Closed)
 ConfigsWindow:GetPropertyChangedEvent("Opened"):Connect(function()
     if ConfigsWindow.Opened then
-        configuratorButton.Title:Load(configuratorTitleOpened)
-    else configuratorButton.Title:Load(configuratorTitleClosed)
+        configuratorButton.Title:Load(configuratorTitle.Opened)
+    else configuratorButton.Title:Load(configuratorTitle.Closed)
     end
 end) configuratorButton.Visible = SavesIsSupported
 
