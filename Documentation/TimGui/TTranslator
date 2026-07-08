@@ -2,7 +2,7 @@
     "type":"class",
     "description":"A class for translating variables, can be created using TClasses:CreateTranslator()",
     "description-ru":"Класс для перевода variables, можно создать с помощью TClasses:CreateTranslator()",
-    "class":"Translator",
+    "class":"TTranslator",
     "inherited":["TClass","Preset"],
     "deprecated":false,
     "properties":{

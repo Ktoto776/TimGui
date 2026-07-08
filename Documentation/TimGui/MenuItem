@@ -22,7 +22,7 @@
             "deprecated":false
         },"Title":{
             "type":"class",
-            "class":"Translator",
+            "class":"TTranslator",
             "description":"Text visible to the user",
             "description-ru":"Текст которое видит пользователь",
             "readonly":true,

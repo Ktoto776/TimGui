@@ -26,7 +26,7 @@
             "deprecated":false
         },"Saying":{
             "type":"class",
-            "class":"Translator",
+            "class":"TTranslator",
             "description":"Text from the translator that will appear on hover if `SayEnabled == true`",
             "description-ru":"Текст из переводчика который будет появляться при наводе если `SayEnabled==true`",
             "readonly":false,

@@ -2,7 +2,7 @@
     "type":"class",
     "description":"Example class",
     "description-ru":"Пример класса",
-    "class":"Example",
+    "class":"Preset",
     "inherited":["TClass"],
     "deprecated":false,
     "properties":{

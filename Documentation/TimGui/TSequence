@@ -78,8 +78,8 @@
                 },{
                     "name":"Title",
                     "type":"string | table | class",
-                    "class":"Translator",
-                    "dType":"string | table<string,string> | Translator",
+                    "class":"TTranslator",
+                    "dType":"string | table<string,string> | TTranslator",
                     "description":"Object title",
                     "description-ru":"Заголовок обьекта",
                     "required":true

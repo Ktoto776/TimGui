@@ -2,7 +2,7 @@
     "type":"class",
     "description":"A class for creating groups and buttons. Located in TimGui.GuiObjects.",
     "description-ru":"Класс для создания групп и кнопок. Находится в TimGui.GuiObjects",
-    "class":"Example",
+    "class":"GuiObjects",
     "inherited":["TClass"],
     "deprecated":false,
     "properties":{}, 
@@ -21,8 +21,8 @@
                 },{
                     "name":"Title",
                     "type":"string | table | class",
-                    "class":"Translator",
-                    "dType":"string | table<string,string> | Translator",
+                    "class":"TTranslator",
+                    "dType":"string | table<string,string> | TTranslator",
                     "description":"Object title",
                     "description-ru":"Заголовок обьекта",
                     "required":true
@@ -57,8 +57,8 @@
                 },{
                     "name":"Title",
                     "type":"string | table | class",
-                    "class":"Translator",
-                    "dType":"string | table<string,string> | Translator",
+                    "class":"TTranslator",
+                    "dType":"string | table<string,string> | TTranslator",
                     "description":"Object title",
                     "description-ru":"Заголовок обьекта",
                     "required":true
@@ -100,8 +100,8 @@
                 },{
                     "name":"Title",
                     "type":"string | table | class",
-                    "class":"Translator",
-                    "dType":"string | table<string,string> | Translator",
+                    "class":"TTranslator",
+                    "dType":"string | table<string,string> | TTranslator",
                     "description":"Object title",
                     "description-ru":"Заголовок обьекта",
                     "required":true
@@ -143,8 +143,8 @@
                 },{
                     "name":"Title",
                     "type":"string | table | class",
-                    "class":"Translator",
-                    "dType":"string | table<string,string> | Translator",
+                    "class":"TTranslator",
+                    "dType":"string | table<string,string> | TTranslator",
                     "description":"Object title",
                     "description-ru":"Заголовок обьекта",
                     "required":true
@@ -179,8 +179,8 @@
                 },{
                     "name":"Title",
                     "type":"string | table | class",
-                    "class":"Translator",
-                    "dType":"string | table<string,string> | Translator",
+                    "class":"TTranslator",
+                    "dType":"string | table<string,string> | TTranslator",
                     "description":"Object title",
                     "description-ru":"Заголовок обьекта",
                     "required":true
@@ -222,8 +222,8 @@
                 },{
                     "name":"Title",
                     "type":"string | table | class",
-                    "class":"Translator",
-                    "dType":"string | table<string,string> | Translator",
+                    "class":"TTranslator",
+                    "dType":"string | table<string,string> | TTranslator",
                     "description":"Object title",
                     "description-ru":"Заголовок обьекта",
                     "required":true

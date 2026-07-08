@@ -14,7 +14,7 @@
             "deprecated":false
         },"Translator":{
             "type":"class",
-            "class":"Translator",
+            "class":"TTranslator",
             "description":"Value, but with translation, changes .Value if the desired translation has been changed",
             "description-ru":"Значение, но с переводом, изменяет .Value если нужный перевод был изменён",
             "readonly":false,

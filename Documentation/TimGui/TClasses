@@ -143,8 +143,8 @@
                 }
             ]
         },"CreateTranslator":{
-            "description":"Creates a Translator class, helps translate anything to user language",
-            "description-ru":"Создаёт Translator класс, помогает переводить всё что угодно на язык пользователя",
+            "description":"Creates a TTranslator class, helps translate anything to user language",
+            "description-ru":"Создаёт TTranslator класс, помогает переводить всё что угодно на язык пользователя",
             "deprecated":false,
             "args":[
                 {
@@ -164,9 +164,9 @@
                 {
                     "name":"response",
                     "type":"class",
-                    "class":"Translator",
-                    "description":"Translator class",
-                    "description-ru":"Класс Translator"
+                    "class":"TTranslator",
+                    "description":"TTranslator class",
+                    "description-ru":"Класс TTranslator"
                 }
             ]
         },"CreateWindow":{
@@ -183,8 +183,8 @@
                 },{
                     "name":"Title",
                     "type":"string | table | class",
-                    "class":"Translator",
-                    "dType":"string | table<string,string> | Translator",
+                    "class":"TTranslator",
+                    "dType":"string | table<string,string> | TTranslator",
                     "description":"A header title of window",
                     "description-ru":"Заголовок окна",
                     "required":false
@@ -224,16 +224,16 @@
                 },{
                     "name":"Title",
                     "type":"string | table | class",
-                    "class":"Translator",
-                    "dType":"string | table<string,string> | Translator",
+                    "class":"TTranslator",
+                    "dType":"string | table<string,string> | TTranslator",
                     "description":"A title",
                     "description-ru":"Заголовок",
                     "required":false
                 },{
                     "name":"Description",
                     "type":"string | table | class",
-                    "class":"Translator",
-                    "dType":"string | table<string,string> | Translator",
+                    "class":"TTranslator",
+                    "dType":"string | table<string,string> | TTranslator",
                     "description":"A prompt description",
                     "description-ru":"Описания промпта",
                     "required":false
@@ -281,8 +281,8 @@
                 },{
                     "name":"Title",
                     "type":"string | table | class",
-                    "class":"Translator",
-                    "dType":"string | table<string,string> | Translator",
+                    "class":"TTranslator",
+                    "dType":"string | table<string,string> | TTranslator",
                     "description":"A title",
                     "description-ru":"Заголовок",
                     "required":false
@@ -316,8 +316,8 @@
                 },{
                     "name":"Title",
                     "type":"string | table | class",
-                    "class":"Translator",
-                    "dType":"string | table<string,string> | Translator",
+                    "class":"TTranslator",
+                    "dType":"string | table<string,string> | TTranslator",
                     "description":"A title",
                     "description-ru":"Заголовок",
                     "required":false
@@ -345,8 +345,8 @@
                 },{
                     "name":"Title",
                     "type":"string | table | class",
-                    "class":"Translator",
-                    "dType":"string | table<string,string> | Translator",
+                    "class":"TTranslator",
+                    "dType":"string | table<string,string> | TTranslator",
                     "description":"A title",
                     "description-ru":"Заголовок",
                     "required":false
@@ -374,8 +374,8 @@
                 },{
                     "name":"Title",
                     "type":"string | table | class",
-                    "class":"Translator",
-                    "dType":"string | table<string,string> | Translator",
+                    "class":"TTranslator",
+                    "dType":"string | table<string,string> | TTranslator",
                     "description":"A title",
                     "description-ru":"Заголовок",
                     "required":false

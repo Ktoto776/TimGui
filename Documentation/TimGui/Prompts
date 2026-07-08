@@ -21,16 +21,16 @@
                 },{
                     "name":"Title",
                     "type":"string | table | class",
-                    "class":"Translator",
-                    "dType":"string | table<string,string> | Translator",
+                    "class":"TTranslator",
+                    "dType":"string | table<string,string> | TTranslator",
                     "description":"A title",
                     "description-ru":"Заголовок",
                     "required":false
                 },{
                     "name":"Description",
                     "type":"string | table | class",
-                    "class":"Translator",
-                    "dType":"string | table<string,string> | Translator",
+                    "class":"TTranslator",
+                    "dType":"string | table<string,string> | TTranslator",
                     "description":"A prompt description",
                     "description-ru":"Описания промпта",
                     "required":false
@@ -64,16 +64,16 @@
                 },{
                     "name":"Title",
                     "type":"string | table | class",
-                    "class":"Translator",
-                    "dType":"string | table<string,string> | Translator",
+                    "class":"TTranslator",
+                    "dType":"string | table<string,string> | TTranslator",
                     "description":"A title",
                     "description-ru":"Заголовок",
                     "required":false
                 },{
                     "name":"Description",
                     "type":"string | table | class",
-                    "class":"Translator",
-                    "dType":"string | table<string,string> | Translator",
+                    "class":"TTranslator",
+                    "dType":"string | table<string,string> | TTranslator",
                     "description":"A prompt description",
                     "description-ru":"Описания промпта",
                     "required":false
@@ -107,16 +107,16 @@
                 },{
                     "name":"Title",
                     "type":"string | table | class",
-                    "class":"Translator",
-                    "dType":"string | table<string,string> | Translator",
+                    "class":"TTranslator",
+                    "dType":"string | table<string,string> | TTranslator",
                     "description":"A title",
                     "description-ru":"Заголовок",
                     "required":false
                 },{
                     "name":"Description",
                     "type":"string | table | class",
-                    "class":"Translator",
-                    "dType":"string | table<string,string> | Translator",
+                    "class":"TTranslator",
+                    "dType":"string | table<string,string> | TTranslator",
                     "description":"A prompt description",
                     "description-ru":"Описания промпта",
                     "required":false

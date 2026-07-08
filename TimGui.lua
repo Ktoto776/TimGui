@@ -445,7 +445,7 @@ end -- #FIND_POINT Class Translator
 function Classes:CreateTranslator(EnglishData:any,raw:{any?}?)
     if EnglishData==nil then logger:critical_error("Classes:CreateTranslator","English/Default data is incorrect(got nil)") end
     local Translator = Classes:CreatePreset(true,raw)
-    Translator:AddClassName("Translator")
+    Translator:AddClassName("TTranslator")
     Translator.en = EnglishData
     function Translator:GetLangCode()
         for _,langCode in TimGui.LanguagePreferences do

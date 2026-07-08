@@ -1,15 +1,15 @@
 {
     "type":"class",
-    "description":"The ConfirmationPrompt class is used to confirm an action. Cancel = closing the window.",
-    "description-ru":"Класс ConfirmationPrompt, для подтверждения действия. Отмена = закрытие окна",
-    "class":"ConfirmationPrompt",
+    "description":"The TextPrompt class for requesting text from the user.",
+    "description-ru":"Класс TextPrompt, чтобы спрашивать текст у пользователя.",
+    "class":"TextPrompt",
     "inherited":["TClass","ConfigObject","TWindow","Prompt"],
     "deprecated":false,
     "properties":{
         "Buttons":{
             "type":"Frame",
-            "description":"The frame containing the 'Confirm' and 'Reject' buttons.",
-            "description-ru":"Frame в котором находятся кнопки 'Подтвердить' и 'Отклонить'",
+            "description":"The frame containing the 'Confirm' and 'Cancel' buttons.",
+            "description-ru":"Frame в котором находятся кнопки 'Подтвердить' и 'Отменить'",
             "readonly":true,
             "deprecated":false
         },"ConfirmButton":{
@@ -20,7 +20,7 @@
             "deprecated":false
         },"ConfirmText":{
             "type":"class",
-            "class":"Translate",
+            "class":"TTranslator",
             "description":"Text for confirm button",
             "description-ru":"Текст для кнопки подтверждения",
             "readonly":true,
@@ -37,24 +37,36 @@
             "description-ru":"Размер текста описания",
             "readonly":false,
             "deprecated":false
-        },"RejectButton":{
-            "type":"TextButton",
-            "description":"Reject button (takes text from `.RejectText`)",
-            "description-ru":"Кнопка отклонения(берёт текст из `.RejectText`)",
-            "readonly":true,
-            "deprecated":false
-        },"RejectText":{
-            "type":"class",
-            "class":"Translate",
-            "description":"Text for reject button",
-            "description-ru":"Текст для кнопки отклонения",
-            "readonly":true,
-            "deprecated":false
         },"CancelEnabled":{
             "type":"boolean",
-            "description":"Can the user cancel using the window close button?",
-            "description-ru":"Может ли пользователь отменить, через кнопку закрытия окна?",
+            "description":"Can the user cancel?",
+            "description-ru":"Может ли пользователь отменить?",
             "readonly":false,
+            "deprecated":false
+        },"CancelButton":{
+            "type":"TextButton",
+            "description":"Cancel button (takes text from `.CancelText`)",
+            "description-ru":"Кнопка отмены(берёт текст из `.CancelText`)",
+            "readonly":true,
+            "deprecated":false
+        },"CancelText":{
+            "type":"class",
+            "class":"TTranslator",
+            "description":"Text for cancel button",
+            "description-ru":"Текст для кнопки отмены",
+            "readonly":true,
+            "deprecated":false
+        },"Value":{
+            "type":"string",
+            "description":"The content of the TextBox (if you change it, it will change there too)",
+            "description-ru":"То что находится в TextBox(если изменить изменится и там)",
+            "readonly":false,
+            "deprecated":false
+        },"TextBox":{
+            "type":"TextBox",
+            "description":"The main TextBox",
+            "description-ru":"Основной TextBox",
+            "readonly":true,
             "deprecated":false
         }
     }, "methods":{}, 
@@ -66,19 +78,18 @@
             "deprecated":false,
             "args":[]
         }
-    }, 
-    "binds":{
+    }, "binds":{
         "SpecialDescriptionSizeBind":{
-            "description":"Special Bind for setting description size. Working like Binder.ConfirmationPromptDescriptionSizeBind",
-            "description-ru":"Специальный Bind для установки размера описанию. Работает как в Binder.ConfirmationPromptDescriptionSizeBind",
+            "description":"Special Bind for setting description size. Working like Binder.TextPromptDescriptionSizeBind",
+            "description-ru":"Специальный Bind для установки размера описанию. Работает как в Binder.TextPromptDescriptionSizeBind",
             "deprecated":false,
             "args":[
                 {
-                    "name":"ConfirmationPrompt",
+                    "name":"TextPrompt",
                     "type":"class",
-                    "class":"ConfirmationPrompt",
-                    "description":"ConfirmationPrompt which needs to set description size",
-                    "description-ru":"ConfirmationPrompt которому нужно установить размер для описания",
+                    "class":"TextPrompt",
+                    "description":"TextPrompt which needs to set description size",
+                    "description-ru":"TextPrompt которому нужно установить размер для описания",
                     "required":true
                 },{
                     "name":"startYPos",

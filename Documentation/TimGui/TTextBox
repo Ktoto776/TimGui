@@ -93,7 +93,7 @@
             "deprecated":false,
             "args":[
                 {
-                    "name":"TextBox",
+                    "name":"TTextBox",
                     "type":"class",
                     "class":"TTextBox",
                     "description":"TTextBox for set the position of the name and input field.",

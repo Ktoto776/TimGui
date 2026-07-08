@@ -14,7 +14,7 @@
             "deprecated":false
         },"Title":{
             "type":"class",
-            "class":"Translator",
+            "class":"TTranslator",
             "description":"Window title",
             "description-ru":"Название окна",
             "readonly":true,
@@ -222,8 +222,8 @@
                 },{
                     "name":"title",
                     "type":"string | table | class",
-                    "class":"Translator",
-                    "dType":"string | table<string,string> | Translator",
+                    "class":"TTranslator",
+                    "dType":"string | table<string,string> | TTranslator",
                     "description":"Title for EventType",
                     "description-ru":"Заголовок для EventType",
                     "required":true
@@ -245,7 +245,7 @@
                 {
                     "name":"Title",
                     "type":"class",
-                    "class":"Translator",
+                    "class":"TTranslator",
                     "description":"Title of this event",
                     "description-ru":"Заголовок этого эвента"
                 }
@@ -303,7 +303,7 @@
                     "description-ru":"EventType который был изменён"
                 }
             ]
-        },"ExampleTSignal":{
+        },"Event":{
             "type":"TSignal",
             "description":"An event that fires whenever any `BaseKeybind.Event` is fired within a this Keybinder.",
             "description-ru":"Эвент, который запускается при запуске любого `BaseKeybind.Event` в этом Keybinder'е",

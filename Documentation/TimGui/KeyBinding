@@ -168,8 +168,8 @@
                 },{
                     "name":"Title",
                     "type":"string | table | class",
-                    "class":"Translator",
-                    "dType":"string | table<string,string> | Translator",
+                    "class":"TTranslator",
+                    "dType":"string | table<string,string> | TTranslator",
                     "description":"title",
                     "description-ru":"Заголовок",
                     "required":false

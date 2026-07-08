@@ -21,7 +21,7 @@
             "deprecated":false
         },"Title":{
             "type":"class",
-            "class":"Translator",
+            "class":"TTranslator",
             "description":"Title of button",
             "description-ru":"Название кнопки, которое видит пользователь",
             "readonly":true,

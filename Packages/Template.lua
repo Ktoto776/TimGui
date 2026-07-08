@@ -5,4 +5,6 @@
 ]] ---@type TimGui
 local TimGui = _G.TimGui
 
+TimGui.KeyBinding:CreateKeybinder("21","124")
+
 return "Hello World!"

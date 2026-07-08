@@ -20,7 +20,7 @@
             "deprecated":false
         },"ConfirmText":{
             "type":"class",
-            "class":"Translate",
+            "class":"TTranslator",
             "description":"Text for confirm button",
             "description-ru":"Текст для кнопки подтверждения",
             "readonly":true,
@@ -51,7 +51,7 @@
             "deprecated":false
         },"CancelText":{
             "type":"class",
-            "class":"Translate",
+            "class":"TTranslator",
             "description":"Text for cancel button",
             "description-ru":"Текст для кнопки отмены",
             "readonly":true,
@@ -77,21 +77,21 @@
             "deprecated":false
         },"NoneKeyText":{
             "type":"class",
-            "class":"Translate",
+            "class":"TTranslator",
             "description":"Text if the button is not selected",
             "description-ru":"Текст если кнопка не выбрана",
             "readonly":true,
             "deprecated":false
         },"KeyText":{
             "type":"class",
-            "class":"Translate",
+            "class":"TTranslator",
             "description":"If a button is selected, the text replaces `%KEY%` with the selected button.",
             "description-ru":"Текст если кнопка выбрана, заменяет `%KEY%` - на выбранную кнопку",
             "readonly":true,
             "deprecated":false
         },"AlreadyUsingInGameText":{
             "type":"class",
-            "class":"Translate",
+            "class":"TTranslator",
             "description":"Tooltip if the selected button is used in the game.",
             "description-ru":"Подсказка если выбранная кнопка используется в игре",
             "readonly":true,

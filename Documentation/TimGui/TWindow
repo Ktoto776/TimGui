@@ -14,7 +14,7 @@
             "deprecated":false
         },"Title":{
             "type":"class",
-            "class":"Translator",
+            "class":"TTranslator",
             "description":"Title of window",
             "description-ru":"Заголовок окна",
             "readonly":true,

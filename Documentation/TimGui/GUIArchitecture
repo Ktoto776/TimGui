@@ -61,10 +61,10 @@
                 },{
                     "name":"Title",
                     "type":"string | table | class",
-                    "class":"Translator",
-                    "dType": "string | table<string,string> | Translator",
-                    "description":"Title, can be Translator | table({'ru'='rus','en'='eng'}) | string?, if not, the object name is taken",
-                    "description-ru":"Заголовок, может быть Translator | table({'ru'='rus','en'='eng'}) | string?, если нету берётся название обьекта",
+                    "class":"TTranslator",
+                    "dType": "string | table<string,string> | TTranslator",
+                    "description":"Title, can be TTranslator | table({'ru'='rus','en'='eng'}) | string?, if not, the object name is taken",
+                    "description-ru":"Заголовок, может быть TTranslator | table({'ru'='rus','en'='eng'}) | string?, если нету берётся название обьекта",
                     "required":false
                 }
             ],"returns":[

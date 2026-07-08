@@ -14,14 +14,14 @@
             "deprecated":false
         },"FirstName":{
             "type":"class",
-            "class":"Translator",
+            "class":"TTranslator",
             "description":"First part of the Name",
             "description-ru":"Первая часть Имени",
             "readonly":true,
             "deprecated":false
         },"SecondName":{
             "type":"class",
-            "class":"Translator",
+            "class":"TTranslator",
             "description":"Second part of the Name",
             "description-ru":"Вторая часть Имени",
             "readonly":true,
