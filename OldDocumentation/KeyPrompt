@@ -1,0 +1,11 @@
+{
+    "RunArgs":[],
+    "InputArgs":[
+        {
+            "name":"Key",
+            "type":"class?",
+            "class":"TKey",
+            "description":"Данные кнопки которой нажал пользователь, если пользователь не выбрал кнопку, но отменил то возвращает TKey для Enum.KeyCode.Unknown"
+        }
+    ]
+}

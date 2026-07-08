@@ -1,41 +1,65 @@
 {
-    "description":"Класс для перевода текстов, можно создать с помощью TClasses:CreateTranslator()",
     "type":"class",
-    "classes":["TClass","Preset","Translator"],
-    "writeSameMode":true,
+    "description":"A class for translating variables, can be created using TClasses:CreateTranslator()",
+    "description-ru":"Класс для перевода variables, можно создать с помощью TClasses:CreateTranslator()",
+    "class":"Translator",
+    "inherited":["TClass","Preset"],
     "deprecated":false,
     "properties":{
         "en":{
-            "type":"string",
-            "description":"Английский вариант, стандартный и должен быть всегда",
-            "canChange":true,
+            "type":"any?",
+            "description":"English version",
+            "description-ru":"Английский вариант",
+            "readonly":false,
+            "deprecated":false
+        },"ru":{
+            "type":"any?",
+            "description":"Russian version",
+            "description-ru":"Русский вариант",
+            "readonly":false,
+            "deprecated":false
+        },"uk":{
+            "type":"any?",
+            "description":"Ukrainian version",
+            "description-ru":"Русский вариант",
+            "readonly":false,
             "deprecated":false
         }
     }, "methods":{
-        "Translate":{
-            "description":"Получить переведённый вариант",
+        "GetLangCode":{
+            "description":"Gets the required translation of the text available",
+            "description-ru":"Получает доступный нужный перевод текста",
+            "deprecated":false,
             "args":[],
-            "return":[], 
-            "deprecated":false
-        }, "GetLangCode":{
-            "description":"Получает доступный нужный перевод текста",
-            "args":[],
-            "return":[
+            "returns":[
                 {
                     "name":"langCode",
-                    "description":"Код языка например: ru; en; uk",
-                    "type":"string"
+                    "type":"string",
+                    "description":"Language code, for example: en; ru; uk",
+                    "description-ru":"Код языка, например: ru; en; uk"
                 }
-            ], 
-            "deprecated":false
-        }
-    }, 
-    "events":{
-        "TranslateValueChanged":{
-            "description":"Запускается когда изменился нужный перевод текста",
-            "type":"RBXScriptEvent",
+            ]
+        },"Translate":{
+            "description":"Get a translated version",
+            "description-ru":"Получить переведённый вариант",
+            "deprecated":false,
             "args":[],
-            "deprecated":false
+            "returns":[
+                {
+                    "name":"response",
+                    "description":"Translated version self[selectedLangCode]",
+                    "description-ru":"Переведённый вариант self[selectedLangCode]",
+                    "type":"any?"
+                }
+            ]
         }
-    }
+    }, "events":{
+        "TranslateValueChanged":{
+            "type":"RBXScriptSignal",
+            "description":"Launched when the required text translation has changed",
+            "description-ru":"Запускается когда изменился нужный перевод текста",
+            "deprecated":false,
+            "args":[]
+        }
+    }, "binds":{}
 }

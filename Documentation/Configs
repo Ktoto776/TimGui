@@ -1,47 +1,54 @@
 {
-    "description":"Класс настройки конфигураций, чтобы получить или сохранить данные используй Saves/TScript",
     "type":"class",
-    "classes":["TClass","Configs"],
-    "writeSameMode":true,
+    "description":"A class for retrieving configuration information (for configuration-related actions, see ControlCfg); use Saves/TScript to retrieve or save data.",
+    "description-ru":"Класс получения информации о конфигурациях(для действий с конфигурациями см. ControlCfg), чтобы получить или сохранить данные используй Saves/TScript",
+    "class":"Configs",
+    "inherited":["TClass"],
     "deprecated":false,
     "properties":{
         "Window":{
-            "type":"TWindow",
-            "description":"Окно",
-            "canChange":false,
+            "type":"class",
+            "class":"TWindow",
+            "description":"Configurations window",
+            "description-ru":"Окно конфигураций",
+            "readonly":true,
             "deprecated":false
         }
     }, "methods":{
         "LoadedConfig":{
-            "description":"Возвращает название загруженого конфига",
+            "description":"Returns loaded config name",
+            "description-ru":"Возвращает название загруженого конфига",
+            "deprecated":false,
             "args":[],
-            "return":[
+            "returns":[
                 {
                     "name":"name",
                     "type":"string",
-                    "description":"Название конфига"
+                    "description":"Loaded config name",
+                    "description-ru":"Имя загруженного конфига"
                 }
-            ], 
-            "deprecated":false
+            ]
         }
-    }, 
-    "events":{
+    }, "events":{
         "OnLoaded":{
-            "description":"Запускается если конфигурация была загружена",
-            "type":"RBXScriptEvent",
+            "type":"RBXScriptSignal",
+            "description":"Fires when configuration has been loaded",
+            "description-ru":"Запускается если конфигурация была загружена",
             "deprecated":false,
             "args":[
                 {
                     "name":"Name",
-                    "type":"string | nil",
-                    "description":"Название конфига, если nil, то загружает без конфигурации"
+                    "type":"string?",
+                    "description":"Config name; if nil, loads without configuration.",
+                    "description-ru":"Название конфига, если nil, то загружает без конфигурации"
                 }
             ]
         },"OnConfigDataChanged":{
-            "description":"Запускается если конфигурация была сохранена/изменена(лучше не ставить лагучие штуки на этот эвент, так как он может запускаться просто при изменении переключателя)",
-            "type":"RBXScriptEvent",
+            "type":"RBXScriptSignal",
+            "description":"Starts if the configuration has been saved/modified.",
+            "description-ru":"Запускается если конфигурация была сохранена/изменена",
             "deprecated":false,
             "args":[]
         }
-    }
+    }, "binds":{}
 }

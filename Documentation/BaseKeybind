@@ -1,56 +1,64 @@
 {
-    "description":"Часть для других классов связанных с кейбндами",
     "type":"class",
-    "classes":["TClass","BaseKeybind"],
-    "writeSameMode":true,
+    "description":"Part for other classes related to keybinds",
+    "description-ru":"Часть для других классов связанных с кейбиндами",
+    "class":"BaseKeybind",
+    "inherited":["TClass"],
     "deprecated":false,
     "properties":{
         "State":{
             "type":"string",
-            "description":"Нужный статус. Могут быть: \"Begin\",\"End\",\"Change\". Change - когда и Begin и End. По умолчанию End",
-            "canChange":true,
+            "description":"Status where Event will start. Maybe: \"Begin\",\"Change\",\"End\". By default \"End\"",
+            "description-ru":"Статус при котором будет запускаться Event. Может быть: \"Begin\",\"Change\",\"End\". По умолчанию \"End\"",
+            "readonly":false,
             "deprecated":false
         },"Type":{
             "type":"string",
-            "description":"Тип бинда, нужен чтобы группировать бинды по действиям(где названия придумываешь ты сам).По умолчанию \"\"",
-            "canChange":true,
+            "description":"KBind type, need to group KBinds by actions(where the names come up with you yourself).By default \"\"",
+            "description-ru":"Тип бинда, нужен чтобы группировать бинды по действиям(где названия придумываешь ты сам).По умолчанию \"\"",
+            "readonly":false,
+            "deprecated":false
+        },"IgnoreExtraSpecialKeys":{
+            "type":"boolean",
+            "description":"Should ignore the extra Special keys(ctrl/shift, etc.)",
+            "description-ru":"Игнорировать ли лишние Специальные ключи(ctrl/shift и др.)",
+            "readonly":false,
             "deprecated":false
         },"Key":{
             "type":"class",
             "class":"TKey",
-            "description":"Сам ключ, если Enum.KeyCode.Unknown -> значит не выбран",
-            "canChange":true,
-            "deprecated":false
-        },"IgnoreExtraSpecialKeys":{
-            "type":"boolean",
-            "description":"Игнорировать ли лишние Специальные ключ(ctrl/shift и др.)",
-            "canChange":true,
+            "description":"Key, can be empty(that is, not selected)",
+            "description-ru":"Сам ключ, может быть пустым(то есть не выбранным)",
+            "readonly":false,
             "deprecated":false
         }
     }, "methods":{
         "Emulate":{
-            "description":"Эмулирует нажатие и запускает .Event",
+            "description":"It emulates pressing, that is, it starts .Event",
+            "description-ru":"Эмулирует нажатие, то есть запускает .Event",
+            "deprecated":false,
             "args":[],
-            "return":[], 
-            "deprecated":false
+            "returns":[]
         }
-    }, 
-    "events":{
+    }, "events":{
         "Event":{
-            "description":"Обычный эвент, который запускается при нажатии кнопки установленной в BaseKeybind",
-            "type":"RBXScriptEvent",
+            "type":"RBXScriptSignal",
+            "description":"An event that is triggered by pressing the button installed in BaseKeybind",
+            "description-ru":"Эвент, который запускается при нажатии кнопки установленной в BaseKeybind",
+            "deprecated":false,
             "args":[
                 {
                     "name":"Input",
                     "type":"InputObject?",
-                    "description":"InputObject этого нажатия. nil-если был эмулирован"
+                    "description":"The InputObject of this click. If not, then the click was emulated.",
+                    "description-ru":"InputObject этого нажатия. Если нету, то нажатие было эмулировано"
                 },{
                     "name":"GPE",
                     "type":"boolean?",
-                    "description":"Game Processed Event, используется ли в игре? nil-если был эмулирован"
+                    "description":"Game Processed Event. If not, then the click was emulated.",
+                    "description-ru":"Game Processed Event, то есть используется в игре. Если нету, то нажатие было эмулировано"
                 }
-            ],
-            "deprecated":false
+            ]
         }
-    }
+    }, "binds":{}
 }

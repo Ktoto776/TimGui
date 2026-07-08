@@ -1,53 +1,57 @@
 {
-    "description":"Класс Prompt. Часть других промтов. .CanHide обычно false, а также устанавливает DisplayOrder на 2",
     "type":"class",
-    "classes":["TClass","ConfigObject","TWindow","Prompt"],
-    "writeSameMode":true,
+    "description":"The Prompt class. Part of other prompts. .CanHide is usually false, and also sets DisplayOrder to 2.",
+    "description-ru":"Класс Prompt. Часть других промтов. .CanHide обычно false, а также устанавливает DisplayOrder на 2",
+    "class":"Prompt",
+    "inherited":["TClass","ConfigObject","TWindow"],
     "deprecated":false,
     "properties":{
         "Type":{
-            "type":"table",
-            "description":"Тип промта, устанавливается значение из PromptType при запуске TClasses:CreatePrompt(...)",
-            "canChange":true,
+            "type":"string",
+            "description":"Prompt type; the value is set from `PromptType` when calling `TClasses:CreatePrompt(...)` or assigned by default in other methods.",
+            "description-ru":"Тип промта, устанавливается значение из PromptType при запуске TClasses:CreatePrompt(...). Или назначеное по стандарту в других методах",
+            "readonly":true,
             "deprecated":false
         },"Running":{
             "type":"boolean",
-            "description":"Ожидает ли :Run() результата",
-            "canChange":true,
+            "description":"Does :Run() wait for the result?",
+            "description-ru":"Ожидает ли :Run() результата?",
+            "readonly":false,
             "deprecated":false
         }
-    }, 
-    "methods":{
+    }, "methods":{
         "Run":{
-            "description":"Запускает Prompt, спрашивая что либо у пользователя",
-            "args":[{
-                    "name":"InputArgs",
-                    "type":"...",
-                    "description":"Входные данные, разные от типа промпта",
-                    "required":true
-                }
-            ],"return":[
-                {
-                    "name":"OutputArgs",
-                    "type":"...?",
-                    "description":"Выходные данные, если было отменено, то всё nil.(Так если вызвать 2 раза :Run() первый засчитает за отмену и вернёт nil)"
-                }
-            ], 
-            "deprecated":false
+            "description":"Launches a prompt, asking the user for input. There may be no output if the request is cancelled. Cancels the previous request if it is still active.",
+            "description-ru":"Запускает Prompt, спрашивая что либо у пользователя. Выходных данных может и не быть, если запрос отменён. Отменяет предыдущий запрос, если он всё ещё действует",
+            "deprecated":false,
+            "args":[],
+            "returns":[]
+        },"EmulateInput":{
+            "description":"Simulates user input; if no parameters are provided, it cancels the operation.",
+            "description-ru":"Эмулирует ввод данных от пользователя, если параметров нет - отмена.",
+            "deprecated":false,
+            "args":[],
+            "returns":[]
         }
-    }, 
-    "events":{
+    }, "events":{
         "OnInput":{
-            "description":"Запускается если произошёл Input или был запущен :EmulateInput(...)",
-            "type":"TEvent.Event",
-            "args":[
-                {
-                    "name":"...any",
-                    "type":"...",
-                    "description":"Всё что угодно, читай в документации класса использующего этот класс"
-                }
-            ],
-            "deprecated":false
+            "type":"TSignal",
+            "description":"Fires if an input event occurs or :EmulateInput(...) is called. Includes any parameters (which may be absent in the event of cancellation).",
+            "description-ru":"Запускается если произошёл Input или был запущен :EmulateInput(...). С любыми параметрами, которых может не быть при отмене",
+            "deprecated":false,
+            "args":[]
+        },"OnRunned":{
+            "type":"TSignal",
+            "description":"Starts after :Run(...) is executed, with the passed parameters.",
+            "description-ru":"Запускается после запуска :Run(...) с переданными параметрами.",
+            "deprecated":false,
+            "args":[]
+        },"RunStopped":{
+            "type":"TSignal",
+            "description":"It is triggered by an Input signal after :Run(...) has been started, and it passes the same parameters as when :Run(...) was launched.",
+            "description-ru":"Запускается после Input сигнала, когда :Run(...) был запущен. И передаёт те же параметры как при запуске :Run(...).",
+            "deprecated":false,
+            "args":[]
         }
-    }
+    }, "binds":{}
 }

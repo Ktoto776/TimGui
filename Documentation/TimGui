@@ -1,141 +1,345 @@
 {
-    "description":"",
     "type":"class",
+    "description":"The main object of the ENTIRE TGui system. Can be accessed using _G.TimGui",
+    "description-ru":"Главный обьект ВСЕЙ системы TGui. Можно получить с помощью _G.TimGui",
     "class":"TimGui",
-    "writeSameMode":true,
     "deprecated":false,
     "properties":{
-        "Configs":{
-            "type":"class",
-            "class":"Configs",
-            "description":"Класс для получения информации о конфигурациях(но не для изменения, если нужно изменить см. ControlCfg)",
-            "canChange":false,
+        "Closed":{
+            "type":"boolean",
+            "description":"Was :Exit() run, i.e. was TimGui closed?",
+            "description-ru":"Был ли :Exit() запущен, тоесть закрыт ли TimGui",
+            "readonly":true,
             "deprecated":false
-        },"Saves":{
-            "type":"class",
-            "class":"Saves",
-            "description":"Сохранения, проверка доступности",
-            "canChange":false,
+        },"Opened":{
+            "type":"boolean",
+            "description":"Is the GUI open? If false, it's collapsed.",
+            "description-ru":"Открыто ли gui? Если false, то свёрнуто",
+            "readonly":false,
             "deprecated":false
-        },"Groups":{
-            "type":"class",
-            "class":"GUIArchitecture",
-            "description":"БАЗА. Группы, в которые ложить можно кнопки итд.",
-            "canChange":false,
+        },"LanguagesPreference":{
+            "type":"table",
+            "dType":"table<number,string>",
+            "description":"An array of language preferences, for example: [\"en\",\"uk\",\"ru\",...]",
+            "description-ru":"Массив с языковыми предпочтениями, например: [\"ru\",\"uk\",\"en\",...]",
+            "readonly":false,
             "deprecated":false
-        },"Prompts":{
-            "type":"class",
-            "class":"Prompts",
-            "description":"Создания prompt окна(для того чтобы, что нибудь спросить у пользователя)",
-            "canChange":false,
+        },"SetupData":{
+            "type":"table",
+            "description":"When TimGui starts, the data is transferred to _G.Setup, more details in TimGuiSetupObject",
+            "description-ru":"Данные при старте TimGui, передаются в _G.Setup, подробнее в TimGuiSetupObject",
+            "readonly":true,
             "deprecated":false
-        },"KeyBinding":{
-            "type":"class",
-            "class":"KeyBinding",
-            "description":"Класс для созадния Привязок к кнопкам, тоесть Key binds",
-            "canChange":false,
+        },"ScreenGui":{
+            "type":"ScreenGui",
+            "description":"TimGui main gui",
+            "description-ru":"Главный интерфейс TimGui",
+            "readonly":true,
             "deprecated":false
-        },"GuiObjects":{
-            "type":"class",
-            "class":"GUIArchitecture",
-            "description":"БАЗА. Класс для создания кнопок/групп",
-            "canChange":false,
+        },"BuildCount":{
+            "type":"number",
+            "description":"The current version of TGui. For example, 1",
+            "description-ru":"Текущая версия TGui. Например 1",
+            "readonly":true,
             "deprecated":false
-        },
-        "Binder":{
-            "type":"class",
-            "class":"Binder",
-            "description":"Класс для замены стандартных функций (БОЛЬШЕ КАСТОМИЗАЦИИ)",
-            "canChange":false,
+        },"Version":{
+            "type":"string",
+            "description":"The current TGui version in string format. For example, 1.0.0",
+            "description-ru":"Текущая версия TGui в формате строки. Например 1.0.0",
+            "readonly":true,
             "deprecated":false
-        },
-        "Colors":{
-            "type":"class",
-            "class":"Colors",
-            "description":"Класс для цветов",
-            "canChange":false,
+        },"CoreBuildCount":{
+            "type":"number",
+            "description":"The current version of TGui core. For example, 1",
+            "description-ru":"Текущая версия ядра TGui. Например 1",
+            "readonly":true,
             "deprecated":false
-        },
-        "GuiSize":{
-            "type":"class",
-            "class":"GuiSize",
-            "description":"Класс для смены размеров Gui",
-            "canChange":false,
+        },"CoreVersion":{
+            "type":"string",
+            "description":"The current TGui core version in string format. For example, 3.0.0",
+            "description-ru":"Текущая версия ядра TGui в формате строки. Например 3.0.0",
+            "readonly":true,
             "deprecated":false
-        },"Assets":{
-            "type":"class",
-            "class":"Assets",
-            "description":"Класс для смены assets Gui",
-            "canChange":false,
+        },"httpGet_BaseDir":{
+            "type":"string",
+            "description":"The directory where the TGui files are located (https Link or locally, can be determined via httpGet_BaseDirIsLocal)",
+            "description-ru":"Директория в которой находятся файлы TGui(Ссылка или локально, можно определить через .httpGet_BaseDirIsLocal)",
+            "readonly":true,
             "deprecated":false
-        },"GuiAnimations":{
+        },"httpGet_BaseDirIsLocal":{
+            "type":"boolean",
+            "description":"Is httpGet_BaseDir local or not?",
+            "description-ru":"httpGet_BaseDir локальная или нет?",
+            "readonly":true,
+            "deprecated":false
+        },"MenuScreenGui":{
+            "type":"ScreenGui",
+            "description":"ScreenGui containing the menu (must be on top of the main ScreenGui)",
+            "description-ru":"ScreenGui в котором находятся меню(должно быть поверх основного ScreenGui)",
+            "readonly":true,
+            "deprecated":false
+        },"Loggers":{
             "type":"class",
-            "class":"GuiAnimations",
-            "description":"Класс для настройки анимации интерфейса",
-            "canChange":false,
+            "class":"Loggers",
+            "description":"Class for create loggers and read logs",
+            "description-ru":"Класс для создания логгеров и чтения логов",
+            "readonly":true,
             "deprecated":false
         },"Header":{
             "type":"class",
             "class":"Header",
-            "description":"Класс для смены заголовка",
-            "canChange":false,
+            "description":"Class for customizing the header",
+            "description-ru":"Класс для кастомизации заголовка",
+            "readonly":true,
+            "deprecated":false
+        },"Groups":{
+            "type":"class",
+            "class":"GUIArchitecture",
+            "description":"Groups, where buttons can be placed",
+            "description-ru":"Группы, в которые можно ложить кнопки",
+            "readonly":true,
+            "deprecated":false
+        },"Configs":{
+            "type":"class",
+            "class":"Configs",
+            "description":"A class for retrieving configuration information (but not for modifying it; see ControlCfg if modification is required).",
+            "description-ru":"Класс для получения информации о конфигурациях(но не для изменения, если нужно изменить см. ControlCfg)",
+            "readonly":true,
+            "deprecated":false
+        },"Saves":{
+            "type":"class",
+            "class":"Saves",
+            "description":"Save files, save file availability check",
+            "description-ru":"Сохранения, проверка доступности сохранений",
+            "readonly":true,
+            "deprecated":false
+        },"Binder":{
+            "type":"class",
+            "class":"Binder",
+            "description":"A class for replacing standard functions (MORE CUSTOMIZATION)",
+            "description-ru":"Класс для замены стандартных функций (БОЛЬШЕ КАСТОМИЗАЦИИ)",
+            "readonly":true,
+            "deprecated":false
+        },"Assets":{
+            "type":"class",
+            "class":"Assets",
+            "description":"Class for changing assets",
+            "description-ru":"Класс для смены ресурсов",
+            "readonly":true,
+            "deprecated":false
+        },"Prompts":{
+            "type":"class",
+            "class":"Prompts",
+            "description":"Creating a prompt window (to ask the user for something)",
+            "description-ru":"Создания prompt окна(для того чтобы, что нибудь спросить у пользователя)",
+            "readonly":true,
+            "deprecated":false
+        },"KeyBinding":{
+            "type":"class",
+            "class":"KeyBinding",
+            "description":"A class for creating button bindings—that is, keybinds.",
+            "description-ru":"Класс для созадния Привязок к кнопкам, тоесть Key binds",
+            "readonly":true,
+            "deprecated":false
+        },"GuiObjects":{
+            "type":"class",
+            "class":"GuiObjects",
+            "description":"Class for creating buttons/groups in the main gui",
+            "description-ru":"Класс для создания кнопок/групп в основном gui",
+            "readonly":true,
+            "deprecated":false
+        },"Colors":{
+            "type":"class",
+            "class":"Colors",
+            "description":"Class for color customization",
+            "description-ru":"Класс для кастомизации цветов",
+            "readonly":true,
+            "deprecated":false
+        },"GuiSize":{
+            "type":"class",
+            "class":"GuiSize",
+            "description":"Class for resizing the GUI",
+            "description-ru":"Класс для смены размеров Gui",
+            "readonly":true,
+            "deprecated":false
+        },"GuiAnimations":{
+            "type":"class",
+            "class":"GuiAnimations",
+            "description":"A class for configuring interface animations",
+            "description-ru":"Класс для настройки анимаций интерфейса",
+            "readonly":true,
             "deprecated":false
         },"State":{
             "type":"class",
             "class":"GuiState",
-            "description":"Класс для изменения кнопки открытия в статус, например загрузка или ошибка(Блокирует открытие)",
-            "canChange":false,
+            "description":"A class for changing the open button to a status state—such as 'loading' or 'error'—while blocking the open action.",
+            "description-ru":"Класс для изменения кнопки открытия в статус, например загрузка или ошибка(Блокирует открытие)",
+            "readonly":true,
             "deprecated":false
         },"GuiInstances":{
             "type":"class",
             "class":"GuiInstances",
-            "description":"Класс для хранения обьектов интерфейса",
-            "canChange":false,
+            "description":"A class for creating interface objects.",
+            "description-ru":"Класс для созданий обьектов интерфейса",
+            "readonly":true,
             "deprecated":false
-        },
-        "Classes":{
-            "type":"class",
-            "class":"TClasses",
-            "description":"Класс TClasses для создания своих классов",
-            "canChange":false,
-            "deprecated":false
-        },
-        "GlobalOpenedGroup":{
+        },"GlobalOpenedGroup":{
             "type":"class",
             "class":"TGroup",
-            "description":"Глобально открытая группа(типо та которая в группах слево)",
-            "canChange":false,
+            "description":"A globally open group (like the ones in the list on the left)",
+            "description-ru":"Глобально открытая группа(типо та которая в группах слево)",
+            "readonly":true,
             "deprecated":false
         }
     }, "methods":{
-        "GetTScript":{
-            "description":"Создаёт TScript или получает если можно",
-            "args":[{
+        "IsA":{
+            "description":"Compares the class name with 1 parameter",
+            "description-ru":"Сравнивает имя класса с 1 параметром",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"className",
+                    "type":"string",
+                    "description":"Name of the class to compare",
+                    "description-ru":"Имя класса для сравнения",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"response",
+                    "type":"boolean",
+                    "description":"Is it a descendant of this class (or the class itself)",
+                    "description-ru":"Является ли потомком этого класса(или самим классом)"
+                }
+            ]
+        }, "GetFrameGuiPosition":{
+            "description":"Returns the TimGui position for the selected state",
+            "description-ru":"Возвращает позицию TimGui, для выбранного состояния",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"Opened",
+                    "type":"boolean",
+                    "description":"The desired state (whether it is open). If nil, then gets the value for the current state.",
+                    "description-ru":"Нужное состояние(открыто ли). Если nil, то получает для текущего состояния",
+                    "required":false
+                }
+            ],"returns":[
+                {
+                    "name":"Position",
+                    "type":"UDim2",
+                    "description":"Position",
+                    "description-ru":"Позиция"
+                }
+            ]
+        }, "HttpGet":{
+            "description":"Gets data from the internet. If it starts with './', it gets it from the script directory.",
+            "description-ru":"Получает данные из инета. Если начинается на './', то получает из директории скрипта",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"URL",
+                    "type":"string",
+                    "description":"Link to receive.",
+                    "description-ru":"Ссылка для получение.",
+                    "required":false
+                }
+            ],"returns":[
+                {
+                    "name":"response",
+                    "type":"string?",
+                    "description":"Result",
+                    "description-ru":"Результат"
+                }
+            ]
+        }, "Exit":{
+            "description":"Closes TimGui (exits) and runs the .OnExit event",
+            "description-ru":"Закрывает TimGui(выходит), и запускает .OnExit event",
+            "deprecated":false,
+            "args":[],
+            "returns":[]
+        }, "SetLanguagePreferences":{
+            "description":"Changes language preferences",
+            "description-ru":"Изменяет языковые предпочтения",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"langCodes",
+                    "type":"table",
+                    "dType":"table<number,string>",
+                    "description":"An array of language preferences, for example: [\"en\",\"uk\",\"ru\",...]",
+                    "description-ru":"Массив с языковыми предпочтениями, например: [\"ru\",\"uk\",\"en\",...]",
+                    "required":true
+                }
+            ],"returns":[]
+        },"GetTScript":{
+            "description":"Creates a TScript or retrieves an existing one with this name (if possible).",
+            "description-ru":"Создаёт TScript или получает уже созданный с этим именем (если можно)",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"scriptName",
                     "type":"string",
-                    "description":"Имя скрипта, должно быть уникальным, иначе выдаст ошибку(если)",
+                    "description":"Script name, must be unique, else returns error(on no access)",
+                    "description-ru":"Имя скрипта, должно быть уникальным, иначе выдаст ошибку(если нет доступа)",
                     "required":true
                 },{
                     "name":"allowToLoadTwice",
                     "type":"boolean",
-                    "description":"Позволяет загрузить скрипт повторно",
+                    "description":"If `true`, allows the script to be reloaded.",
+                    "description-ru":"Если `true`, то позволяет загрузить скрипт повторно",
                     "required":false
                 }
-            ],
-            "return":[{
+            ],"returns":[
+                {
                     "name":"response",
                     "type":"class",
                     "class":"TScript",
-                    "description":"Данные скрипта"
+                    "description":"TScript",
+                    "description-ru":"TScript"
                 }
-            ], "deprecated":false
+            ]
         }
     }, "events":{
-        "GlobalOpenedGroupChanged":{
-            "description":"Если глобально открытая группа изменилась",
-            "type":"RBXScriptEvent",
-            "args":[],
-            "deprecated":false
+        "OnOpened":{
+            "type":"RBXScriptSignal",
+            "description":"Runs if TimGui.Opened has changed",
+            "description-ru":"Запускается если TimGui.Opened изменился",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"isOpened",
+                    "type":"boolean",
+                    "description":"New state (open or not)",
+                    "description-ru":"Новое состояние(открыт или нет)"
+                }
+            ]
+        },"OnExit":{
+            "type":"RBXScriptSignal",
+            "description":"Runs if TimGui:Exit() is running to close the GUI.",
+            "description-ru":"Запускается если TimGui:Exit() запущен, чтобы закрыть GUI",
+            "deprecated":false,
+            "args":[]
+        },"LanguageChanged":{
+            "type":"RBXScriptSignal",
+            "description":"Runs if language preferences have changed",
+            "description-ru":"Запускается если языковые предпочтения изменились",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"langCodes",
+                    "type":"table",
+                    "dType":"table<number,string>",
+                    "description":"An array of language preferences, for example: [\"en\",\"uk\",\"ru\",...]",
+                    "description-ru":"Массив с языковыми предпочтениями, например: [\"ru\",\"uk\",\"en\",...]"
+                }
+            ]
+        },"GlobalOpenedGroupChanged":{
+            "type":"RBXScriptSignal",
+            "description":"Triggered when a globally open group changes.",
+            "description-ru":"Запускается когда глобально открытая группа изменилась",
+            "deprecated":false,
+            "args":[]
         }
-    }
+    }, "binds":{}
 }

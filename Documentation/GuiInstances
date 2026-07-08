@@ -1,71 +1,85 @@
 {
-    "description":"Класс для цветов, использующий пресеты",
     "type":"class",
-    "classes":["TClass","Preset","GuiInstances"],
-    "writeSameMode":true,
+    "description":"Class with GUI objects",
+    "description-ru":"Класс с GUI обьектами",
+    "class":"GuiInstances",
+    "inherited":["TClass"],
     "deprecated":false,
     "properties":{
         "ScreenGui":{
-            "type":"Instance: ScreenGui",
-            "description":"Главный ScreenGui",
-            "canChange":false,
+            "type":"ScreenGui",
+            "description":"The main ScreenGui",
+            "description-ru":"Главный ScreenGui",
+            "readonly":true,
             "deprecated":false
         },"Main":{
-            "type":"Instance: Frame",
-            "description":"Главный Frame TimGui, на котором расположено само меню",
-            "canChange":false,
+            "type":"Frame",
+            "description":"The main Frame containing the menu itself, along with all the buttons.",
+            "description-ru":"Главный Frame, на котором расположено само меню со всеми кнопками",
+            "readonly":true,
             "deprecated":false
         },"Header":{
-            "type":"Instance: ImageButton",
-            "description":"Заголовок",
-            "canChange":false,
+            "type":"Frame",
+            "description":"Header",
+            "description-ru":"Заголовок",
+            "readonly":true,
             "deprecated":false
         },"OpenImage":{
-            "type":"Instance: ImageLabel",
-            "description":"Иконка открытия(обычно,стрелочка)",
-            "canChange":false,
+            "type":"ImageLabel",
+            "description":"Open icon(usually arrow)",
+            "description-ru":"Иконка открытия(обычно,стрелочка)",
+            "readonly":true,
             "deprecated":false
         },"LoadingStateImage":{
-            "type":"Instance: ImageLabel",
-            "description":"Иконка которая появляется при загрузке вместо кнопки открытия",
-            "canChange":false,
+            "type":"ImageLabel",
+            "description":"The icon that appears during loading instead of the open button.",
+            "description-ru":"Иконка которая появляется при загрузке вместо кнопки открытия",
+            "readonly":true,
             "deprecated":false
         },"ErrorStateImage":{
-            "type":"Instance: ImageLabel",
-            "description":"Иконка которая появляется при ошибке вместо кнопки открытия",
-            "canChange":false,
+            "type":"ImageLabel",
+            "description":"The icon that appears upon an error instead of the open button.",
+            "description-ru":"Иконка которая появляется при ошибке вместо кнопки открытия",
+            "readonly":true,
             "deprecated":false
         },"Saying":{
-            "type":"Instance: Frame",
-            "description":"Текст над кнопкой открытия, появляющийся при наводке на эту кнопку",
-            "canChange":false,
+            "type":"Frame",
+            "description":"Text above the open button that appears when hovering over the button.",
+            "description-ru":"Текст над кнопкой открытия, появляющийся при наводке на эту кнопку",
+            "readonly":true,
             "deprecated":false
         },"State":{
-            "type":"Instance: Frame",
-            "description":"Frame со статусами и кнопкой 'Открыть'",
-            "canChange":false,
+            "type":"Frame",
+            "description":"Frame with state and open button",
+            "description-ru":"Frame со статусами и кнопкой открытия",
+            "readonly":true,
             "deprecated":false
         },"FirstHeaderName":{
-            "type":"Instance: TextLabel",
-            "description":"Первая часть текста заголовка",
-            "canChange":false,
+            "type":"TextLabel",
+            "description":"First part of header label",
+            "description-ru":"Первая часть текста заголовка",
+            "readonly":true,
             "deprecated":false
         },"SecondHeaderName":{
-            "type":"Instance: TextLabel",
-            "description":"Вторая часть текста заголовка",
-            "canChange":false,
+            "type":"TextLabel",
+            "description":"Second part of header label",
+            "description-ru":"Вторая часть текста заголовка",
+            "readonly":true,
             "deprecated":false
         },"HeaderSeparator":{
-            "type":"Instance: Frame",
-            "description":"Разделитель в заголовке",
-            "canChange":false,
+            "type":"TextLabel",
+            "description":"Header separator",
+            "description-ru":"Разделитель в заголовке",
+            "readonly":true,
             "deprecated":false
         },"HeaderInfo":{
-            "type":"Instance: TextLabel",
-            "description":"Информация в заголовке",
-            "canChange":false,
+            "type":"TextLabel",
+            "description":"Information in header",
+            "description-ru":"Информация в заголовке",
+            "readonly":true,
             "deprecated":false
         }
     }, "methods":{}, 
-    "events":{}
+    "events":{}, 
+    "binds":{}
 }

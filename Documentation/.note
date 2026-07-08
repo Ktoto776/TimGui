@@ -1,0 +1,106 @@
+Ты можешь создать _G.Setup и оформить его как TimGuiSetupObject
+Object.__type - тип 
+
+
+Если Translator read only - ты всё равно можешь менять значения в нём!
+
+Заметки по документации:
+    Оригинальный язык русский(будет всегда), "-ru" - постфикс
+    Если класс в документации к TimGui, то в type будет указано class, а название класса в параметре class
+    Обычно под Title подрузумевается название, которое видит пользователь
+        А под Name имя обьекта для идентификации
+
+Для классов(которые в папке "Documentation"):
+    type: string = "class"/"table"
+    description: string - англ. описание классу
+    description-ru: string - рус. описание классу
+    deprecated: boolean - Устарело ли
+
+    type=="class", иначе nil:
+        class: string - имя класса
+        inherited: array? = ["TClass",...] - наследуемые классы(Без этого класса)
+        writeSameMode: boolean? - Нужно изменять только на такой-же тип?, если нету, то включен(true)
+        properties: таблица где ключ - это название значения:
+            type: string
+            class: string? - если type=="class"
+            deprecated: boolean - Устарело ли
+            readonly: boolean - Только для чтения ли
+            description: string - англ. описание свойству
+            description-ru: string - рус. описание свойству
+            isWriteSameModeException: boolean? - является это свойство исключением для writeSameMode
+            dType: string? - тип только в Definition файлах. Если нету используй просто class/type
+        methods: таблица где ключ - это название метод:
+            description: string - англ. описание методу
+            description-ru: string - рус. описание методу
+            deprecated: boolean - Устарело ли
+            args: массив с требуемыми параметрами:
+                name: string - имя параметра
+                description: string - англ. описание параметра
+                description-ru: string - рус. описание параметра
+                required: boolean - обязательный ли параметр
+                type: string
+                class: string? - если type=="class"
+                dType: string? - тип только в Definition файлах. Если нету используй просто class/type
+            returns: массив с возвращаемыми параметрами:
+                name: string - имя параметра
+                description: string - англ. описание параметра
+                description-ru: string - рус. описание параметра
+                type: string
+                class: string? - если type=="class"
+                dType: string? - тип только в Definition файлах. Если нету используй просто class/type
+        events: таблица где ключ - это название эвента:
+            type: string = "RBXScriptSignal"/"TSignal"
+            deprecated: boolean - Устарело ли
+            description: string - англ. описание свойству
+            description-ru: string - рус. описание свойству
+            args:
+                name: string - Имя
+                dType: string? - тип только в Definition файлах. Если нету используй просто class/type
+                type: string
+                class: string - имя класса, если type=="class"
+                description: string - англ. описание классу
+                description-ru: string - рус. описание классу
+        binds: таблица(с кастомными Bind'ами) где ключ - это название бинда:
+            description: string - англ. описание методу
+            description-ru: string - рус. описание методу
+            deprecated: boolean - Устарело ли
+            args: массив с требуемыми параметрами для :Run(...):
+                name: string - имя параметра
+                description: string - англ. описание параметра
+                description-ru: string - рус. описание параметра
+                required: boolean - обязательный ли параметр
+                type: string
+                class: string? - если type=="class"
+                dType: string? - тип только в Definition файлах. Если нету используй просто class/type
+            returns: массив с возвращаемыми параметрами из :Run(...):
+                name: string - имя параметра
+                description: string - англ. описание параметра
+                description-ru: string - рус. описание параметра
+                type: string
+                class: string? - если type=="class"
+                dType: string? - тип только в Definition файлах. Если нету используй просто class/type
+    type=="table":
+        data: таблица где ключ - это название ключа в таблице:
+            type: string
+
+
+
+Глобалы которые использует TimGui:
+    makefolder(path:string) - Saves
+    writefile(path:string,data:string) - Saves
+    readfile(path:string) - Saves
+    isfile(path:string) - Saves
+    listfiles(path:string) - Saves
+    delfile(path:string) - Saves
+    toclipboard(data:string) - getDefinition
+
+Configs:
+Внимание: Имя не может содержать "\/:*?"<>|" и все такие символы станут пробелами
+
+Saves:
+Название системных настроек - TGuiSettings
+Название сохранений с пасхалками - EasterEggs
+Параметры:
+    LoadedConfig: string
+    lastOpenedConfigName: string
+    LangPreferences: [string]

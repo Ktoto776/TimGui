@@ -1,51 +1,61 @@
 {
-    "description":"Класс - кнопка, нужен для получения нажатой кнопки",
     "type":"class",
-    "classes":["TClass","TKey"],
-    "writeSameMode":true,
+    "description":"Class - key, and need for getting pressed button",
+    "description-ru":"Класс - кнопка, нужен для получения нажатой кнопки",
+    "class":"TKey",
+    "inherited":["TClass"],
     "deprecated":false,
     "properties":{
         "IsKeyboardKey":{
             "type":"boolean",
-            "description":"Эта кнопка клавиатуры?",
-            "canChange":false,
+            "description":"It's keyboard key?",
+            "description-ru":"Эта кнопка клавиатуры?",
+            "readonly":true,
             "deprecated":false
         },"IsMouseKey":{
             "type":"boolean",
-            "description":"Эта кнопка мыши?",
-            "canChange":false,
+            "description":"It's mouse button?",
+            "description-ru":"Эта кнопка мыши?",
+            "readonly":true,
             "deprecated":false
         },"IsEmpty":{
             "type":"boolean",
-            "description":"Пустой ли TKey(тоесть, пользователь не может повторить этот TKey?)",
-            "canChange":false,
+            "description":"TKey is empty?(if true, this tkey is not keyboard key and not mouse button)",
+            "description-ru":"Пустой ли TKey(тоесть, пользователь не может повторить этот TKey?)",
+            "readonly":true,
             "deprecated":false
         },"KeyName":{
             "type":"string",
-            "description":"Имя кнопки например A/1/KEnter/K1(K1 - Keypad One)/LeftMB(LeftMB-Left Mouse Button)",
+            "description":"Key name, for example: A/1/KEnter/K1(K1 - Keypad One)/LeftMB(LeftMB-Left Mouse Button)",
+            "description-ru":"Имя кнопки например A/1/KEnter/K1(K1 - Keypad One)/LeftMB(LeftMB-Left Mouse Button)",
             "canChange":false,
             "deprecated":false
         },"KeyCode":{
             "type":"Enum.KeyCode",
-            "description":"KeyCode этой кнопки",
+            "description":"KeyCode for this keyboard key",
+            "description-ru":"KeyCode этой кнопки клавиатуры",
             "canChange":false,
             "deprecated":false
         },"MouseKey":{
             "type":"number",
-            "description":"Цифра кнопки на мыши(если это не кнопка мыши - 0), работает как в роблоксе 1-Левая,2-Правая,3-Колёсико",
-            "canChange":false,
-            "deprecated":false
-        },"Holding":{
-            "type":"table",
-            "description":"Словарь типо {LeftCTRL:boolean}",
+            "description":"Number of mouse button(if this is not mouse button = 0), working also how roblox. 1-Left, 2-Right, 3-Middle",
+            "description-ru":"Цифра кнопки на мыши(если это не кнопка мыши = 0), работает как в роблоксе 1-Левая,2-Правая,3-Колёсико",
             "canChange":false,
             "deprecated":false
         },"Name":{
             "type":"string",
-            "description":"Полное имя, типо: LeftCTRL + T",
+            "description":"Full key name, for example: LeftCTRL + T",
+            "description-ru":"Полное имя кнопки, типо: LeftCTRL + T",
+            "canChange":false,
+            "deprecated":false
+        },"Holding":{
+            "type":"table",
+            "description":"Table with holding keys, for example {LeftCTRL=true,LeftShift=false}",
+            "description-ru":"Словарь с зажатыми кнопками, типо {LeftCTRL=true,LeftShift=false}",
             "canChange":false,
             "deprecated":false
         }
     }, "methods":{}, 
-    "events":{}
+    "events":{}, 
+    "binds":{}
 }

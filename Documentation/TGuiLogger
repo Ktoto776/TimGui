@@ -1,169 +1,206 @@
 {
-    "description":"Хранится в TimGui.Logger",
     "type":"class",
-    "class":"Loggers",
-    "writeSameMode":true,
+    "description":"Logger class for logging",
+    "description-ru":"Logger класс, для логирования",
+    "class":"TGuiLogger",
     "deprecated":false,
     "properties":{
         "Log":{
             "type":"table",
-            "description":"Лог этого скрипта, массив состоящий из таблиц с ключами: time[number],type[string],result[string],place[string?],data[any],stringData[string],scriptName[string],loggerId[number]",
-            "canChange":false,
+            "dType":"table<number,LogMessage>",
+            "description":"Log of this logger",
+            "description-ru":"Весь лог этого логгера",
+            "readonly":false,
             "deprecated":false
         },"debugEnabled":{
             "type":"boolean",
-            "description":"Будет ли выводиться :debug(), по умолчанию false",
-            "canChange":true,
+            "description":"Whether :debug() will be output, default is false",
+            "description-ru":"Будет ли выводиться :debug(), по умолчанию false",
+            "readonly":false,
             "deprecated":false
         }
     }, "methods":{
         "IsA":{
-            "description":"Сравнивает имя класса с 1 параметром, может также выдать true при сокращенном варианте(Logger)",
-            "args":[{
+            "description":"Compare class name(TGuiLogger/Logger) with 1 arg and returns result",
+            "description-ru":"Сравнивает имя класса(TGuiLogger/Logger) с 1 параметром и выдаёт результат",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"className",
                     "type":"string",
-                    "description":"Имя класса для сравнения",
+                    "description":"Class name",
+                    "description-ru":"Имя класса",
                     "required":true
                 }
-            ],
-            "return":[{
-                    "name":"response",
-                    "type":"string | nil",
-                    "description":"Является ли потомком этого класса(или самим классом)"
+            ],"returns":[
+                {
+                    "name":"result",
+                    "type":"boolean",
+                    "description":"Is it a descendant of this class (or the class itself)",
+                    "description-ru":"Является ли потомком этого класса(или самим классом)"
                 }
-            ], "deprecated":false
-        },
-        "log":{
-            "description":"Логгирует в весь лог и в только этого скрипта",
-            "args":[{
+            ]
+        },"log":{
+            "description":"Logging this data",
+            "description-ru":"Логгирует эти данные",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"type",
-                    "type":"number",
-                    "description":"Числовое значение",
-                    "required":false
+                    "type":"string",
+                    "description":"Type of message",
+                    "description-ru":"Тип собщения",
+                    "required":true
                 },{
                     "name":"placeName",
                     "type":"string",
-                    "description":"Название места события",
+                    "description":"Place name",
+                    "description-ru":"Имя плейса",
                     "required":false
                 },{
                     "name":"data",
                     "type":"any",
-                    "description":"Данные",
+                    "description":"Data",
+                    "description-ru":"Данные",
                     "required":true
                 }
-            ],
-            "return":[{
-                "type":"table",
-                "description":"Лог, таблица с ключами: time[number],type[string],result[string],place[string?],data[any],stringData[string],scriptName[string],loggerId[number]",
-                "canChange":false,
-                "deprecated":false
-            }], 
-            "deprecated":false
-        },
-        "debug":{
-            "description":"Логгирует в весь лог и в только этого скрипта, также запускает print есль self.debugEnabled",
-            "args":[{
+            ],"returns":[
+                {
+                    "name":"message",
+                    "type":"class",
+                    "class":"LogMessage",
+                    "description":"Message",
+                    "description-ru":"Сообщение"
+                }
+            ]
+        },"debug":{
+            "description":"Logging this debug data",
+            "description-ru":"Логгирует эти дебаг данные",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"placeName",
                     "type":"string",
-                    "description":"Название места события",
+                    "description":"Place name",
+                    "description-ru":"Имя плейса",
                     "required":false
                 },{
                     "name":"data",
                     "type":"any",
-                    "description":"Данные",
+                    "description":"Data",
+                    "description-ru":"Данные",
                     "required":true
                 }
-            ],
-            "return":[{
-                "type":"table",
-                "description":"Лог, таблица с ключами: time[number],type[string],result[string],place[string?],data[any],stringData[string],scriptName[string],loggerId[number]",
-                "canChange":false,
-                "deprecated":false
-            }], 
-            "deprecated":false
-        },
-        "info":{
-            "description":"Логгирует в весь лог и в только этого скрипта, также запускает print",
-            "args":[{
+            ],"returns":[
+                {
+                    "name":"message",
+                    "type":"class",
+                    "class":"LogMessage",
+                    "description":"Message",
+                    "description-ru":"Сообщение"
+                }
+            ]
+        },"info":{
+            "description":"Logging this data",
+            "description-ru":"Логгирует эти данные",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"placeName",
                     "type":"string",
-                    "description":"Название места события",
+                    "description":"Place name",
+                    "description-ru":"Имя плейса",
                     "required":false
                 },{
                     "name":"data",
                     "type":"any",
-                    "description":"Данные",
+                    "description":"Data",
+                    "description-ru":"Данные",
                     "required":true
                 }
-            ],
-            "return":[{
-                "type":"table",
-                "description":"Лог, таблица с ключами: time[number],type[string],result[string],place[string?],data[any],stringData[string],scriptName[string],loggerId[number]",
-                "canChange":false,
-                "deprecated":false
-            }], 
-            "deprecated":false
-        },
-        "warn":{
-            "description":"Логгирует в весь лог и в только этого скрипта, также запускает warn",
-            "args":[{
+            ],"returns":[
+                {
+                    "name":"message",
+                    "type":"class",
+                    "class":"LogMessage",
+                    "description":"Message",
+                    "description-ru":"Сообщение"
+                }
+            ]
+        },"warn":{
+            "description":"Warn with this data",
+            "description-ru":"Предупреждение с этими данными",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"placeName",
                     "type":"string",
-                    "description":"Название места события",
+                    "description":"Place name",
+                    "description-ru":"Имя плейса",
                     "required":false
                 },{
                     "name":"data",
                     "type":"any",
-                    "description":"Данные",
+                    "description":"Data",
+                    "description-ru":"Данные",
                     "required":true
                 }
-            ],
-            "return":[{
-                "type":"table",
-                "description":"Лог, таблица с ключами: time[number],type[string],result[string],place[string?],data[any],stringData[string],scriptName[string],loggerId[number]",
-                "canChange":false,
-                "deprecated":false
-            }], 
-            "deprecated":false
-        },
-        "error":{
-            "description":"Логгирует в весь лог и в только этого скрипта, также запускает error не останавливая скрипт",
-            "args":[{
+            ],"returns":[
+                {
+                    "name":"message",
+                    "type":"class",
+                    "class":"LogMessage",
+                    "description":"Message",
+                    "description-ru":"Сообщение"
+                }
+            ]
+        },"error":{
+            "description":"Error with this data(the script will continue to run)",
+            "description-ru":"Ошибка с этими данными(скрипт продолжит работу)",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"placeName",
                     "type":"string",
-                    "description":"Название места события",
+                    "description":"Place name",
+                    "description-ru":"Имя плейса",
                     "required":false
                 },{
                     "name":"data",
                     "type":"any",
-                    "description":"Данные",
+                    "description":"Data",
+                    "description-ru":"Данные",
                     "required":true
                 }
-            ],
-            "return":[{
-                "type":"table",
-                "description":"Лог, таблица с ключами: time[number],type[string],result[string],place[string?],data[any],stringData[string],scriptName[string],loggerId[number]",
-                "canChange":false,
-                "deprecated":false
-            }], 
-            "deprecated":false
-        },
-        "critical_error":{
-            "description":"Логгирует в весь лог и в только этого скрипта, также запускает error и останавливает скрипт",
-            "args":[{
+            ],"returns":[
+                {
+                    "name":"message",
+                    "type":"class",
+                    "class":"LogMessage",
+                    "description":"Message",
+                    "description-ru":"Сообщение"
+                }
+            ]
+        },"critical_error":{
+            "description":"Error with this data(the script will not continue to run)",
+            "description-ru":"Ошибка с этими данными(скрипт не продолжит работу)",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"placeName",
                     "type":"string",
-                    "description":"Название места события",
+                    "description":"Place name",
+                    "description-ru":"Имя плейса",
                     "required":false
                 },{
                     "name":"data",
                     "type":"any",
-                    "description":"Данные",
+                    "description":"Data",
+                    "description-ru":"Данные",
                     "required":true
                 }
-            ],
-            "return":[], 
-            "deprecated":false
+            ],"returns":[]
         }
-    }, "events":{}
+    }, "events":{}, 
+    "binds":{}
 }

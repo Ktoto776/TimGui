@@ -1,0 +1,19 @@
+{
+    "type":"class",
+    "description":"Toggle button in the menu",
+    "description-ru":"Кнопка-переключатель в меню",
+    "class":"MenuTogle",
+    "inherited":["TClass","MenuItem","MenuButton"],
+    "deprecated":false,
+    "properties":{
+        "Value":{
+            "type":"boolean",
+            "description":"Value",
+            "description-ru":"Значение",
+            "readonly":false,
+            "deprecated":false
+        }
+    }, "methods":{}, 
+    "events":{}, 
+    "binds":{}
+}

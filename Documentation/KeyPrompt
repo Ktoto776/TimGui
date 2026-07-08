@@ -1,104 +1,139 @@
 {
-    "description":"Класс KeyPrompt, чтобы спрашивать клавишу у пользователя на ПК.",
     "type":"class",
-    "classes":["TClass","ConfigObject","TWindow","Prompt","KeyPrompt"],
-    "writeSameMode":true,
+    "description":"The KeyPrompt class is used to prompt the user for a key (keyboard or mouse) on a PC.",
+    "description-ru":"Класс KeyPrompt, чтобы спрашивать клавишу(клавиатуры/мыши) у пользователя на ПК.",
+    "class":"KeyPrompt",
+    "inherited":["TClass","ConfigObject","TWindow","Prompt"],
     "deprecated":false,
-    "RunArgs":[],
-    "InputArgs":[
-        {
-            "name":"Key",
-            "type":"class?",
-            "class":"TKey",
-            "description":"Данные кнопки которой нажал пользователь, если пользователь не выбрал кнопку, но отменил то возвращает TKey для Enum.KeyCode.Unknown"
-        }
-    ],
     "properties":{
         "Buttons":{
             "type":"Frame",
-            "description":"Frame в котором находятся кнопки 'подтвердить' и 'отменить'",
-            "canChange":false,
+            "description":"The frame containing the 'Confirm' and 'Cancel' buttons.",
+            "description-ru":"Frame в котором находятся кнопки 'Подтвердить' и 'Отменить'",
+            "readonly":true,
             "deprecated":false
         },"ConfirmButton":{
             "type":"TextButton",
-            "description":"TextButton кнопки подтверждения(берёт текст из .ConfirmText)",
-            "canChange":false,
+            "description":"Confirm button (takes text from `.ConfirmText`)",
+            "description-ru":"Кнопка подтверждения(берёт текст из `.ConfirmText`)",
+            "readonly":true,
             "deprecated":false
         },"ConfirmText":{
             "type":"class",
-            "class":"Translator",
-            "description":"Текст для кнопки подтверждения",
-            "canChange":false,
+            "class":"Translate",
+            "description":"Text for confirm button",
+            "description-ru":"Текст для кнопки подтверждения",
+            "readonly":true,
             "deprecated":false
         },"DescriptionLabel":{
             "type":"TextLabel",
-            "description":"TextLabel описания",
-            "canChange":true,
+            "description":"TextLabel description",
+            "description-ru":"TextLabel описания",
+            "readonly":true,
             "deprecated":false
         },"DescriptionTextSize":{
             "type":"number",
-            "description":"Размер текста описания",
-            "canChange":true,
+            "description":"Description text size",
+            "description-ru":"Размер текста описания",
+            "readonly":false,
             "deprecated":false
-        },"SpecialDescriptionSizeBind":{
-            "type":"class",
-            "class":"Bind",
-            "description":"Bind для установки размера описанию. См Binder.TextPromptDescriptionSizeBind",
-            "canChange":true,
-            "deprecated":false
-        },"Value":{
-            "type":"TKey",
-            "description":"То что нажал пользователь",
-            "canChange":true,
-            "deprecated":false
-        },"TextLabel":{
-            "type":"TextLabel",
-            "description":"Основной TextLabel с выводом какая кнопка была нажата",
-            "canChange":false,
+        },"CancelEnabled":{
+            "type":"boolean",
+            "description":"Can the user cancel?",
+            "description-ru":"Может ли пользователь отменить?",
+            "readonly":false,
             "deprecated":false
         },"CancelButton":{
             "type":"TextButton",
-            "description":"TextButton для отмены",
-            "canChange":false,
+            "description":"Cancel button (takes text from `.CancelText`)",
+            "description-ru":"Кнопка отмены(берёт текст из `.CancelText`)",
+            "readonly":true,
             "deprecated":false
         },"CancelText":{
             "type":"class",
-            "class":"Translator",
-            "description":"Текст для кнопки отмены",
-            "canChange":false,
+            "class":"Translate",
+            "description":"Text for cancel button",
+            "description-ru":"Текст для кнопки отмены",
+            "readonly":true,
             "deprecated":false
-        },"NoneKeyText":{
+        },"Value":{
             "type":"class",
-            "class":"Translator",
-            "description":"Текст если кнопка не выбрана",
-            "canChange":false,
+            "class":"TKey",
+            "description":"What the user clicked",
+            "description-ru":"То что нажал пользователь",
+            "readonly":false,
             "deprecated":false
-        },"KeyText":{
-            "type":"class",
-            "class":"Translator",
-            "description":"Текст если кнопка выбрана, %KEY% - выбранная кнопка",
-            "canChange":false,
-            "deprecated":false
-        },"AlreadyUsingInGameText":{
-            "type":"class",
-            "class":"Translator",
-            "description":"Подсказка если выбранная кнопка используется в игре",
-            "canChange":false,
+        },"TextLabel":{
+            "type":"TextLabel",
+            "description":"Main TextLabel displaying which button was pressed.",
+            "description-ru":"Основной TextLabel с выводом какая кнопка была нажата",
+            "readonly":true,
             "deprecated":false
         },"DisableOtherInputsWhenRunning":{
             "type":"boolean",
-            "description":"Включено ли выключение эвентов при клике кнопки, на время пока промпт запущен?",
-            "canChange":true,
+            "description":"Are click events disabled while the prompt is active?",
+            "description-ru":"Включено ли выключение эвентов при клике кнопки, на время пока промпт запущен?",
+            "readonly":false,
+            "deprecated":false
+        },"NoneKeyText":{
+            "type":"class",
+            "class":"Translate",
+            "description":"Text if the button is not selected",
+            "description-ru":"Текст если кнопка не выбрана",
+            "readonly":true,
+            "deprecated":false
+        },"KeyText":{
+            "type":"class",
+            "class":"Translate",
+            "description":"If a button is selected, the text replaces `%KEY%` with the selected button.",
+            "description-ru":"Текст если кнопка выбрана, заменяет `%KEY%` - на выбранную кнопку",
+            "readonly":true,
+            "deprecated":false
+        },"AlreadyUsingInGameText":{
+            "type":"class",
+            "class":"Translate",
+            "description":"Tooltip if the selected button is used in the game.",
+            "description-ru":"Подсказка если выбранная кнопка используется в игре",
+            "readonly":true,
             "deprecated":false
         }
-    }, 
-    "methods":{}, 
+    }, "methods":{}, 
     "events":{
         "OnSizeRefreshed":{
-            "description":"Запускается когда обновился размер(описания и тд) и позиции",
-            "type":"RBXScriptEvent",
-            "args":[],
-            "deprecated":false
+            "type":"RBXScriptSignal",
+            "description":"Fires when the size (description, etc.) and positions have been updated.",
+            "description-ru":"Запускается когда обновился размер(описания и тд) и позиции",
+            "deprecated":false,
+            "args":[]
+        }
+    }, "binds":{
+        "SpecialDescriptionSizeBind":{
+            "description":"Special Bind for setting description size. Working like Binder.KeyPromptDescriptionSizeBind",
+            "description-ru":"Специальный Bind для установки размера описанию. Работает как в Binder.KeyPromptDescriptionSizeBind",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"KeyPrompt",
+                    "type":"class",
+                    "class":"KeyPrompt",
+                    "description":"KeyPrompt which needs to set description size",
+                    "description-ru":"KeyPrompt которому нужно установить размер для описания",
+                    "required":true
+                },{
+                    "name":"startYPos",
+                    "type":"UDim",
+                    "description":"The Y position of start this object",
+                    "description-ru":"Позиция Y начала этого объекта",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"lastYPos",
+                    "type":"UDim",
+                    "description":"Y position after this object",
+                    "description-ru":"Y позиция после этого обьекта"
+                }
+            ]
         }
     }
 }

@@ -23,6 +23,16 @@
                 "en":"•••••",
                 "ru":"in your region"
             }, "Chance":100
+        },{
+            "Id":"TimGui is multy-tool",
+            "Part1":{
+                "en":"Multy",
+                "ru":"Multy"
+            }, "Part2":{
+                "en":"tool",
+                "ru":"tool"
+            }, "Chance":100
         }
-    ]
+    ], "HeaderTitlesPercent":1,
+    "HeaderTitlesPercentPerStart":0.25
 }

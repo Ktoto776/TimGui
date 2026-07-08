@@ -1,21 +1,25 @@
 {
-    "description":"Текст в меню",
     "type":"class",
-    "classes":["TClass","MenuItem","MenuText"],
-    "writeSameMode":true,
+    "description":"Text on menu",
+    "description-ru":"Текст в меню",
+    "class":"MenuText",
+    "inherited":["TClass","MenuItem"],
     "deprecated":false,
     "properties":{
         "TextLabel":{
             "type":"TextLabel",
-            "description":"Основной TextLabel этого меню обьекта",
-            "canChange":false,
+            "description":"The main TextLabel of this object menu.",
+            "description-ru":"Основной TextLabel этого меню обьекта",
+            "readonly":true,
             "deprecated":false
         },"TextObject":{
             "type":"TextLabel",
-            "description":"Обьект соддержащий текст(здесь - TextLabel)",
-            "canChange":false,
+            "description":"An object containing text (in this case, TextLabel). The same as `.TextLabel`, but included for compatibility.",
+            "description-ru":"Обьект соддержащий текст(здесь - TextLabel). Тоже самое что и `.TextLabel`, но для совместимости",
+            "readonly":true,
             "deprecated":false
         }
-    }, "methods":{}, 
-    "events":{}
+    }, "methods":{},
+    "events":{}, 
+    "binds":{}
 }

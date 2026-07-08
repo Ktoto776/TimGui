@@ -1,113 +1,167 @@
 {
-    "description":"Класс относящийся к глобальной Архитектуре интерфейса. Можно получать детей через This.ChildName(также как в Instance и выдаст ошибку если не найдено!)",
     "type":"class",
-    "classes":["TClass","GUIArchitecture"],
-    "writeSameMode":true,
+    "description":"A class related to the global Interface Architecture. Children can be retrieved via This.ChildName (just like in Instance, and will throw an error if not found!)",
+    "description-ru":"Класс относящийся к глобальной Архитектуре интерфейса. Можно получать детей через This.ChildName(также как в Instance и выдаст ошибку если не найдено!)",
+    "class":"GUIArchitecture",
+    "inherited":["TClass"],
     "deprecated":false,
     "properties":{
         "GroupSize":{
             "type":"UDim2",
-            "description":"Размер группы(Последняя полученная точка при запуске :Refresh())",
-            "canChange":true,
+            "description":"Group size (Last point received when running :Refresh())",
+            "description-ru":"Размер группы(Последняя полученная точка при запуске :Refresh())",
+            "readonly":false,
             "deprecated":false
         },"IsGlobal":{
             "type":"boolean",
-            "description":"Глобальная ли группа",
-            "canChange":true,
-            "deprecated":false
-        },"SpecialRefreshingBind":{
-            "type":"UDim2",
-            "description":"Биндер для обновления позиций кнопок в группе. Работает как в Binder.RefreshingBind",
-            "canChange":true,
+            "description":"This group is global?",
+            "description-ru":"Глобальная ли группа",
+            "readonly":false,
             "deprecated":false
         },"GroupFrame":{
-            "type":"Instance: Frame",
-            "description":"Frame с кнопками в группе,canChange: true, но false в TimGui.Groups",
-            "canChange":true,
+            "type":"Frame",
+            "description":"This group is global?",
+            "description-ru":"Frame с кнопками в группе,canChange: true, но false в TimGui.Groups",
+            "readonly":false,
             "deprecated":false
         }
-    }, 
-    "methods":{
+    }, "methods":{
         "FindFirstChild":{
-            "description":"Вернёт первого ребёнка с таким именем",
-            "args":[{
+            "description":"Will return the first child with this name",
+            "description-ru":"Вернёт первого ребёнка с таким именем",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"childName",
                     "type":"string",
-                    "description":"Имя ребёнка",
+                    "description":"Child name",
+                    "description-ru":"Имя ребёнка",
                     "required":true
                 }
-            ],
-            "return":[{
-                    "name":"response",
-                    "type":"TGuiObject",
-                    "description":"nil - если не одна функция не была запущена успешно."
+            ],"returns":[
+                {
+                    "name":"child",
+                    "type":"class",
+                    "class":"TGuiObject?",
+                    "description":"A child, if not found, is nil.",
+                    "description-ru":"Ребёнок, если не найден - nil"
                 }
-            ], 
-            "deprecated":false
-        },
-        "CreateGroup":{
-            "description":"Создаёт группу с parent в этой архитектуре",
-            "args":[{
+            ]
+        },"CreateGroup":{
+            "description":"Create group in this archtecture",
+            "description-ru":"Создаст группу в этой архитектуре",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"Name",
                     "type":"string",
-                    "description":"Имя группы",
+                    "description":"Group name",
+                    "description-ru":"Имя группы",
                     "required":true
                 },{
                     "name":"Title",
-                    "type":"string | Translator",
-                    "description":"Название которое видит пользователь, если nil берёт из Name",
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType": "string | table<string,string> | Translator",
+                    "description":"Title, can be Translator | table({'ru'='rus','en'='eng'}) | string?, if not, the object name is taken",
+                    "description-ru":"Заголовок, может быть Translator | table({'ru'='rus','en'='eng'}) | string?, если нету берётся название обьекта",
                     "required":false
                 }
-            ],
-            "return":[{
-                    "name":"response",
-                    "type":"TGroup",
-                    "description":"Группа"
+            ],"returns":[
+                {
+                    "name":"child",
+                    "type":"class",
+                    "class":"TGroup",
+                    "description":"Created group belonging to this architecture",
+                    "description-ru":"Созданная группа, принадлежащая этой архитектуре"
                 }
-            ], "deprecated":false
+            ]
         },"RefreshGroup":{
-            "description":"Обновляет позиции всему, что в группе",
-            "args":[{
-                    "name":"After",
-                    "type":"TGuiObject",
-                    "description":"Обновляет после и включая этот обьект. Если nil, то обновляет со старта",
+            "description":"Updates the positions of objects in a group",
+            "description-ru":"Обновляет позиции объектов в группе",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"FromObject",
+                    "type":"class",
+                    "class":"TGuiObject",
+                    "description":"Updates after and including this object. If missing, updates from start.",
+                    "description-ru":"Обновляет после и включая этот обьект. Если отсутствует, то обновляет со старта",
                     "required":false
                 },{
                     "name":"notParentRefreshing",
                     "type":"boolean",
-                    "description":"Нужно ли обновлять Parent(если parent группа и не TimGui.Groups)",
+                    "description":"Do I need to update Parent (if parent is a group and not TimGui.Groups)?",
+                    "description-ru":"Нужно ли обновлять Parent(если parent группа и не TimGui.Groups)",
                     "required":false
                 }
-            ],"return":[], 
-            "deprecated":false
+            ],"returns":[]
         }
-    }, 
-    "events":{
-        "ChildAdded":{
-            "description":"Запускается когда добавлен новый ребёнок",
-            "type":"TEvent.Event",
-            "args":[{
-                    "name":"child",
-                    "type":"TGuiObject",
-                    "description":"TGuiObject который теперь в этой архитектуре"
+    }, "events":{
+        "GroupRefreshed":{
+            "type":"RBXScriptSignal",
+            "description":"Fires when the architecture has been updated (i.e. when :RefreshGroup() has completed)",
+            "description-ru":"Запускается когда архитекртура обновилась(тоесть когда :RefreshGroup() был закончен)",
+            "deprecated":false,
+            "args":[]
+        },"ChildAdded":{
+            "type":"TSignal",
+            "description":"Fires when a new child is added.",
+            "description-ru":"Запускается когда добавлен новый ребёнок",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"name",
+                    "type":"class",
+                    "class":"TGuiObject",
+                    "description":"TGuiObject which is now in this architecture",
+                    "description-ru":"TGuiObject который теперь в этой архитектуре"
                 }
-            ],
-            "deprecated":false
+            ]
         },"ChildRemoved":{
-            "description":"Запускается когда убран ребёнок",
-            "type":"TEvent.Event",
-            "args":[{
-                    "name":"child",
-                    "type":"TGuiObject",
-                    "description":"TGuiObject который теперь не в этой архитектуре"
+            "type":"TSignal",
+            "description":"Fires when the child is removed",
+            "description-ru":"Запускается когда убран ребёнок",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"name",
+                    "type":"class",
+                    "class":"TGuiObject",
+                    "description":"TGuiObject which is no longer in this architecture",
+                    "description-ru":"TGuiObject который теперь не в этой архитектуре"
                 }
-            ],
-            "deprecated":false
-        },"GroupRefreshed":{
-            "description":"Запускается когда :RefreshGroup() был закончен",
-            "type":"RBXScriptEvent",
-            "args":[],
-            "deprecated":false
+            ]
+        }
+    }, "binds":{
+        "SpecialRefreshingBind":{
+            "description":"A bind for updating button positions in a group. Works like Binder.RefreshingBind.",
+            "description-ru":"Бинд для обновления позиций кнопок в группе. Работает как в Binder.RefreshingBind",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"Children",
+                    "type":"table",
+                    "dType":"table<number,TGuiObject>",
+                    "description":"Related TGuiObjects for updating positions",
+                    "description-ru":"Относящиеся TGuiObject'ы, для обновления позиций",
+                    "required":true
+                },{
+                    "name":"FromObject",
+                    "type":"class",
+                    "class":"TGuiObject",
+                    "description":"From which object do the changes begin",
+                    "description-ru":"От какого обьекта начинаются изменения",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"EndPoint",
+                    "type":"UDim2",
+                    "description":"Point after the last object",
+                    "description-ru":"Точка после последнего обьекта"
+                }
+            ]
         }
     }
 }

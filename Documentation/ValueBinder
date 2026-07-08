@@ -1,56 +1,62 @@
 {
-    "description":"Биндер для значений, используется чтобы значения не наслаивались друг на друга. Создаётся через TClasses:CreateValueBinder(Стандартное значение)",
     "type":"class",
-    "classes":["TClass","ValueBinder"],
-    "writeSameMode":true,
+    "description":"A value binder used to prevent values from overlapping. Created via TClasses:CreateValueBinder(Default Value)",
+    "description-ru":"Биндер для значений, используется чтобы значения не наслаивались друг на друга. Создаётся через TClasses:CreateValueBinder(Стандартное значение)",
+    "class":"ValueBinder",
+    "inherited":["TClass"],
     "deprecated":false,
     "properties":{
-        "ListenId":{
-            "type":"class",
-            "class":"ValueBind",
-            "description":"Id слушаемого ValueBind'а, его значения будут в .Value. По умолчанию 0(если не существует, то стандартное значение)",
-            "canChange":true,
-            "deprecated":false
-        },"Value":{
-            "type":"class",
-            "class":"any",
-            "description":"Значение, можно изменить прям так, но не советуется. writeSameMode отсутствует!",
-            "canChange":true,
+        "Value":{
+            "type":"any",
+            "description":"The value can be changed directly, but it is not recommended.",
+            "description-ru":"Значение, можно изменить прям так, но не советуется.",
+            "readonly":false,
+            "deprecated":false,
+            "isWriteSameModeException":true
+        },"ListenId":{
+            "type":"number",
+            "description":"The Id of the ValueBind being listened to; its values will be in .Value. Defaults to 0 (if it doesn't exist, then the default value).",
+            "description-ru":"Id слушаемого ValueBind'а, его значения будут в .Value. По умолчанию 0(если не существует, то стандартное значение)",
+            "readonly":false,
             "deprecated":false
         }
     }, "methods":{
         "Bind":{
-            "description":"Bind для установки значения",
+            "description":"Creates a ValueBind to set a value",
+            "description-ru":"Создаёт ValueBind для установки значения",
+            "deprecated":false,
             "args":[
                 {
-                    "name":"SetToListen",
+                    "name":"TurnOnListing",
                     "type":"boolean",
-                    "description":"Установить на слушание(если nil, то считается как true)",
+                    "description":"Set to listening (if none, then it is considered true)",
+                    "description-ru":"Установить на слушание(если нету, то считается как true)",
                     "required":false
                 }
-            ],
-            "return":[{
+            ],"returns":[
+                {
                     "name":"response",
                     "type":"class",
                     "class":"ValueBind",
-                    "description":"Класс ValueBind"
+                    "description":"ValueBind class",
+                    "description-ru":"Класс ValueBind"
                 }
-            ], 
-            "deprecated":false
+            ]
         }
-    }, 
-    "events":{
+    }, "events":{
         "OnBinded":{
-            "description":"Запускается при Bind:Bind",
-            "type":"RBXScriptEvent",
+            "type":"RBXScriptSignal",
+            "description":"Runs when ValueBinder:Bind is started.",
+            "description-ru":"Запускается когда ValueBinder:Bind был запущен",
+            "deprecated":false,
             "args":[
                 {
                     "name":"Id",
                     "type":"number",
-                    "description":"Всё что угодно, может быть написано в классе Binder"
+                    "description":"New ValueBind Id",
+                    "description-ru":"Id нового ValueBind'а"
                 }
-            ],
-            "deprecated":false
+            ]
         }
-    }
+    }, "binds":{}
 }

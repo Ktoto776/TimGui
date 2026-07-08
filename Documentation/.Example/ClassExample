@@ -70,5 +70,28 @@
                 }
             ]
         }
+    }, "binds":{
+        "ExampleBIND":{
+            "description":"",
+            "description-ru":"",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"arg",
+                    "type":"any",
+                    "description":"",
+                    "description-ru":"",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"array with TimGuis",
+                    "type":"table",
+                    "dType":"table<number,TimGui>",
+                    "description":"",
+                    "description-ru":""
+                }
+            ]
+        }
     }
 }

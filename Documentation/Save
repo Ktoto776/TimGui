@@ -1,89 +1,112 @@
 {
-    "description":"Сохранение, можно записать в конфиг или глобально",
     "type":"class",
-    "classes":["TClass","Save"],
-    "writeSameMode":true,
+    "description":"Save, can write to the config or globally",
+    "description-ru":"Сохранение, можно записать в конфиг или глобально",
+    "class":"Save",
+    "inherited":["TClass"],
     "deprecated":false,
     "properties":{
         "Name":{
             "type":"string",
-            "description":"Имя сохранения",
-            "canChange":false,
+            "description":"Name of save",
+            "description-ru":"Имя сохранения",
+            "readonly":true,
             "deprecated":false
         }
-    }, 
-    "methods":{
+    }, "methods":{
         "GetFromSave":{
-            "description":"Читает значения с (глобального) сохранения",
-            "args":[{
+            "description":"Read data from global save",
+            "description-ru":"Читает данные с глобального сохранения",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"key",
                     "type":"string",
-                    "description":"Ключ",
+                    "description":"Save key(name)",
+                    "description-ru":"Ключ(название) сохранения",
                     "required":true
                 }
-            ],
-            "return":[{
-                    "name":"result",
+            ],"returns":[
+                {
+                    "name":"data",
                     "type":"any",
-                    "description":"Результат"
+                    "description":"Data",
+                    "description-ru":"Данные"
                 }
-            ], "deprecated":false
+            ]
         },"SetToSave":{
-            "description":"Записывает в (глобальное) сохранение",
-            "args":[{
+            "description":"Write data to global save",
+            "description-ru":"Записывает данные на глобальное сохранение",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"key",
                     "type":"string",
-                    "description":"Ключ",
+                    "description":"Save key(name)",
+                    "description-ru":"Ключ(название) сохранения",
                     "required":true
                 },{
-                    "name":"Value",
-                    "type":"string | number | table | boolean",
-                    "description":"Значение",
-                    "required":true
-                }
-            ],
-            "return":[{
-                    "name":"success",
-                    "type":"boolean",
-                    "description":"Успешно ли (если TimGui.Saves.IsSupported == false, то оно сбросится после перезахода)"
-                }
-            ], "deprecated":false
-        },"GetFromConfig":{
-            "description":"Читает значения с конфигурации",
-            "args":[{
-                    "name":"key",
-                    "type":"string",
-                    "description":"Ключ",
-                    "required":true
-                }
-            ],
-            "return":[{
-                    "name":"result",
+                    "name":"value",
                     "type":"any",
-                    "description":"Результат"
-                }
-            ], "deprecated":false
-        },"SetToConfig":{
-            "description":"Записывает в конфигурацию",
-            "args":[{
-                    "name":"key",
-                    "type":"string",
-                    "description":"Ключ",
-                    "required":true
-                },{
-                    "name":"Value",
-                    "type":"string | number | table | boolean",
-                    "description":"Значение",
+                    "description":"Value, string | number | table | boolean types supporting",
+                    "description-ru":"Значение, string | number | table | boolean типы поддерживаются",
                     "required":true
                 }
-            ],
-            "return":[{
+            ],"returns":[
+                {
                     "name":"success",
                     "type":"boolean",
-                    "description":"Успешно ли (если TimGui.Saves.IsSupported == false, то оно сбросится после перезахода)"
+                    "description":"Was it successful? (If `TimGui.Saves.IsSupported == false`, it will reset after re-entering.)",
+                    "description-ru":"Успешно ли (если `TimGui.Saves.IsSupported == false`, то оно сбросится после перезахода)"
                 }
-            ], "deprecated":false
+            ]
+        },"GetFromConfig":{
+            "description":"Read data from config",
+            "description-ru":"Читает данные с конфигурации",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"key",
+                    "type":"string",
+                    "description":"Save key(name)",
+                    "description-ru":"Ключ(название) сохранения",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"data",
+                    "type":"any",
+                    "description":"Data",
+                    "description-ru":"Данные"
+                }
+            ]
+        },"SetToConfig":{
+            "description":"Write data to config",
+            "description-ru":"Записывает данные на конфигурацию",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"key",
+                    "type":"string",
+                    "description":"Save key(name)",
+                    "description-ru":"Ключ(название) сохранения",
+                    "required":true
+                },{
+                    "name":"value",
+                    "type":"any",
+                    "description":"Value, string | number | table | boolean types supporting",
+                    "description-ru":"Значение, string | number | table | boolean типы поддерживаются",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"success",
+                    "type":"boolean",
+                    "description":"Was it successful? (If `TimGui.Saves.IsSupported == false`, it will reset after re-entering.)",
+                    "description-ru":"Успешно ли (если `TimGui.Saves.IsSupported == false`, то оно сбросится после перезахода)"
+                }
+            ]
         }
-    }, 
-    "events":{}
+    }, "events":{}, 
+    "binds":{}
 }

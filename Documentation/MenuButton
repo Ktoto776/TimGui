@@ -1,40 +1,45 @@
 {
-    "description":"Кнопка в меню.",
     "type":"class",
-    "classes":["TClass","MenuItem","MenuButton"],
-    "writeSameMode":true,
+    "description":"Button in menu",
+    "description-ru":"Кнопка в меню.",
+    "class":"MenuButton",
+    "inherited":["TClass","MenuItem"],
     "deprecated":false,
     "properties":{
         "Button":{
             "type":"TextButton",
-            "description":"Основная кнопка этого меню обьекта",
-            "canChange":false,
+            "description":"The main button of this object menu",
+            "description-ru":"Основная кнопка этого меню обьекта",
+            "readonly":true,
             "deprecated":false
         },"TextObject":{
             "type":"TextButton",
-            "description":"Обьект соддержащий текст(здесь - кнопка)",
-            "canChange":false,
+            "description":"An object containing text (in this case, a button). Same as `.Button`, but included for compatibility.",
+            "description-ru":"Обьект соддержащий текст(здесь - кнопка). Тоже самое что и `.Button`, но для совместимости",
+            "readonly":true,
             "deprecated":false
         },"CloseMenuOnActivated":{
             "type":"boolean",
-            "description":"Прятать ли меню при активации",
-            "canChange":false,
+            "description":"Whether to hide the menu upon activation",
+            "description-ru":"Прятать ли меню при активации?",
+            "readonly":false,
             "deprecated":false
         }
     }, "methods":{
         "EmulateActivate":{
-            "description":"Эмулирует нажатие на кнопку",
+            "description":"Emulates a button press.",
+            "description-ru":"Эмулирует нажатие на кнопку",
+            "deprecated":false,
             "args":[],
-            "return":[], 
-            "deprecated":false
+            "returns":[]
         }
-    }, 
-    "events":{
+    }, "events":{
         "Activated":{
-            "description":"Запускается при нажатии или :EmulateActivate()",
-            "type":"RBXScriptEvent",
-            "args":[],
-            "deprecated":false
+            "type":"RBXScriptSignal",
+            "description":"Fires upon clicking or when calling `:EmulateActivate()`.",
+            "description-ru":"Запускается при нажатии или при запуске `:EmulateActivate()`",
+            "deprecated":false,
+            "args":[]
         }
-    }
+    }, "binds":{}
 }

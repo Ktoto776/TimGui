@@ -1,151 +1,198 @@
 {
-    "description":"Класс обьекта TimGui, например группы/кнопки. Устанавливает ConfigSaveName по GlobalName и ставит только для чтения",
     "type":"class",
-    "classes":["TClass","ConfigObject","TGuiObject"],
-    "writeSameMode":true,
+    "description":"A TimGui object class (e.g., groups or buttons). It sets ConfigSaveName based on GlobalName and marks it as read-only.",
+    "description-ru":"Класс обьекта TimGui, например группы/кнопки. Устанавливает ConfigSaveName по GlobalName и ставит только для чтения",
+    "class":"TGuiObject",
+    "inherited":["TClass","ConfigObject"],
     "deprecated":false,
     "properties":{
         "Name":{
             "type":"string",
-            "description":"Имя по которому его можно найти",
-            "canChange":true,
+            "description":"The name by which he can be found",
+            "description-ru":"Имя по которому его можно найти",
+            "readonly":false,
             "deprecated":false
         },"Parent":{
-            "type":"GUIArchitecture?",
-            "description":"В какой группе/архитектуре находится, можно менять на nil. При смене появляется в самом низу группы",
-            "canChange":true,
+            "type":"class",
+            "class":"GUIArchitecture?",
+            "description":"The group or architecture it belongs to can be changed to `nil`. When changed, it appears at the very bottom of the group.",
+            "description-ru":"В какой группе/архитектуре находится, можно менять на nil. При смене появляется в самом низу группы",
+            "readonly":false,
             "deprecated":false
         },"Title":{
-            "type":"Translator",
-            "description":"Название кнопки, которое видит пользователь",
-            "canChange":false,
-            "deprecated":false
-        },"ParentIsGlobal":{
-            "type":"boolean",
-            "description":"Глобальный ли родитель(для групп в группах), если находится в группе false, если находится в Groups или нигде(nil) то true",
-            "canChange":true,
+            "type":"class",
+            "class":"Translator",
+            "description":"Title of button",
+            "description-ru":"Название кнопки, которое видит пользователь",
+            "readonly":true,
             "deprecated":false
         },"SpecialColors":{
-            "type":"Preset",
-            "description":"Специальные цвета для этого обьекта, заполняй как в TimGui.Colors, только Load очищает прошлые значения",
-            "canChange":true,
+            "type":"class",
+            "class":"SpecialColors",
+            "description":"Special colors for this object",
+            "description-ru":"Специальные цвета для этого обьекта",
+            "readonly":true,
             "deprecated":false
         },"Frame":{
-            "type":"Instance: Frame",
-            "description":"Frame в котором содержимое кнопки",
-            "canChange":false,
+            "type":"Frame",
+            "description":"The frame containing the button's content",
+            "description-ru":"Frame в котором содержимое кнопки",
+            "readonly":true,
             "deprecated":false
         },"UICorner":{
-            "type":"Instance: UICorner",
-            "description":"Скругление",
-            "canChange":false,
+            "type":"UICorner",
+            "description":"Button rounding",
+            "description-ru":"Скругление кнопки",
+            "readonly":true,
             "deprecated":false
         },"CornerChangingEnabled":{
             "type":"boolean",
-            "description":"Включить ли изменение скругления(при изменении в GuiSize.ButtonCornerRadius). Для специального изменения на этой кнопке",
-            "canChange":false,
-            "deprecated":false
-        },"SpecialSizeBind":{
-            "type":"Bind",
-            "description":"Специальные bind, но только для этого обьекта, работает по принципу из Binder.TObjectSize",
-            "canChange":true,
+            "description":"Whether to enable corner radius changes (when GuiSize.ButtonCornerRadius changes). For specific modifications to this button.",
+            "description-ru":"Включить ли изменение скругления(при изменении в GuiSize.ButtonCornerRadius). Для специального изменения на этой кнопке",
+            "readonly":false,
             "deprecated":false
         },"Menu":{
-            "type":"Menu",
-            "description":"Menu этой кнопки",
-            "canChange":false,
-            "deprecated":false
-        },"OpenMenuBind":{
             "type":"class",
-            "class":"Bind",
-            "description":"Бинд для замены :OpenMenu()",
-            "canChange":false,
+            "class":"Menu",
+            "description":"Menu for this object",
+            "description-ru":"Меню этого обьекта",
+            "readonly":true,
             "deprecated":false
         },"Type":{
-            "type":"table",
-            "description":"Тип обьекта(Здесь unknown, изменяется в других классах и становится только для чтения)",
-            "canChange":true,
+            "type":"string",
+            "description":"Object type (Here it is `unknown`; it changes in other classes and becomes read-only)",
+            "description-ru":"Тип обьекта(Здесь `unknown`, изменяется в других классах и становится только для чтения)",
+            "readonly":false,
             "deprecated":false
         },"Position":{
             "type":"number",
-            "description":"Позиция, становится самой нижней если Parent меняется",
-            "canChange":true,
+            "description":"The position becomes the lowest if the Parent changes.",
+            "description-ru":"Позиция, становится самой нижней если Parent меняется",
+            "readonly":false,
             "deprecated":false
         },"Indent":{
             "type":"UDim2",
-            "description":"Отступ",
-            "canChange":true,
-            "deprecated":false
-        },"SpecialButtonPositionBind":{
-            "type":"Bind",
-            "description":"Специальный бинд для подсчета позиции кнопки, работает как в Binder.ButtonPositionBind",
-            "canChange":true,
+            "description":"Indent",
+            "description-ru":"Отступ",
+            "readonly":false,
             "deprecated":false
         },"Visible":{
             "type":"boolean",
-            "description":"Если true, то этот обьект видим и с ним можно взаимодейсвовать",
-            "canChange":true,
-            "deprecated":false
-        },"SpecialVisibleBind":{
-            "type":"Bind",
-            "description":"Специальный бинд для точной прорисовки кнопки(если группа не открыта, не показывать. свойство Visible считается само), работает как в Binder.VisibleBind",
-            "canChange":true,
+            "description":"If true, this object is visible and interactive.",
+            "description-ru":"Если true, то этот обьект видим и с ним можно взаимодейсвовать",
+            "readonly":false,
             "deprecated":false
         },"GlobalName":{
             "type":"string",
-            "description":"Можно изменить сразу при создании(после task.wait) уже нельзя, по умолчанию ставится также через task.wait(), нужно для индефикации этого обьекта после перезахода(например конфигураций)",
-            "canChange":true,
+            "description":"You can change it immediately upon creation; you cannot change it later (after `task.wait()`). By default, it is also set via `task.wait()`. This is needed to identify the object after rejoining (for example, for configurations).",
+            "description-ru":"Можно изменить сразу при создании(после `task.wait`) уже нельзя, по умолчанию ставится также через `task.wait()`, нужно для индефикации этого обьекта после перезахода(например конфигураций)",
+            "readonly":false,
             "deprecated":false
         }
-    }, 
-    "methods":{
-        "Destroy":{
-            "description":"Удаляет обьект и запускает Destroyed евент",
-            "args":[],
-            "return":[], 
-            "deprecated":false
-        },"RefreshSize":{
-            "description":"Обновляет размер, запуская специальный Bind(SizeBind)",
-            "args":[{
+    }, "methods":{
+        "RefreshSize":{
+            "description":"Refreshes the size by invoking a special Bind(SizeBind).",
+            "description-ru":"Обновляет размер, запуская специальный Bind(SizeBind)",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"dontRefreshPosition",
                     "type":"boolean",
-                    "description":"Не запускать ли обновление позиции",
+                    "description":"Should start the position update?",
+                    "description-ru":"Не запускать ли обновление позиции",
                     "required":false
                 }
-            ],
-            "return":[], 
-            "deprecated":false
+            ],"returns":[]
         },"GetGlobalGroup":{
-            "description":"Возвращает глобальную группу в которой находится",
+            "description":"Returns the global group containing it.",
+            "description-ru":"Возвращает глобальную группу в которой находится",
+            "deprecated":false,
             "args":[],
-            "return":[{
+            "returns":[
+                {
                     "name":"group",
                     "type":"GUIArchitecture?",
-                    "description":"Глобальная группа, если есть"
+                    "description":"Global group, if exists",
+                    "description-ru":"Глобальная группа, если есть"
                 }
-            ], "deprecated":false
-        },"RefreshPosition":{
-            "description":"Обновляет позиции группы",
-            "args":[],
-            "return":[{
-                    "name":"success",
-                    "type":"boolean",
-                    "description":"Успешно ли было запущено"
-                }
-            ], "deprecated":false
+            ]
         },"OpenMenu":{
-            "description":"Открывает меню этого обьекта",
+            "description":"Open menu of this object",
+            "description-ru":"Открывает меню этого обьекта",
+            "deprecated":false,
             "args":[],
-            "return":[], 
-            "deprecated":false
+            "returns":[]
         }
-    }, 
-    "events":{
+    }, "events":{
         "Destroyed":{
-            "description":"Запускается когда :Destroy() был запущен",
-            "type":"RBXScriptEvent",
+            "type":"RBXScriptSignal",
+            "description":"Removes the object and triggers the Destroyed event.",
+            "description-ru":"Удаляет обьект и запускает Destroyed евент",
+            "deprecated":false,
+            "args":[]
+        }
+    }, "binds":{
+        "SpecialSizeBind":{
+            "description":"Special bind, Bind for set object size. (working like Binder.TObjectSize)",
+            "description-ru":"Специальный bind, Бинд для установки размера объектам. (работает по принципу из Binder.TObjectSize)",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"TGuiObject",
+                    "type":"class",
+                    "class":"TGuiObject",
+                    "description":"TGuiObject which needs to change size",
+                    "description-ru":"TGuiObject которому нужно установить размер",
+                    "required":true
+                }
+            ],"returns":[]
+        },"OpenMenuBind":{
+            "description":"Bind for change :OpenMenu()",
+            "description-ru":"Бинд для замены :OpenMenu()",
+            "deprecated":false,
             "args":[],
-            "deprecated":false
+            "returns":[]
+        },"SpecialButtonPositionBind":{
+            "description":"Special bind for set button position. (working like Binder.ButtonPositionBind)",
+            "description-ru":"Специальный бинд для подсчета позиции кнопки, работает как в Binder.ButtonPositionBind",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"child",
+                    "type":"class",
+                    "class":"TGuiObject",
+                    "description":"TGuiObject which needs to change position",
+                    "description-ru":"Объект для установки позиций",
+                    "required":true
+                },{
+                    "name":"pos",
+                    "type":"UDim2",
+                    "description":"The position of this object (what it returned, the last launch of the bind)",
+                    "description-ru":"Позиция этого объекта (то что вернул, последний запуск бинда)",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"nextPos",
+                    "type":"UDim2",
+                    "description":"Position after that object",
+                    "description-ru":"Позиция после этого объекта"
+                }
+            ]
+        },"SpecialVisibleBind":{
+            "description":"Special bind for counting the view of the object. (working like Binder.VisibleBind)",
+            "description-ru":"Специальный бинд для точной прорисовки видимости кнопки(если группа не открыта, не показывать. свойство Visible считается само), работает как в Binder.VisibleBind",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"Object",
+                    "type":"class",
+                    "class":"TGuiObject",
+                    "description":"TGuiObject which needs to count visible",
+                    "description-ru":"Объект для подсчёта видимости",
+                    "required":true
+                }
+            ],"returns":[]
         }
     }
 }

@@ -1,117 +1,200 @@
 {
-    "description":"Класс для установки порядка исполнения(например, порядок языков)",
     "type":"class",
-    "classes":["TClass","TGuiObject","ButtonObject","TSequence"],
-    "writeSameMode":true,
+    "description":"Sequence button for setting the execution order (e.g., language order)",
+    "description-ru":"Кнопка-последовательность для установки порядка исполнения(например, порядок языков)",
+    "class":"TSequence",
+    "inherited":["TClass","ConfigObject","TGuiObject","ButtonObject"],
     "deprecated":false,
     "properties":{
         "Type":{
             "type":"string",
-            "description":"Равен \"Sequence\". Нужен для определения типа обьекта",
-            "canChange":false,
+            "description":"set to `Sequence`. Needs to check object type",
+            "description-ru":"Равен `Sequence`. Нужен для определения типа обьекта",
+            "readonly":true,
             "deprecated":false
         },"Opened":{
             "type":"boolean",
-            "description":"Открыт ли",
-            "canChange":false,
+            "description":"Is opened?",
+            "description-ru":"Открыт ли?",
+            "readonly":false,
             "deprecated":false
         },"Size":{
             "type":"UDim2",
-            "description":"Размер",
-            "canChange":false,
-            "deprecated":false
-        },"IndentBind":{
-            "type":"Bind",
-            "description":"Бинд для кастомного отступа. Параметры: TSequence:TSequence, VisibleIndent: Frame, SequenceFrame: Frame",
-            "canChange":false,
+            "description":"Size",
+            "description-ru":"Размер",
+            "readonly":true,
             "deprecated":false
         },"OpenLabel":{
-            "type":"Instance: ImageLabel",
-            "description":"Стрелочка статуса открытия",
-            "canChange":false,
-            "deprecated":false
-        },"SpecialOpenArrowBind":{
-            "type":"Bind",
-            "description":"Бинд для анимации стрелочки. Работает как в Binder.SequenceOpenArrowBind",
-            "canChange":false,
-            "deprecated":false
-        },"SpecialCreateObject":{
-            "type":"Bind",
-            "description":"Бинд для создания обьектов в TSequence. Работает как в Binder.SequenceCreateObject",
-            "canChange":false,
+            "type":"ImageLabel",
+            "description":"Open status arrow",
+            "description-ru":"Стрелочка статуса открытия",
+            "readonly":true,
             "deprecated":false
         },"SequenceFrame":{
-            "type":"Instance: Frame",
-            "description":"Frame со всеми кнопками",
-            "canChange":false,
+            "type":"Frame",
+            "description":"Frame with all sequence objects",
+            "description-ru":"Frame со всеми обьектами",
+            "readonly":true,
             "deprecated":false
         }
-    }, 
-    "methods":{
+    }, "methods":{
         "SetObjectPosition":{
-            "description":"Изменяет позицию для обьекта в TSequence",
-            "args":[{
-                    "name":"Name",
+            "description":"Changes the position of an object in a TSequence.",
+            "description-ru":"Изменяет позицию для обьекта в TSequence",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"ObjectName",
                     "type":"string",
-                    "description":"Имя обьекта",
+                    "description":"Name of sequence object",
+                    "description-ru":"Имя порядкого обьекта",
                     "required":true
                 },{
-                    "name":"New position",
+                    "name":"NewPosition",
                     "type":"number",
-                    "description":"Позиция",
+                    "description":"New position of this object",
+                    "description-ru":"Новая позиция этого обьекта",
                     "required":true
                 }
-            ],
-            "return":[{
+            ],"returns":[
+                {
                     "name":"success",
                     "type":"boolean",
-                    "description":"Успешно ли(обычно возвращает false, если обьекта не существует)"
+                    "description":"Was it successful? (usually returns `false` if the object does not exist)",
+                    "description-ru":"Успешно ли(обычно возвращает `false`, если обьекта не существует)"
                 }
-            ], "deprecated":false
+            ]
         },"AddObject":{
-            "description":"Добавляет обьект",
-            "args":[{
-                    "name":"Name",
+            "description":"Adding sequence object",
+            "description-ru":"Добавляет порядковый обьект",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"ObjectName",
                     "type":"string",
-                    "description":"Имя обьекта",
+                    "description":"Name of sequence object",
+                    "description-ru":"Имя порядкого обьекта",
                     "required":true
                 },{
                     "name":"Title",
-                    "type":"string | {[string]:string} | Translator?",
-                    "description":"Название которое видит пользователь",
-                    "required":false
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"Object title",
+                    "description-ru":"Заголовок обьекта",
+                    "required":true
                 }
-            ],
-            "return":[{
+            ],"returns":[
+                {
                     "name":"success",
                     "type":"boolean",
-                    "description":"Успешно ли(обычно возвращает false, если обьект уже существует)"
+                    "description":"Was it successful? (usually returns `false` if the object already exist)",
+                    "description-ru":"Успешно ли(обычно возвращает `false`, если обьекта уже существует)"
                 }
-            ], "deprecated":false
+            ]
         }
-    }, 
-    "events":{
-        "OnOpen":{
-            "description":"При открытии группы",
-            "type":"RBXScriptEvent",
-            "args":[],
-            "deprecated":false
-        },"OnClose":{
-            "description":"При закрытии группы",
-            "type":"RBXScriptEvent",
-            "args":[],
-            "deprecated":false
-        },"SequenceChanged":{
-            "description":"При закрытии группы",
-            "type":"RBXScriptEvent",
+    }, "events":{
+        "SequenceChanged":{
+            "type":"RBXScriptSignal",
+            "description":"When changing the objects order",
+            "description-ru":"При смене порядка обьектов",
+            "deprecated":false,
             "args":[
                 {
                     "name":"data",
-                    "type":"{string,string,...}",
-                    "description":"Таблица с именами по порядку"
+                    "type":"table",
+                    "dType":"table<number,string>",
+                    "description":"Array with object names in order",
+                    "description-ru":"Массив с именами обьктов по порядку"
                 }
-            ],
-            "deprecated":false
+            ]
+        },"OnOpen":{
+            "type":"RBXScriptSignal",
+            "description":"When opened",
+            "description-ru":"При открытии",
+            "deprecated":false,
+            "args":[]
+        },"OnClose":{
+            "type":"RBXScriptSignal",
+            "description":"When closed",
+            "description-ru":"При закрытии",
+            "deprecated":false,
+            "args":[]
+        }
+    }, "binds":{
+        "IndentBind":{
+            "description":"Bind for custom indent",
+            "description-ru":"Бинд для кастомного отступа.",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"TSequence",
+                    "type":"class",
+                    "class":"TSequence",
+                    "description":"TSequence",
+                    "description-ru":"TSequence",
+                    "required":true
+                },{
+                    "name":"VisibleIndent",
+                    "type":"Frame",
+                    "description":"Visible part of indent",
+                    "description-ru":"Видимая часть отступа",
+                    "required":true
+                },{
+                    "name":"SequenceFrame",
+                    "type":"Frame",
+                    "description":"The frame with objects must be placed after the indentation so that the indentation does not cover the buttons.",
+                    "description-ru":"Frame с обьектами, должно быть после отступа, чтобы отступ не закрывал кнопки",
+                    "required":true
+                }
+            ],"returns":[]
+        },"SpecialOpenArrowBind":{
+            "description":"Special bind for arrow animation. Working like Binder.SequenceOpenArrowBind",
+            "description-ru":"Специальный бинд для анимации стрелочки. Работает как в Binder.SequenceOpenArrowBind",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"TSequence",
+                    "type":"class",
+                    "class":"TSequence",
+                    "description":"TSequence in which needs animate arrow",
+                    "description-ru":"TSequence в котором нужно анимировать стрелочку",
+                    "required":true
+                }
+            ],"returns":[]
+        },"SpecialCreateObject":{
+            "description":"Special bind for creating sequence objects. Working like Binder.SequenceCreateObject",
+            "description-ru":"Специальный бинд для создания обьектов в TSequence. Работает как в Binder.SequenceCreateObject",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"TSequence",
+                    "type":"class",
+                    "class":"TSequence",
+                    "description":"TSequence in which an object needs to be created.",
+                    "description-ru":"TSequence в котором нужно создать обьект",
+                    "required":true
+                },{
+                    "name":"Name",
+                    "type":"string",
+                    "description":"",
+                    "description-ru":"",
+                    "required":true
+                },{
+                    "name":"Position",
+                    "type":"number",
+                    "description":"Start position",
+                    "description-ru":"Стартовая позиция",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"SequenceObject",
+                    "type":"table",
+                    "description":"A table with a `Button: Frame` and an `OnNewPosition: RBXScriptSignal(args= NewPos: number)` event, along with the following functions: `SetTitle(Title: string)` (sets a new title), `SetPosition(Pos: number)` (sets the position), and `GetNextPos=()->(UDim2)` (returns the position following this object).",
+                    "description-ru":"Таблица с Button:Frame, OnNewPosition:RBXScriptSignal(args= NewPos:number) и с функциями: SetTitle(Title:string)--устанавливает новое название; SetPosition(Pos:number)--устанавливает позицию; GetNextPos=()->(UDim2) возвращает позицию после этого обьекта"
+                }
+            ]
         }
     }
 }

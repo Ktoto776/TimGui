@@ -1,17 +1,20 @@
 {
-    "description":"Класс кнопок в интерфейсе, просто пустая кнопка. P.S: Используй TButton.Activated",
     "type":"class",
-    "classes":["TClass","TGuiObject","ButtonObject","TButton"],
-    "writeSameMode":true,
+    "description":"Just button on TGuiObject. P.S: Use TButton.Activated",
+    "description-ru":"Просто кнопка на TGuiObject. P.S: Используй TButton.Activated",
+    "class":"TButton",
+    "inherited":["TClass","ConfigObject","TGuiObject","ButtonObject","GuiKeybindingObject"],
     "deprecated":false,
     "properties":{
         "Type":{
             "type":"string",
-            "description":"Равен \"Button\". Нужен для определения типа обьекта",
-            "canChange":false,
+            "description":"set to `Button`. Needs to check object type",
+            "description-ru":"Равен `Button`. Нужен для определения типа обьекта",
+            "readonly":true,
             "deprecated":false
         }
-    }, 
-    "methods":{}, 
-    "events":{}
+    },
+    "methods":{},
+    "events":{}, 
+    "binds":{}
 }

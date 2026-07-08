@@ -1,39 +1,46 @@
 {
-    "description":"Данные пакета",
     "type":"class",
-    "classes":["TClass","PackageData"],
-    "writeSameMode":true,
+    "description":"Package data",
+    "description-ru":"Данные пакета",
+    "class":"PackageData",
+    "inherited":["TClass"],
     "deprecated":false,
     "properties":{
         "Code":{
             "type":"string",
-            "description":"Сырой код пакета",
-            "canChange":false,
+            "description":"Raw package code",
+            "description-ru":"Сырой код пакета",
+            "readonly":true,
             "deprecated":false
         },"IsPackage":{
-            "type":"boolean",
-            "description":"Это TPacket?",
-            "canChange":false,
+            "type":"string",
+            "description":"Is this TPackage?",
+            "description-ru":"Это TPacket?",
+            "readonly":true,
             "deprecated":false
         },"RawData":{
             "type":"string",
-            "description":"Сырые данные пакета, если это не TPacket то будут ''",
-            "canChange":false,
+            "description":"Raw package data, if this is not TPackage then this = ''",
+            "description-ru":"Сырые данные пакета, если это не TPacket то будут ''",
+            "readonly":true,
             "deprecated":false
         }
     }, "methods":{
         "GetData":{
-            "description":"Возвращает данные пакета",
+            "description":"Returns a package data",
+            "description-ru":"Возвращает данные пакета",
+            "deprecated":false,
             "args":[],
-            "return":[
+            "returns":[
                 {
                     "name":"Data",
                     "type":"table",
-                    "description":"Таблица с данными из пакета"
+                    "dType":"table<number,string>",
+                    "description":"Table with data from package",
+                    "description-ru":"Таблица с данными из пакета"
                 }
-            ], 
-            "deprecated":false
+            ]
         }
-    }, 
-    "events":{}
+    }, "events":{}, 
+    "binds":{}
 }

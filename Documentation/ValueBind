@@ -1,46 +1,60 @@
 {
-    "description":"Биндер для значений, используется чтобы значения не наслаивались друг на друга. Создаётся через TClasses:CreateValueBinder(Стандартное значение)",
     "type":"class",
-    "classes":["TClass","ValueBinder"],
-    "writeSameMode":true,
+    "description":"A value binder used in ValueBinder",
+    "description-ru":"Бинд для значений, использующийся в ValueBinder",
+    "class":"ValueBind",
+    "inherited":["TClass"],
     "deprecated":false,
     "properties":{
         "Id":{
-            "type":"class",
-            "class":"ValueBind",
-            "description":"Id этого бинда",
-            "canChange":true,
-            "deprecated":false
-        },"Value":{
-            "type":"class",
-            "class":"any",
-            "description":"Значение, writeSameMode отсутствует!(Может быть установлен с помощью .Translator)",
-            "canChange":true,
+            "type":"number",
+            "description":"Id of this ValueBind",
+            "description-ru":"Id этого бинда",
+            "readonly":false,
             "deprecated":false
         },"Translator":{
             "type":"class",
             "class":"Translator",
-            "description":"Значение, но с переводом, изменяет .Value если нужный перевод был изменён",
-            "canChange":false,
+            "description":"Value, but with translation, changes .Value if the desired translation has been changed",
+            "description-ru":"Значение, но с переводом, изменяет .Value если нужный перевод был изменён",
+            "readonly":false,
             "deprecated":false
         },"Enabled":{
             "type":"boolean",
-            "description":"Включен ли бинд(то есть прослушивается ли)",
-            "canChange":true,
+            "description":"Is the bind enabled (that is, is it being listened)?",
+            "description-ru":"Включен ли бинд(то есть прослушивается ли)",
+            "readonly":false,
             "deprecated":false
+        },"Value":{
+            "type":"any",
+            "description":"Value, can be changed from .Translator",
+            "description-ru":"Значение, может быть изменено через .Translator",
+            "readonly":false,
+            "deprecated":false,
+            "isWriteSameModeException":true
+        },"Parent":{
+            "type":"class",
+            "class":"ValueBinder",
+            "description":"ValueBinder to which this VBind belongs",
+            "description-ru":"ValueBinder, к которому пренадлежит этот VBind",
+            "readonly":false,
+            "deprecated":false,
+            "isWriteSameModeException":true
         }
     }, "methods":{}, 
     "events":{
         "OnEnabled":{
-            "description":"Запускается если Binder слушает этот Bind",
-            "type":"RBXScriptEvent",
-            "args":[],
-            "deprecated":false
+            "type":"RBXScriptSignal",
+            "description":"Fires if ValueBinder is listening to this Bind",
+            "description-ru":"Запускается если ValueBinder слушает этот Bind",
+            "deprecated":false,
+            "args":[]
         },"OnDisabled":{
-            "description":"Запускается если Binder больше не слушает этот Bind",
-            "type":"RBXScriptEvent",
-            "args":[],
-            "deprecated":false
+            "type":"RBXScriptSignal",
+            "description":"Fires if Binder is no longer listening to this Bind",
+            "description-ru":"Запускается если Binder больше не слушает этот Bind",
+            "deprecated":false,
+            "args":[]
         }
-    }
+    }, "binds":{}
 }

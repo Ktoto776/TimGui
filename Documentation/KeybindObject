@@ -1,57 +1,72 @@
 {
-    "description":"Кейбинд предназначенный специально для Keybinder",
     "type":"class",
-    "classes":["TClass","BaseKeybind","KeybindObject"],
-    "writeSameMode":true,
+    "description":"A keybind designed specifically for Keybinder.",
+    "description-ru":"Кейбинд предназначенный специально для Keybinder",
+    "class":"KeybindObject",
+    "inherited":["TClass","BaseKeybind"],
     "deprecated":false,
     "properties":{
         "Position":{
             "type":"number",
-            "description":"Позиция",
-            "canChange":true,
+            "description":"Position in keybinder's window",
+            "description-ru":"Позиция в окне keybinder",
+            "readonly":false,
             "deprecated":false
         },"Id":{
             "type":"number",
-            "description":"Уникальный Id KeybindObject'а, ставится при создании",
-            "canChange":false,
+            "description":"Unique ID of the KeybindObject; set upon creation.",
+            "description-ru":"Уникальный Id KeybindObject'а, ставится при создании",
+            "readonly":true,
             "deprecated":false
         },"Parent":{
-            "type":"class?",
+            "type":"class",
             "class":"Keybinder?",
-            "description":"Родитель обьекта, может быть nil",
-            "canChange":true,
+            "isWriteSameModeException":true,
+            "description":"Parent of object, can be `nil`",
+            "description-ru":"Родитель обьекта, может быть `nil`",
+            "readonly":false,
             "deprecated":false
         },"Frame":{
             "type":"Frame",
-            "description":"Основной Frame",
-            "canChange":false,
+            "description":"Main Frame",
+            "description-ru":"Основной Frame",
+            "readonly":true,
             "deprecated":false
         },"UICorner":{
             "type":"UICorner",
-            "description":"UICorner, для скругления углов для .Frame",
-            "canChange":false,
+            "description":"UICorner for rounding corners for `.Frame`",
+            "description-ru":"UICorner, для скругления углов для `.Frame`",
+            "readonly":true,
             "deprecated":false
         },"SpecialColors":{
             "type":"class",
             "class":"SpecialColors",
-            "description":"Специальные цвета этому обьекту",
-            "canChange":false,
+            "description":"Special colors for this object",
+            "description-ru":"Специальные цвета этому обьекту",
+            "readonly":true,
+            "deprecated":false
+        },"DeleteButton":{
+            "type":"ImageButton",
+            "description":"Button for deleting this bind",
+            "description-ru":"Кнопка для удаления этого бинда",
+            "readonly":true,
             "deprecated":false
         }
     }, "methods":{
         "Destroy":{
-            "description":"Удаляет обьект",
+            "description":"Destroying this object.",
+            "description-ru":"Удаляет этот обьект.",
+            "deprecated":false,
             "args":[],
-            "return":[], 
-            "deprecated":false
+            "returns":[]
         }
-    }, 
-    "events":{
+    }, "events":{
         "Destroyed":{
-            "description":"Запускается когда обьект удалён",
-            "type":"RBXScriptEvent",
-            "args":[],
-            "deprecated":false
+            "type":"RBXScriptSignal",
+            "description":"Fires when the object has been destroyed",
+            "description-ru":"Запускается когда обьект удалён",
+            "deprecated":false,
+            "args":[]
         }
-    }
+    }, "binds":{}
 }

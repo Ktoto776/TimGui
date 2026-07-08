@@ -1,166 +1,320 @@
 {
-    "description":"Класс групп в интерфейсе, может находится в TimGui.Groups или группа в группе.",
     "type":"class",
-    "classes":["TClass","GUIArchitecture","TGuiObject","ButtonObject","TGroup"],
-    "writeSameMode":true,
+    "description":"The class is a group; it can be located in `TimGui.Groups` or nested within another group.",
+    "description-ru":"Класс группа, может находится в `TimGui.Groups` или группа в группе.",
+    "class":"TGroup",
+    "inherited":["TClass","GUIArchitecture","ConfigObject","TGuiObject","ButtonObject"],
     "deprecated":false,
     "properties":{
         "Type":{
             "type":"string",
-            "description":"Равен \"Group\". Нужен для определения типа обьекта",
-            "canChange":false,
+            "description":"set to `Group`. Needs to check object type",
+            "description-ru":"Равен `Group`. Нужен для определения типа обьекта",
+            "readonly":true,
             "deprecated":false
         },"Opened":{
             "type":"boolean",
-            "description":"Открыта ли группа",
-            "canChange":true,
-            "deprecated":false
-        },"SpecialGlobalGroupRefreshPosition":{
-            "type":"Bind",
-            "description":"Бинд для обновления позиций кнопок в группе. Работает как в Binder.GlobalGroupRefreshPosition",
-            "canChange":true,
-            "deprecated":false
-        },"SpecialGlobalGroupRefreshSize":{
-            "type":"Bind",
-            "description":"Бинд для обновления позиций кнопок в группе. Работает как в Binder.GlobalGroupRefreshSize",
-            "canChange":true,
+            "description":"Is group opened?",
+            "description-ru":"Открыта ли группа?",
+            "readonly":false,
             "deprecated":false
         },"OpenLabel":{
-            "type":"Instance: ImageLabel",
-            "description":"Стрелочка статуса открытия для не глобальных групп",
-            "canChange":false,
-            "deprecated":false
-        },"SpecialGroupOpenArrowBind":{
-            "type":"Bind",
-            "description":"Бинд для анимации стрелочки. Работает как в Binder.GroupOpenArrowBind",
-            "canChange":false,
-            "deprecated":false
-        },"GroupIndentBind":{
-            "type":"Bind",
-            "description":"Бинд для кастомного отступа не глобальных групп. Параметры: TGroup:TGroup, VisibleIndent: Frame, GroupFrame: Frame",
-            "canChange":false,
+            "type":"ImageLabel",
+            "description":"Open arrow for not global groups",
+            "description-ru":"Стрелочка статуса открытия для не глобальных групп",
+            "readonly":true,
             "deprecated":false
         },"NotGlobalGroupFrame":{
-            "type":"Instance: Frame",
-            "description":"Frame с кнопками в не глобальной группе",
-            "canChange":false,
+            "type":"Frame",
+            "description":"Frame with buttons, for not global groups",
+            "description-ru":"Frame с кнопками для не глобальных групп",
+            "readonly":true,
             "deprecated":false
         },"ConfigSavingForNewGroupObjects":{
             "type":"boolean",
-            "description":"Включено ли сохранение в конфиг для новых обьектов созданных через методы в этой группе.(Устанавливает .ConfigSavingEnabled на это значение). По умолчанию true",
-            "canChange":true,
+            "description":"Determines whether saving to the config is enabled for new objects created via methods in this group (sets `.ConfigSavingEnabled` to this value). Defaults to `true`.",
+            "description-ru":"Включено ли сохранение в конфиг для новых обьектов созданных через методы в этой группе.(Устанавливает `.ConfigSavingEnabled` на это значение). По умолчанию `true`",
+            "readonly":false,
             "deprecated":false
         }
-    }, 
-    "methods":{
-        "CreateButton":{
-            "description":"Создаёт кнопку с parent в этой группе",
-            "args":[{
+    }, "methods":{
+        "CreateToggle":{
+            "description":"Creates toggle switch with `.Parent` in this group",
+            "description-ru":"Создаёт переключатель(тумблер) с `.Parent` в этой группе",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"Name",
                     "type":"string",
-                    "description":"Имя кнопки",
+                    "description":"Object name",
+                    "description-ru":"Имя обьекта",
                     "required":true
                 },{
                     "name":"Title",
-                    "type":"string | Translator | {langCode=string}",
-                    "description":"Название которое видит пользователь, если nil берёт из Name, string-только англ",
-                    "required":false
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"Object title",
+                    "description-ru":"Заголовок обьекта",
+                    "required":true
                 },{
-                    "name":"function",
-                    "type":"(TButton)->()",
-                    "description":"Функция, для установки на клик, запускается с этой же кнопкой(нужно, чтобы не нагружать код лишними переменными)",
+                    "name":"callback",
+                    "type":"(self: TToggle)->()",
+                    "dType":"fun(self: TToggle)",
+                    "description":"The function assigned to the click action is triggered by that same toggle.",
+                    "description-ru":"Функция, для установки на клик, запускается с этим же переключателем",
                     "required":false
                 }
-            ],
-            "return":[{
-                    "name":"response",
-                    "type":"TButton",
-                    "description":"Кнопка"
+            ],"returns":[
+                {
+                    "name":"return",
+                    "type":"class",
+                    "class":"TToggle",
+                    "description":"Toggle switch",
+                    "description-ru":"Переключатель(тумблер)"
                 }
-            ], "deprecated":false
-        },"CreateToggle":{
-            "description":"Создаёт переключатель с parent в этой группе",
-            "args":[{
+            ]
+        },"CreateButton":{
+            "description":"Creates button with `.Parent` in this group",
+            "description-ru":"Создаёт кнопку с `.Parent` в этой группе",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"Name",
                     "type":"string",
-                    "description":"Имя переключателя",
+                    "description":"Object name",
+                    "description-ru":"Имя обьекта",
                     "required":true
                 },{
                     "name":"Title",
-                    "type":"string | Translator | {langCode=string}",
-                    "description":"Название которое видит пользователь, если nil берёт из Name, string-только англ",
-                    "required":false
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"Object title",
+                    "description-ru":"Заголовок обьекта",
+                    "required":true
                 },{
-                    "name":"function",
-                    "type":"(TToggle)->()",
-                    "description":"Функция, для установки на смену значения, запускается с этой же кнопкой(нужно, чтобы не нагружать код лишними переменными)",
+                    "name":"callback",
+                    "type":"(self: TButton)->()",
+                    "dType":"fun(self: TButton)",
+                    "description":"The function assigned to the click action is triggered by that same button.",
+                    "description-ru":"Функция, для установки на клик, запускается с этой же кнопкой",
                     "required":false
                 }
-            ],
-            "return":[{
-                    "name":"response",
-                    "type":"TTogle",
-                    "description":"Переключатель"
+            ],"returns":[
+                {
+                    "name":"return",
+                    "type":"class",
+                    "class":"TButton",
+                    "description":"Button",
+                    "description-ru":"Кнопка"
                 }
-            ], "deprecated":false
+            ]
         },"CreateText":{
-            "description":"Создаёт текст с parent в этой группе",
-            "args":[{
+            "description":"Creates just text with `.Parent` in this group",
+            "description-ru":"Создаёт просто текст с `.Parent` в этой группе",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"Name",
                     "type":"string",
-                    "description":"Имя текста",
+                    "description":"Object name",
+                    "description-ru":"Имя обьекта",
                     "required":true
                 },{
                     "name":"Title",
-                    "type":"string | Translator | {langCode=string}",
-                    "description":"Текст который видит пользователь, если nil берёт из Name, string-только англ",
-                    "required":false
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"Object title",
+                    "description-ru":"Заголовок обьекта",
+                    "required":true
                 }
-            ],
-            "return":[{
-                    "name":"response",
-                    "type":"TText",
-                    "description":"Текст"
+            ],"returns":[
+                {
+                    "name":"return",
+                    "type":"class",
+                    "class":"TText",
+                    "description":"Text",
+                    "description-ru":"Текст"
                 }
-            ], "deprecated":false
+            ]
         },"CreateTextbox":{
-            "description":"Создаёт поле для ввода данных(TextBox), данные могут быть не только текстовыми, с parent в этой группе",
-            "args":[{
+            "description":"Creates field for input data(TextBox), data can be not only 'string', with `.Parent` in this group",
+            "description-ru":"Создаёт поле для ввода данных(TextBox), данные могут быть не только текстовыми с `.Parent` в этой группе",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"Name",
                     "type":"string",
-                    "description":"Имя",
+                    "description":"Object name",
+                    "description-ru":"Имя обьекта",
                     "required":true
                 },{
                     "name":"Title",
-                    "type":"string | Translator | {langCode=string}",
-                    "description":"Название которое видит пользователь, если nil берёт из Name, string-только англ",
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"Object title",
+                    "description-ru":"Заголовок обьекта",
+                    "required":true
+                },{
+                    "name":"callback",
+                    "type":"(self: TTextBox)->()",
+                    "dType":"fun(self: TTextBox)",
+                    "description":"The function for handling the value change is triggered with the same TTextBox.",
+                    "description-ru":"Функция, для установки на смену значения, запускается с этим же TTextBox",
+                    "required":false
+                }
+            ],"returns":[
+                {
+                    "name":"return",
+                    "type":"class",
+                    "class":"TTextBox",
+                    "description":"TextBox",
+                    "description-ru":"TextBox"
+                }
+            ]
+        },"CreateSequence":{
+            "description":"Creates a sequence button that allows you to create a sequence of actions, with `.Parent` in this group",
+            "description-ru":"Создаёт кнопку-последовательность, благодаря которой можно создать последовательность действий с `.Parent` в этой группе",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Object name",
+                    "description-ru":"Имя обьекта",
+                    "required":true
+                },{
+                    "name":"Title",
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"Object title",
+                    "description-ru":"Заголовок обьекта",
+                    "required":true
+                },{
+                    "name":"callback",
+                    "type":"(self: TSequence)->()",
+                    "dType":"fun(self: TSequence)",
+                    "description":"The function for handling the value change",
+                    "description-ru":"Функция, для установки на смену значения",
                     "required":false
                 },{
-                    "name":"function",
-                    "type":"(TToggle)->()",
-                    "description":"Функция, для установки на смену значения, запускается с этим же TTextBox(нужно, чтобы не нагружать код лишними переменными)",
+                    "name":"Objects",
+                    "type":"table",
+                    "dType":"table<string,string> | table<string,table<string,string>>",
+                    "description":"A table of objects where the key is the button name and the value is either a translation table or a title.",
+                    "description-ru":"Таблица с обьектами, где ключ - имя кнопки, а значение - либо таблица переводов, либо заголовок",
                     "required":false
                 }
-            ],
-            "return":[{
-                    "name":"response",
-                    "type":"TTextBox",
-                    "description":"Поле для ввода данных"
+            ],"returns":[
+                {
+                    "name":"return",
+                    "type":"class",
+                    "class":"TSequence",
+                    "description":"Sequence button",
+                    "description-ru":"Кнопка-последовательность"
                 }
-            ], "deprecated":false
+            ]
         }
-    }, 
-    "events":{
+    }, "events":{
         "OnOpen":{
-            "description":"При открытии группы",
-            "type":"RBXScriptEvent",
-            "args":[],
-            "deprecated":false
+            "type":"RBXScriptSignal",
+            "description":"When group open",
+            "description-ru":"При открытии группы",
+            "deprecated":false,
+            "args":[]
         },"OnClose":{
-            "description":"При закрытии группы",
-            "type":"RBXScriptEvent",
-            "args":[],
-            "deprecated":false
+            "type":"RBXScriptSignal",
+            "description":"When group close",
+            "description-ru":"При закрытии группы",
+            "deprecated":false,
+            "args":[]
+        }
+    }, "binds":{
+        "GroupIndentBind":{
+            "description":"Bind for custom indentation of non-global groups.",
+            "description-ru":"Бинд для кастомного отступа не глобальных групп.",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"TGroup",
+                    "type":"class",
+                    "class":"TGroup",
+                    "description":"TGroup",
+                    "description-ru":"TGroup",
+                    "required":true
+                },{
+                    "name":"VisibleIndent",
+                    "type":"Frame",
+                    "description":"Visible part of indent",
+                    "description-ru":"Видимая часть отступа",
+                    "required":true
+                },{
+                    "name":"GroupFrame",
+                    "type":"Frame",
+                    "description":"The frame with buttons must be placed after the indentation so that the indentation does not cover the buttons.",
+                    "description-ru":"Frame с кнопками, должно быть после отступа, чтобы отступ не закрывал кнопки",
+                    "required":true
+                }
+            ],"returns":[]
+        },"SpecialGlobalGroupRefreshPosition":{
+            "description":"Special bind for refreshing position buttons in this group. Works like Binder.GlobalGroupRefreshPosition",
+            "description-ru":"Специальный бинд для обновления позиций кнопок в этой группе. Работает как в Binder.GlobalGroupRefreshPosition",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"GlobalGroup",
+                    "type":"class",
+                    "class":"TGroup",
+                    "description":"Group which needs to change position",
+                    "description-ru":"Группа которой нужно установить позицию",
+                    "required":true
+                },{
+                    "name":"pos",
+                    "type":"UDim2",
+                    "description":"The position of this object (what it returned, the last launch of the bind)",
+                    "description-ru":"Позиция этого объекта (то что вернул, последний запуск бинда)",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"nextPos",
+                    "type":"UDim2",
+                    "description":"Position after that group",
+                    "description-ru":"Позиция после этой группы"
+                }
+            ]
+        },"SpecialGlobalGroupRefreshSize":{
+            "description":"Special bind for refreshing position buttons in group. Works like Binder.GlobalGroupRefreshSize",
+            "description-ru":"Специальный бинд для обновления позиций кнопок в группе. Работает как в Binder.GlobalGroupRefreshSize",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"group",
+                    "type":"class",
+                    "class":"TGroup",
+                    "description":"Group which needs to change size",
+                    "description-ru":"Группа для установки размера",
+                    "required":true
+                }
+            ],"returns":[]
+        },"SpecialGroupOpenArrowBind":{
+            "description":"Special bind for arrow animation. Works like Binder.GroupOpenArrowBind",
+            "description-ru":"Специальный бинд для анимации стрелочки. Работает как в Binder.GroupOpenArrowBind",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"group",
+                    "type":"class",
+                    "class":"TGroup",
+                    "description":"TGroup which needs to animate",
+                    "description-ru":"TGroup которую нужно анимировать",
+                    "required":true
+                }
+            ],"returns":[]
         }
     }
 }

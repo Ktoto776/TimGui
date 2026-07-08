@@ -1,0 +1,10 @@
+{
+    "RunArgs":[],
+    "InputArgs":[
+        {
+            "name":"result",
+            "type":"boolean?",
+            "description":"Выбрал ли пользователь confirm(false если выберет Reject), если окно закрыто, то nil"
+        }
+    ]
+}

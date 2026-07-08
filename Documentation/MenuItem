@@ -1,95 +1,146 @@
 {
-    "description":"Предмет в Menu, используется в других классах",
     "type":"class",
-    "classes":["TClass","MenuItem"],
-    "writeSameMode":true,
+    "description":"An item in Menu; used in other classes.",
+    "description-ru":"Предмет в Menu, используется в других классах",
+    "class":"MenuItem",
+    "inherited":["TClass"],
     "deprecated":false,
     "properties":{
         "Name":{
             "type":"string",
-            "description":"Имя обьекта которое ставится при создании, нельзя менять",
-            "canChange":false,
+            "description":"The object name assigned upon creation cannot be changed.",
+            "description-ru":"Имя обьекта которое ставится при создании, нельзя менять",
+            "readonly":true,
             "deprecated":false
         },"Parent":{
             "type":"class",
             "class":"Menu?",
-            "description":"Меню которому принадлежит, можно менять на nil",
-            "canChange":true,
+            "description":"The menu to which it belongs can be changed to nil.",
+            "description-ru":"Меню которому принадлежит, можно менять на nil",
+            "isWriteSameModeException":true,
+            "readonly":false,
             "deprecated":false
         },"Title":{
             "type":"class",
             "class":"Translator",
-            "description":"Текст которое видит пользователь",
-            "canChange":false,
+            "description":"Text visible to the user",
+            "description-ru":"Текст которое видит пользователь",
+            "readonly":true,
             "deprecated":false
         },"Frame":{
             "type":"Frame",
-            "description":"Основной Frame обьекта",
-            "canChange":false,
+            "description":"Text visible to the user",
+            "description-ru":"Текст которое видит пользователь",
+            "readonly":true,
             "deprecated":false
         },"SpecialColors":{
             "type":"class",
             "class":"SpecialColors",
-            "description":"Специальные цвета этого обьекта",
-            "canChange":false,
+            "description":"Special colors for this object",
+            "description-ru":"Специальные цвета этого обьекта",
+            "readonly":true,
             "deprecated":false
         },"Position":{
             "type":"number",
-            "description":"Позиция Y этого обьекта, при смене Parent становится в самый низ",
-            "canChange":true,
+            "description":"Y position of this object, on `.Parent` change",
+            "description-ru":"Позиция Y этого обьекта, when changing `.Parent` it goes to the very bottom",
+            "readonly":false,
             "deprecated":false
         },"Id":{
             "type":"number",
-            "description":"Id menu элемента, устанавливается при создании и не меняется",
-            "canChange":false,
-            "deprecated":false
-        },"SpecialRefreshSizeBind":{
-            "type":"class",
-            "class":"Bind",
-            "description":"Bind для установки размера обьекта. Работает как в Binder.MenuItemRefreshSizeBind",
-            "canChange":false,
+            "description":"The element's menu ID; it is set upon creation and does not change.",
+            "description-ru":"Id menu элемента, устанавливается при создании и не меняется",
+            "readonly":true,
             "deprecated":false
         },"XSizeOffset":{
             "type":"number",
-            "description":"X размер кнопки",
-            "canChange":false,
-            "deprecated":false
-        },"SpecialRefreshPositionBind":{
-            "type":"class",
-            "class":"Bind",
-            "description":"Bind для установки позиции обьекта. Работает как в Binder.MenuItemRefreshPositionBind",
-            "canChange":false,
+            "description":"X size offset of this button",
+            "description-ru":"X размер offset этой кнопки",
+            "readonly":true,
             "deprecated":false
         },"MaxXSize":{
             "type":"UDim",
-            "description":"Максимальный размер X",
-            "canChange":false,
+            "description":"Max X Size",
+            "description-ru":"Максимальный размер X",
+            "readonly":false,
             "deprecated":false
         },"Visible":{
             "type":"boolean",
-            "description":"Видно ли этот обьект меню",
-            "canChange":true,
+            "description":"Is this menu item visible?",
+            "description-ru":"Видно ли этот обьект меню",
+            "readonly":false,
             "deprecated":false
         }
     }, "methods":{
         "RefreshPosition":{
-            "description":"Обновляет позицию этого обьекта(и всех в Parent)",
+            "description":"Refreshes position of this object(and all in `.Parent`)",
+            "description-ru":"Обновляет позицию этого обьекта(и всех в `.Parent`)",
+            "deprecated":false,
             "args":[],
-            "return":[], 
-            "deprecated":false
+            "returns":[]
         },"RefreshSize":{
-            "description":"Обновляет размер этого обьекта и обновляет позицию",
+            "description":"Refreshes size and position of this object",
+            "description-ru":"Обновляет размер и позици этого обьекта",
+            "deprecated":false,
             "args":[],
-            "return":[], 
-            "deprecated":false
+            "returns":[]
         },"Destroy":{
-            "description":"Удаляет обьект",
+            "description":"Destroying this object",
+            "description-ru":"Удаляет этот обьект",
+            "deprecated":false,
             "args":[],
-            "return":[], 
-            "deprecated":false
+            "returns":[]
         }
-    }, 
-    "events":{
-        
+    }, "events":{}, 
+    "binds":{
+        "SpecialRefreshSizeBind":{
+            "description":"Bind for setting size of this object. Working like Binder.MenuItemRefreshSizeBind",
+            "description-ru":"Bind для установки размера обьекта. Работает как в Binder.MenuItemRefreshSizeBind",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"MenuItem",
+                    "type":"class",
+                    "class":"MenuItem",
+                    "description":"MenuItem which needs to set size",
+                    "description-ru":"MenuItem которому нужно установить размер",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"XSizeOffset",
+                    "type":"number",
+                    "description":"X Offset Size",
+                    "description-ru":"X Offset Размер"
+                }
+            ]
+        },"SpecialRefreshPositionBind":{
+            "description":"Bind for setting position of this object. Working like Binder.MenuItemRefreshPositionBind",
+            "description-ru":"Bind для установки позиции обьекта. Работает как в Binder.MenuItemRefreshPositionBind",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"MenuItem",
+                    "type":"class",
+                    "class":"MenuItem",
+                    "description":"MenuItem which needs to set position",
+                    "description-ru":"MenuItem которому нужно установить позицию",
+                    "required":true
+                },{
+                    "name":"YPosition",
+                    "type":"UDim",
+                    "description":"The Y position of start this object (what it returned, the last launch of the bind)",
+                    "description-ru":"Позиция Y начала этого объекта (то что вернул, последний запуск бинда)",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"lastYPos",
+                    "type":"UDim",
+                    "description":"Y position after this object",
+                    "description-ru":"Y позиция после этого обьекта"
+                }
+            ]
+        }
     }
 }

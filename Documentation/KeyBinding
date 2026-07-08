@@ -1,241 +1,290 @@
 {
-    "description":"Класс для создания привязок к кнопкам и находится в TimGui.KeyBinding",
     "type":"class",
-    "classes":["TClass","KeyBinding"],
-    "writeSameMode":true,
+    "description":"The class for creating button bindings is located in TimGui.KeyBinding. Mouse button: 1-Left, 2-Right, 3-Middle",
+    "description-ru":"Класс для создания привязок к кнопкам и находится в TimGui.KeyBinding. Кнопка мыши: 1-Левая,2-Правая,3-Колёсико",
+    "class":"KeyBinding",
+    "inherited":["TClass"],
     "deprecated":false,
     "properties":{
         "EventsEnabled":{
             "type":"boolean",
-            "description":"Если false, то не реагирует на нажатие кнопки",
-            "canChange":true,
+            "description":"If `false`, it does not respond to button presses.",
+            "description-ru":"Если `false`, то не реагирует на нажатие кнопки",
+            "readonly":false,
             "deprecated":false
         },"NextBlocked":{
             "type":"boolean",
-            "description":"Если true, то блокирует следующее нажатие кнопки. Служит, чтобы автокликеры не вызывали KeyBind'ы",
-            "canChange":true,
-            "deprecated":false
-        },"SpecialColors":{
-            "type":"class",
-            "class":"SpecialColors",
-            "description":"Специальные цвета, связаны с специальными цветами у окна",
-            "canChange":false,
+            "description":"If `true`, blocks the next button click. Prevents auto-clickers from triggering keybinds.",
+            "description-ru":"Если `true`, то блокирует следующее нажатие кнопки. Служит, чтобы автокликеры не вызывали KeyBind'ы",
+            "readonly":false,
             "deprecated":false
         }
     }, "methods":{
         "GetKeyNameFromKeyCode":{
-            "description":"Возвращает имя ключа по KeyCode",
-            "args":[{
+            "description":"Returns the key name based on the KeyCode.",
+            "description-ru":"Возвращает имя ключа по KeyCode",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"KeyCode",
                     "type":"Enum.KeyCode",
-                    "description":"Код ключа",
+                    "description":"KeyCode",
+                    "description-ru":"KeyCode",
                     "required":true
                 }
-            ],"return":[
+            ],"returns":[
                 {
                     "name":"KeyName",
                     "type":"string",
-                    "description":"Имя ключа"
+                    "description":"Key name",
+                    "description-ru":"Имя ключа"
                 }
-            ], 
-            "deprecated":false
+            ]
         },"CreateKeyboardKey":{
-            "description":"Создаёт ключ клавиатуры",
-            "args":[{
+            "description":"Creates keyboard key(TKey)",
+            "description-ru":"Создаёт ключ кнопки клавиатуры(TKey)",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"KeyCode",
                     "type":"Enum.KeyCode",
-                    "description":"Код ключа",
+                    "description":"KeyCode",
+                    "description-ru":"KeyCode",
                     "required":true
-                }, {
+                },{
                     "name":"Holding",
                     "type":"table",
-                    "description":"Названия (специальных) кнопок которые задерживаются",
+                    "dType":"table<string,boolean>",
+                    "description":"A table of pressed special keys, where the key is the name and the value is a boolean (indicating whether it is held down).",
+                    "description-ru":"Таблица нажатых специальные кнопок, где ключ - название, значение - boolean(зажато ли?)",
                     "required":false
                 }
-            ],"return":[
+            ],"returns":[
                 {
                     "name":"Key",
                     "type":"TKey",
-                    "description":"Результат"
+                    "description":"result",
+                    "description-ru":"результат"
                 }
-            ], 
-            "deprecated":false
+            ]
         },"CreateMouseKey":{
-            "description":"Создаёт ключ мыши",
-            "args":[{
+            "description":"Creates keyboard key(TKey)",
+            "description-ru":"Создаёт ключ кнопки клавиатуры(TKey)",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"MouseCode",
                     "type":"number",
-                    "description":"Кнопка мыши от 1 до 3(включительно)",
+                    "description":"Mouse button 1 to 3 (inclusive)",
+                    "description-ru":"Кнопка мыши от 1 до 3(включительно)",
                     "required":true
-                }, {
+                },{
                     "name":"Holding",
                     "type":"table",
-                    "description":"Названия (специальных) кнопок которые задерживаются",
+                    "dType":"table<string,boolean>",
+                    "description":"A table of pressed special keys, where the key is the name and the value is a boolean (indicating whether it is held down).",
+                    "description-ru":"Таблица нажатых специальные кнопок, где ключ - название, значение - boolean(зажато ли?)",
                     "required":false
                 }
-            ],"return":[
+            ],"returns":[
                 {
                     "name":"Key",
                     "type":"TKey",
-                    "description":"Результат"
+                    "description":"result",
+                    "description-ru":"результат"
                 }
-            ], 
-            "deprecated":false
+            ]
         },"GetKeyBeganEvent":{
-            "description":"Возвращает TEvent.Event для этой кнопки",
-            "args":[{
+            "description":"Returns the TSignal fires by pressing this button.",
+            "description-ru":"Возвращает TSignal, запускаемый нажатием этой кнопки",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"KeyName",
                     "type":"string",
-                    "description":"Имя кнопки",
+                    "description":"Key name",
+                    "description-ru":"Название кнопки",
                     "required":true
                 }
-            ],"return":[
+            ],"returns":[
                 {
-                    "name":"Event",
-                    "type":"TEvent.Event",
-                    "description":"Запускается если эта кнопка нажата. Запускает с параметрами как в KeyBinding.Ended/KeyBinded.Began"
+                    "name":"Key",
+                    "type":"TKey",
+                    "description":"Fires by pressing this button. Fires with params like `KeyBinded.Began`",
+                    "description-ru":"Запускается если эта кнопка нажата. Запускает с параметрами как в `KeyBinded.Began`"
                 }
-            ], 
-            "deprecated":false
+            ]
         },"GetKeyEndedEvent":{
-            "description":"Возвращает TEvent.Event для этой кнопки",
-            "args":[{
+            "description":"Returns a TSignal triggered by releasing this button.",
+            "description-ru":"Возвращает TSignal, запускаемый разжатием этой кнопки",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"KeyName",
                     "type":"string",
-                    "description":"Имя кнопки",
+                    "description":"Key name",
+                    "description-ru":"Название кнопки",
                     "required":true
                 }
-            ],"return":[
+            ],"returns":[
                 {
-                    "name":"Event",
-                    "type":"TEvent.Event",
-                    "description":"Запускается если эта кнопка разжата. Запускает с параметрами как в KeyBinding.Ended/KeyBinded.Began"
+                    "name":"Key",
+                    "type":"TKey",
+                    "description":"Fires by releasing this button. Fires with params like `KeyBinding.Ended`",
+                    "description-ru":"Запускается если эта кнопка отжата. Запускает с параметрами как в `KeyBinding.Ended`"
                 }
-            ], 
-            "deprecated":false
+            ]
         },"GetKeyEvent":{
-            "description":"Возвращает TEvent.Event для этой кнопки",
-            "args":[{
+            "description":"Returns a TSignal triggered by pressing or releasing this button.",
+            "description-ru":"Возвращает TSignal, запускаемый нажатием или разжатием этой кнопки",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"KeyName",
                     "type":"string",
-                    "description":"Имя кнопки",
+                    "description":"Key name",
+                    "description-ru":"Название кнопки",
                     "required":true
                 }
-            ],"return":[
+            ],"returns":[
                 {
-                    "name":"Event",
-                    "type":"TEvent.Event",
-                    "description":"Запускается если эта кнопка нажата или разжата. Запускает с параметрами как в KeyBinding.KeyEvent"
+                    "name":"Key",
+                    "type":"TKey",
+                    "description":"Fires by pressing or releasing this button. Fires with params like `KeyBinding.KeyEvent`",
+                    "description-ru":"Запускается если эта кнопка нажата или отжата. Запускает с параметрами как в `KeyBinding.KeyEvent`"
                 }
-            ], 
-            "deprecated":false
+            ]
         },"CreateKeybinder":{
-            "description":"Возвращает TEvent.Event для этой кнопки",
-            "args":[{
+            "description":"Creates Keybinder",
+            "description-ru":"Создаёт Keybinder",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"Name",
                     "type":"string",
-                    "description":"Имя кейбиндеру+окна, в которое сохраняются данные. Если нету ставит настройки сохранения на false",
+                    "description":"Name for keybinder",
+                    "description-ru":"Название keybinder'у",
+                    "required":true
+                },{
+                    "name":"Title",
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"title",
+                    "description-ru":"Заголовок",
                     "required":false
                 },{
-                    "name":"disableDefaultConfigSettingsForWindow",
+                    "name":"disableDefaultConfigSettingsRefreshForWindow",
                     "type":"boolean",
-                    "description":"Выключены ли стандартные настройки сохранения для окна",
+                    "description":"Is the standard save update disabled when changing config settings for window?",
+                    "description-ru":"Выключены ли стандартное обновление сохранений при смене настроек конфига для окна",
                     "required":false
                 }
-            ],"return":[
+            ],"returns":[
                 {
                     "name":"result",
                     "type":"class",
                     "class":"Keybinder",
-                    "description":"Запускается если эта кнопка разжата. Запускает с параметрами как в KeyBinding.Ended/KeyBinded.Began"
+                    "description":"Keybinder class, it is needed to assign different types of functions to different buttons.",
+                    "description-ru":"Keybinder класс, нужен для назначения разных типов функций к разным кнопкам"
                 }
-            ], 
-            "deprecated":false
+            ]
         },"CreateKeybindObject":{
-            "description":"Создаёт KeybindObject(и должен использоваться в Keybinder'е)",
+            "description":"Creates KeybindObject",
+            "description-ru":"Создаёт KeybindObject",
+            "deprecated":false,
             "args":[],
-            "return":[
+            "returns":[
                 {
                     "name":"result",
                     "type":"class",
                     "class":"KeybindObject",
-                    "description":"Созданные KeybindObject"
+                    "description":"The KeybindObject class, should be used in the Keybinder to assign a key to a function.",
+                    "description-ru":"KeybindObject класс, должен использоваться в Keybinder для назначения ключа к функции"
                 }
-            ], 
-            "deprecated":false
-        },"RefreshPositions":{
-            "description":"Обновляет позиции в Keybinder'е",
-            "args":[],
-            "return":[], 
-            "deprecated":false
+            ]
         }
-    }, 
-    "events":{
+    }, "events":{
         "KeyEvent":{
-            "description":"Event, запускаемый когда кнопка нажата/отжата (Игнорирует NextBlocked и EventsEnabled)",
-            "type":"TEvent.Event",
+            "type":"TSignal",
+            "description":"Event fires when the button is pressed or released (ignores `NextBlocked` and `EventsEnabled`).",
+            "description-ru":"Event, запускаемый когда кнопка нажата/отжата (Игнорирует `NextBlocked` и `EventsEnabled`)",
+            "deprecated":false,
             "args":[
                 {
                     "name":"Key",
                     "type":"class",
                     "class":"TKey",
-                    "description":"Ключ для нажатой кнопки"
+                    "description":"This button key",
+                    "description-ru":"Ключ этой кнопки"
                 },{
                     "name":"GPE",
                     "type":"boolean",
-                    "description":"Game Processed Event, то есть используется ли для кнопка роблоксом"
+                    "description":"Game Processed Event",
+                    "description-ru":"Game Processed Event (то есть используется ли кнопка роблоксом)"
                 },{
                     "name":"input",
                     "type":"InputObject",
-                    "description":"InputObject как из UIS.InputChanged"
+                    "description":"InputObject",
+                    "description-ru":"InputObject (как из UIS.InputChanged)"
                 }
-            ],
-            "deprecated":false
-        }, "SpecialKeyEvent":{
-            "description":"Event, запускаемый когда специальная кнопка нажата/отжата(Специальная кнопка типо Alt/Ctrl/Shift)(Игнорирует NextBlocked и EventsEnabled)",
-            "type":"TEvent.Event",
+            ]
+        },"SpecialKeyEvent":{
+            "type":"TSignal",
+            "description":"Event fires when the special button is pressed or released (ignores `NextBlocked` and `EventsEnabled`).",
+            "description-ru":"Event, запускаемый когда специальная кнопка нажата/отжата (Игнорирует `NextBlocked` и `EventsEnabled`)",
+            "deprecated":false,
             "args":[
-                {
+               {
                     "name":"input",
                     "type":"InputObject",
-                    "description":"InputObject как из UIS.InputChanged"
+                    "description":"InputObject",
+                    "description-ru":"InputObject (как из UIS.InputChanged)"
                 },{
                     "name":"GPE",
                     "type":"boolean",
-                    "description":"Game Processed Event, то есть используется ли для кнопка роблоксом"
+                    "description":"Game Processed Event",
+                    "description-ru":"Game Processed Event (то есть используется ли кнопка роблоксом)"
                 }
-            ],
-            "deprecated":false
-        }, "Began":{
-            "description":"Event, запускаемый когда кнопка нажата",
-            "type":"TEvent.Event",
+            ]
+        },"Began":{
+            "type":"TSignal",
+            "description":"Event fires when the button is pressed",
+            "description-ru":"Event, запускаемый когда кнопка нажата",
+            "deprecated":false,
             "args":[
                 {
                     "name":"Key",
-                    "type":"TKey",
-                    "description":"TKey нажатой кнопки"
+                    "type":"class",
+                    "class":"TKey",
+                    "description":"This button key",
+                    "description-ru":"Ключ этой кнопки"
                 },{
                     "name":"GPE",
                     "type":"boolean",
-                    "description":"Game Processed Event, то есть используется ли для кнопка роблоксом"
+                    "description":"Game Processed Event",
+                    "description-ru":"Game Processed Event (то есть используется ли кнопка роблоксом)"
                 }
-            ],
-            "deprecated":false
-        }, "Ended":{
-            "description":"Event, запускаемый когда кнопка отжата",
-            "type":"TEvent.Event",
+            ]
+        },"Ended":{
+            "type":"TSignal",
+            "description":"Event fires when the button is released",
+            "description-ru":"Event, запускаемый когда кнопка отжата",
+            "deprecated":false,
             "args":[
                 {
                     "name":"Key",
-                    "type":"TKey",
-                    "description":"TKey нажатой кнопки"
+                    "type":"class",
+                    "class":"TKey",
+                    "description":"This button key",
+                    "description-ru":"Ключ этой кнопки"
                 },{
                     "name":"GPE",
                     "type":"boolean",
-                    "description":"Game Processed Event, то есть используется ли для кнопка роблоксом"
+                    "description":"Game Processed Event",
+                    "description-ru":"Game Processed Event (то есть используется ли кнопка роблоксом)"
                 }
-            ],
-            "deprecated":false
+            ]
         }
-    }
+    }, "binds":{}
 }

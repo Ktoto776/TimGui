@@ -1,39 +1,47 @@
 {
-    "description":"Класс для сохранений",
     "type":"class",
-    "classes":["TClass","Saves"],
-    "writeSameMode":true,
+    "description":"Class for save values for relaunch",
+    "description-ru":"Класс для сохранения значений для перезахода",
+    "class":"Saves",
+    "inherited":["TClass"],
     "deprecated":false,
     "properties":{
         "BaseDir":{
-            "type":"string",
-            "description":"Локальная директория в которой находятся файлы TGui, используемые для сохранений",
-            "canChange":false,
+            "type":"any",
+            "description":"Local directory containing the files TGui, used for save files",
+            "description-ru":"Локальная директория в которой находятся файлы TGui, используемые для сохранений",
+            "readonly":true,
             "deprecated":false
         },"IsSupported":{
-            "type":"string",
-            "description":"Поддерживаются ли сохранения",
-            "canChange":false,
+            "type":"boolean",
+            "description":"Is saving supported?",
+            "description-ru":"Поддерживаются ли сохранения?",
+            "readonly":true,
             "deprecated":false
         }
     }, "methods":{
         "GetSave":{
-            "description":"Получает сохранение по названию",
-            "args":[{
+            "description":"Return save from name",
+            "description-ru":"Возвращает сохранение по названию",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"SaveName",
                     "type":"string",
-                    "description":"Название сохранения",
+                    "description":"Save name",
+                    "description-ru":"Название сохранения",
                     "required":true
                 }
-            ],
-            "return":[{
-                    "name":"save",
+            ],"returns":[
+                {
+                    "name":"Save",
                     "type":"class",
                     "class":"Save",
-                    "description":"Save класс для сохранения"
+                    "description":"Save class for saving",
+                    "description-ru":"Save класс для сохранения"
                 }
-            ], "deprecated":false
+            ]
         }
-    }, 
-    "events":{}
+    }, "events":{}, 
+    "binds":{}
 }

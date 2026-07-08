@@ -1,63 +1,46 @@
 {
-    "description":"Список функций, запускает каждую функцию поочереди с самой недавней и если вернёт не nil вернёт значение",
     "type":"class",
-    "classes":["TClass","Binder"],
-    "writeSameMode":true,
+    "description":"Bind, that is, a list of functions that are launched in turn and serve to replace functions from external scripts",
+    "description-ru":"Бинд, тоесть список функций, которые запускаются по очереди и служат для замены функций из внешних скриптов",
+    "class":"Bind",
+    "inherited":["TClass"],
     "deprecated":false,
-    "properties":{
-        "ArrowAnimation":{
-            "type":"class",
-            "class":"Bind",
-            "description":"Бинд для Анимации стрелочки. Параметры: Arrow:UIBase,isOpened:boolean",
-            "canChange":true,
-            "deprecated":false
-        }
-    }, "methods":{
+    "properties":{}, 
+    "methods":{
         "Bind":{
-            "description":"Вставляет функцию в список",
-            "args":[{
-                    "name":"func",
-                    "type":"(...)->(boolean)",
-                    "description":"Функция",
-                    "required":true
+            "description":"Adds a function that is skipped and returns nil (i.e., if not nil, the following functions are not run)",
+            "description-ru":"Добавляет функцию, которая пропускается вернёт nil(тоесть если не nil, то следующие функции не запускаются)",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"callback",
+                    "type":"function",
+                    "description":"Function",
+                    "description-ru":"Функция",
+                    "required":true,
+                    "dType":"fun(...)"
                 }
-            ],
-            "return":[], 
-            "deprecated":false
-        },
-        "Run":{
-            "description":"Запускает функции с теме же параметрами с чем и запускался Run(...)",
-            "args":[{
-                    "name":"...",
-                    "type":"any...",
-                    "description":"Всё что угодно, может быть написано в классе Binder",
-                    "required":false
-                }
-            ],
-            "return":[{
-                    "name":"response",
-                    "type":"any",
-                    "description":"nil - если не одна функция не была запущена успешно."
-                }
-            ], "deprecated":false
-        }
-    }, 
-    "events":{
-        "OnRun":{
-            "description":"Запускается при Bind:Run",
-            "type":"TEvent",
-            "args":[{
-                    "name":"...",
-                    "type":"any...",
-                    "description":"Всё что угодно, может быть написано в классе Binder"
-                }
-            ],
-            "deprecated":false
-        },"OnBinded":{
-            "description":"Запускается при Bind:Bind",
-            "type":"RBXScriptEvent",
+            ],"returns":[]
+        },"Run":{
+            "description":"Runs functions with the same parameters as Run(...) and returns what the running function returned",
+            "description-ru":"Запускает функции с теме же параметрами с чем и запускался Run(...) и возвращает, то что вернула запущенная функция",
+            "deprecated":false,
             "args":[],
-            "deprecated":false
+            "returns":[]
         }
-    }
+    }, "events":{
+        "OnBinded":{
+            "type":"RBXScriptSignal",
+            "description":"Runs with Bind:Bind(...)",
+            "description-ru":"Запускается при Bind:Bind(...)",
+            "deprecated":false,
+            "args":[]
+        },"OnRun":{
+            "type":"RBXScriptSignal",
+            "description":"Runs with Bind:Run(...), with the same parameters as in the function startup",
+            "description-ru":"Запускается при Bind:Run(...), с теме же параметрами как и в запуске функции",
+            "deprecated":false,
+            "args":[]
+        }
+    }, "binds":{}
 }

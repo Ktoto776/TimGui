@@ -1,46 +1,67 @@
 {
-    "description":"Класс для цветов, использующий пресеты",
     "type":"class",
-    "classes":["TClass","Preset","Assets"],
-    "writeSameMode":true,
+    "description":"Class for Assets, using presets",
+    "description-ru":"Класс для ресурсов, использующий пресеты",
+    "class":"Assets",
+    "inherited":["TClass","Preset"],
     "deprecated":false,
     "properties":{
         "Arrow":{
             "type":"string",
-            "description":"rbxassetid:// на стрелочку открытия",
-            "canChange":true,
+            "description":"rbxassetid:// on the open arrow",
+            "description-ru":"rbxassetid:// на стрелочку открытия",
+            "readonly":false,
             "deprecated":false
         },"Error":{
             "type":"string",
-            "description":"rbxassetid:// на картинку ошибки",
-            "canChange":true,
+            "description":"rbxassetid:// for the error image",
+            "description-ru":"rbxassetid:// на картинку ошибки",
+            "readonly":false,
             "deprecated":false
         },"Loading":{
             "type":"string",
             "description":"rbxassetid:// на картинку загрузки",
-            "canChange":true,
+            "description-ru":"rbxassetid:// на картинку загрузки",
+            "readonly":false,
             "deprecated":false
         },"GroupOpenArrow":{
             "type":"string",
-            "description":"rbxassetid:// на стрелочку статуса группы",
-            "canChange":true,
+            "description":"rbxassetid:// on the group status arrow",
+            "description-ru":"rbxassetid:// на стрелочку статуса группы",
+            "readonly":false,
             "deprecated":false
         },"SequenceOpenArrow":{
             "type":"string",
-            "description":"rbxassetid:// на стрелочку статуса TSequence",
-            "canChange":true,
+            "description":"rbxassetid:// for the TSequence status arrow",
+            "description-ru":"rbxassetid:// на стрелочку статуса TSequence",
+            "readonly":false,
             "deprecated":false
         },"DeleteKeybindObject":{
             "type":"string",
-            "description":"rbxassetid:// на значок удаления Keybind'а",
-            "canChange":true,
+            "description":"rbxassetid:// for the keybind removal icon",
+            "description-ru":"rbxassetid:// на значок удаления Keybind'а",
+            "readonly":false,
             "deprecated":false
         },"AddKeybind":{
             "type":"string",
-            "description":"rbxassetid:// на значок создания Keybind'а",
-            "canChange":true,
+            "description":"rbxassetid:// for the keybind creation icon",
+            "description-ru":"rbxassetid:// на значок создания Keybind'а",
+            "readonly":false,
+            "deprecated":false
+        },"HideTWindow":{
+            "type":"string",
+            "description":"rbxassetid:// for the window hide/show icon",
+            "description-ru":"rbxassetid:// на значок скрывания/раскрывания окна",
+            "readonly":false,
+            "deprecated":false
+        },"CloseTWindow":{
+            "type":"string",
+            "description":"rbxassetid:// for the window close icon",
+            "description-ru":"rbxassetid:// на значок закрывания окна",
+            "readonly":false,
             "deprecated":false
         }
     }, "methods":{}, 
-    "events":{}
+    "events":{}, 
+    "binds":{}
 }

@@ -1,199 +1,280 @@
 {
-    "description":"Класс меню обьекта(часть меню для создания самого меню или под меню).",
     "type":"class",
-    "classes":["TClass","MenuObject"],
-    "writeSameMode":true,
+    "description":"The MenuObject class is part of the menu-related classes (used to create the menu itself or a submenu).",
+    "description-ru":"Класс MenuObject,часть классов для меню (для создания самого меню или подменю).",
+    "class":"MenuObject",
+    "inherited":["TClass"],
     "deprecated":false,
     "properties":{
         "MenuSize":{
             "type":"UDim2",
-            "description":"UDim2 размера меню",
-            "canChange":true,
+            "description":"Menu size",
+            "description-ru":"Размер меню",
+            "readonly":false,
             "deprecated":false
         },"MenuFrame":{
-            "type":"Instance: Frame",
-            "description":"Основной Frame с menu items",
-            "canChange":false,
+            "type":"Frame",
+            "description":"The main Frame with MenuItem's",
+            "description-ru":"Основной Frame с menu items",
+            "readonly":true,
             "deprecated":false
         },"Opened":{
             "type":"boolean",
-            "description":"Открыто ли меню, лучше использовать :Open(Position[UDim2]), иначе откроет там где и в прошлый раз",
-            "canChange":true,
-            "deprecated":false
-        },"OpenBind":{
-            "type":"class",
-            "class":"Bind",
-            "description":"Бинд при открытии(:Open). Параметры: Position:UDim2?",
-            "canChange":false,
+            "description":"If the menu is open, it is better to use `:Open(Position: UDim2)`; otherwise, it will open in the same location as last time.",
+            "description-ru":"Открыто ли меню, лучше использовать `:Open(Position: UDim2)`, иначе откроет там где и в прошлый раз",
+            "readonly":false,
             "deprecated":false
         },"MouseOnThisMenu":{
             "type":"boolean",
-            "description":"Находится ли курсор на этом меню",
-            "canChange":true,
+            "description":"Is mouse in this menu?",
+            "description-ru":"Находится ли курсор в этом меню?",
+            "readonly":false,
             "deprecated":false
         },"MaxXSizeForMenu":{
             "type":"UDim",
-            "description":"Максимальный X размер для всего меню обьекта, при смене меняет MaxXSize всем children",
-            "canChange":true,
+            "description":"The maximum X-dimension for the entire MenuObject; changing it updates the MaxXSize for all children.",
+            "description-ru":"Максимальный X размер для всего MenuObject, при смене меняет MaxXSize всем children",
+            "readonly":false,
             "deprecated":false
         }
-    }, 
-    "methods":{
+    }, "methods":{
         "GetChildren":{
-            "description":"Возвращает массив: {MenuItem, ...}",
+            "description":"Returns children of this MenuObject",
+            "description-ru":"Возращает детей этого MenuObject",
+            "deprecated":false,
             "args":[],
-            "return":[
+            "returns":[
                 {
                     "name":"result",
                     "type":"table",
-                    "description":"array: {MenuItem, ...}"
+                    "dType":"table<number,MenuItem>",
+                    "description":"Children",
+                    "description-ru":"Дети"
                 }
-            ], 
-            "deprecated":false
+            ]
         },"RefreshMenuSize":{
-            "description":"Обновляет размер меню",
+            "description":"Refreshes menu size",
+            "description-ru":"Обновляет размер меню",
+            "deprecated":false,
             "args":[],
-            "return":[], 
-            "deprecated":false
+            "returns":[]
         },"RefreshMenuPosition":{
-            "description":"Обновляет позиции в меню",
+            "description":"Refreshes menu position",
+            "description-ru":"Обновляет позиции в меню",
+            "deprecated":false,
             "args":[],
-            "return":[], 
-            "deprecated":false
+            "returns":[]
         },"Open":{
-            "description":"Возвращает массив: {MenuItem, ...}",
+            "description":"Opens this menu",
+            "description-ru":"Открывает это меню",
+            "deprecated":false,
             "args":[
                 {
                     "name":"Position",
                     "type":"UDim2",
-                    "description":"Позиция меню",
-                    "required":false
-                }
-            ],
-            "return":[], 
-            "deprecated":false
-        },"FindFirstChild":{
-            "description":"Ищет ребёнка по имени",
-            "args":[
-                {
-                    "name":"Name",
-                    "type":"string",
-                    "description":"Имя ребёнка",
+                    "description":"The position at which to open this menu",
+                    "description-ru":"Позиция в которой открыть это меню",
                     "required":true
                 }
-            ],
-            "return":[
-                {
-                    "name":"result",
-                    "type":"table",
-                    "description":"array: {MenuItem, ...}"
-                }
-            ], 
-            "deprecated":false
-        },"CreateMenuItem":{ 
-            "description":"Создаёт menu item с parent = этому MenuObject",
+            ],"returns":[]
+        },"FindFirstChild":{
+            "description":"Looking for a first child by name",
+            "description-ru":"Ищет первого ребёнка по имени",
+            "deprecated":false,
             "args":[
                 {
                     "name":"Name",
                     "type":"string",
-                    "description":"Название",
+                    "description":"Name of child",
+                    "description-ru":"Имя ребёнка",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"child",
+                    "type":"class?",
+                    "class":"MenuItem",
+                    "description":"The first child with this name",
+                    "description-ru":"Первый ребёнок с этим именем"
+                }
+            ]
+        },"CreateMenuItem":{
+            "description":"Creates a MenuItem; with `.Parent` set to this menu.",
+            "description-ru":"Создаёт MenuItem; С `.Parent` в этом меню",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Object name",
+                    "description-ru":"Имя обьекта",
                     "required":true
                 },{
                     "name":"Title",
-                    "type":"string | Translator | table",
-                    "description":"Заголовок(имя которое видит пользователь)",
-                    "required":false
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"Object title",
+                    "description-ru":"Заголовок обьекта",
+                    "required":true
                 }
-            ],
-            "return":[{
-                    "name":"response",
+            ],"returns":[
+                {
+                    "name":"item",
                     "type":"class",
                     "class":"MenuItem",
-                    "description":"Класс MenuItem"
+                    "description":"Object with `.Parent` in this menu",
+                    "description-ru":"Обьект с `.Parent` в этом меню"
                 }
-            ],"deprecated":false
-        },"CreateMenuButton":{ 
-            "description":"Создаёт menu button с parent = этому MenuObject",
+            ]
+        },"CreateMenuButton":{
+            "description":"Creates a MenuButton; with `.Parent` set to this menu.",
+            "description-ru":"Создаёт MenuButton; С `.Parent` в этом меню",
+            "deprecated":false,
             "args":[
                 {
                     "name":"Name",
                     "type":"string",
-                    "description":"Название",
+                    "description":"Object name",
+                    "description-ru":"Имя обьекта",
                     "required":true
                 },{
                     "name":"Title",
-                    "type":"string | Translator | table",
-                    "description":"Заголовок(имя которое видит пользователь)",
-                    "required":false
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"Object title",
+                    "description-ru":"Заголовок обьекта",
+                    "required":true
                 }
-            ],
-            "return":[{
-                    "name":"response",
+            ],"returns":[
+                {
+                    "name":"item",
                     "type":"class",
                     "class":"MenuButton",
-                    "description":"Класс MenuButton"
+                    "description":"Object with `.Parent` in this menu",
+                    "description-ru":"Обьект с `.Parent` в этом меню"
                 }
-            ],"deprecated":false
-        },"CreateMenuText":{ 
-            "description":"Создаёт menu text с parent = этому MenuObject",
+            ]
+        },"CreateMenuToggle":{
+            "description":"Creates a MenuToggle; with `.Parent` set to this menu.",
+            "description-ru":"Создаёт MenuToggle; С `.Parent` в этом меню",
+            "deprecated":false,
             "args":[
                 {
                     "name":"Name",
                     "type":"string",
-                    "description":"Название",
+                    "description":"Object name",
+                    "description-ru":"Имя обьекта",
                     "required":true
                 },{
                     "name":"Title",
-                    "type":"string | Translator | table",
-                    "description":"Заголовок(имя которое видит пользователь)",
-                    "required":false
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"Object title",
+                    "description-ru":"Заголовок обьекта",
+                    "required":true
                 }
-            ],
-            "return":[{
-                    "name":"response",
+            ],"returns":[
+                {
+                    "name":"item",
+                    "type":"class",
+                    "class":"MenuToggle",
+                    "description":"Object with `.Parent` in this menu",
+                    "description-ru":"Обьект с `.Parent` в этом меню"
+                }
+            ]
+        },"CreateMenuText":{
+            "description":"Creates a MenuText; with `.Parent` set to this menu.",
+            "description-ru":"Создаёт MenuText; С `.Parent` в этом меню",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Object name",
+                    "description-ru":"Имя обьекта",
+                    "required":true
+                },{
+                    "name":"Title",
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"Object title",
+                    "description-ru":"Заголовок обьекта",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"item",
                     "type":"class",
                     "class":"MenuText",
-                    "description":"Класс MenuText"
+                    "description":"Object with `.Parent` in this menu",
+                    "description-ru":"Обьект с `.Parent` в этом меню"
                 }
-            ],"deprecated":false
+            ]
         },"Destroy":{
-            "description":"Удаляет обьект",
+            "description":"Destroying this object",
+            "description-ru":"Удаляет этот обьект",
+            "deprecated":false,
             "args":[],
-            "return":[], 
-            "deprecated":false
+            "returns":[]
         }
-    }, 
-    "events":{
+    }, "events":{
         "ChildAdded":{
-            "description":"Запускается когда добавлен новый ребёнок",
-            "type":"TEvent.Event",
-            "args":[{
+            "type":"TSignal",
+            "description":"Triggered when a new child is added.",
+            "description-ru":"Запускается когда добавлен новый ребёнок",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"child",
                     "type":"MenuItem",
-                    "description":"MenuItem который теперь в этом меню"
+                    "description":"The MenuItem that is now in this menu",
+                    "description-ru":"MenuItem который теперь в этом меню"
                 }
-            ],
-            "deprecated":false
+            ]
         },"ChildRemoved":{
-            "description":"Запускается когда убран ребёнок",
-            "type":"TEvent.Event",
-            "args":[{
+            "type":"TSignal",
+            "description":"Triggered when a child is removed.",
+            "description-ru":"Запускается когда убран ребёнок",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"child",
                     "type":"MenuItem",
-                    "description":"MenuItem который теперь не в этом меню"
+                    "description":"The MenuItem that isn't in this menu",
+                    "description-ru":"MenuItem который теперь не в этом меню"
                 }
-            ],
-            "deprecated":false
+            ]
         },"MenuRefreshed":{
-            "description":"Запускается когда позиции обьектов в меню обновились",
             "type":"RBXScriptSignal",
-            "args":[],
-            "deprecated":false
+            "description":"Triggered when the positions of objects in the menu have been updated.",
+            "description-ru":"Запускается когда позиции обьектов в меню обновились",
+            "deprecated":false,
+            "args":[]
         },"MenuCancelled":{
-            "description":"Запускается когда меню было отменено, тоесть последний клик был не по меню, из-за чего меню закрылось",
             "type":"RBXScriptSignal",
-            "args":[],
-            "deprecated":false
+            "description":"It triggers when the menu has been cancelled—that is, when the last click was outside the menu, causing it to close.",
+            "description-ru":"Запускается когда меню было отменено, тоесть последний клик был не по меню, из-за чего меню закрылось",
+            "deprecated":false,
+            "args":[]
+        }
+    }, "binds":{
+        "OpenBind":{
+            "description":"Bind for open (:Open(Position: UDim))",
+            "description-ru":"Бинд для открытии(:Open(Position: UDim2))",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"Position",
+                    "type":"UDim2",
+                    "description":"The position at which to open this menu",
+                    "description-ru":"Позиция в которой открыть это меню",
+                    "required":false
+                }
+            ],"returns":[]
         }
     }
 }

@@ -1,53 +1,26 @@
 {
-    "description":"Класс который создаёт Keybind'ы в TGuiObjects",
     "type":"class",
-    "classes":["TClass","TGuiObject","GuiKeybindingObject"],
-    "writeSameMode":true,
+    "description":"Example class",
+    "description-ru":"Пример класса",
+    "class":"GuiKeybindingObject",
+    "inherited":["TClass","TGuiObject"],
     "deprecated":false,
     "properties":{
         "KeybindingEnabled":{
             "type":"boolean",
-            "description":"Включены ли кейбинды для этого обьекта",
-            "canChange":true,
+            "description":"Are keybinds enabled for this object?",
+            "description-ru":"Включены ли кейбинды для этого обьекта?",
+            "readonly":false,
             "deprecated":false
         },"Keybinder":{
             "type":"class",
             "class":"Keybinder",
-            "description":"Keybinder этого обьекта",
-            "canChange":false,
+            "description":"Keybinder of this object",
+            "description-ru":"Keybinder этого обьекта",
+            "readonly":true,
             "deprecated":false
         }
-    }, "methods":{
-        "ExampleMethod":{
-            "description":"Описание вроде",
-            "args":[{
-                    "name":"nil",
-                    "type":"any?",
-                    "description":"Позиция",
-                    "required":true
-                }
-            ],"return":[
-                {
-                    "name":"null",
-                    "type":"...",
-                    "description":""
-                }
-            ], 
-            "deprecated":false
-        }
-    }, 
-    "events":{
-        "ExampleEvent":{
-            "description":"",
-            "type":"RBXScriptEvent",
-            "args":[
-                {
-                    "name":"nothing",
-                    "type":"",
-                    "description":"IDK"
-                }
-            ],
-            "deprecated":false
-        }
-    }
+    }, "methods":{}, 
+    "events":{}, 
+    "binds":{}
 }

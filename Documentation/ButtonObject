@@ -1,36 +1,39 @@
 {
-    "description":"Класс который содержит TextButton",
     "type":"class",
-    "classes":["TClass","TGuiObject","ButtonObject"],
-    "writeSameMode":true,
+    "description":"Class using for create TGuiObjects with TextButton",
+    "description-ru":"Класс использющийся для создание TGuiObjects с TextButton",
+    "class":"ButtonObject",
+    "inherited":["TClass","TGuiObject"],
     "deprecated":false,
     "properties":{
         "Button":{
-            "type":"Instance: TextButton",
-            "description":"Кнопка.",
-            "canChange":false,
+            "type":"TextButton",
+            "description":"Just button",
+            "description-ru":"Просто кнопка",
+            "readonly":true,
             "deprecated":false
         },"OpenMenuFromButtonObject":{
             "type":"boolean",
-            "description":"Включено ли открытие меню через кнопку(ПК - правая кнопка мыши, Телефоны - зажатие)",
-            "canChange":false,
+            "description":"Do enabled open menu from button object?(PC - right mouse button, phones - holding)",
+            "description-ru":"Включено ли открытие меню через кнопку(ПК - правая кнопка мыши, Телефоны - зажатие)",
+            "readonly":false,
             "deprecated":false
         }
-    }, 
-    "methods":{
+    }, "methods":{
         "Activate":{
-            "description":"Эмулирует нажатие на кнопку",
+            "description":"Emulating button click",
+            "description-ru":"Эмулирует нажатие кнопки",
+            "deprecated":false,
             "args":[],
-            "return":[], 
-            "deprecated":false
+            "returns":[]
         }
-    }, 
-    "events":{
+    }, "events":{
         "Activated":{
-            "description":"Если изменился предок(parent или parent.parent и тд)",
-            "type":"TEvent.Event",
-            "args":[],
-            "deprecated":false
+            "type":"RBXScriptSignal",
+            "description":"Fires on button click or emulating click",
+            "description-ru":"Запускается при нажатии/эмуляции нажатия кнопки",
+            "deprecated":false,
+            "args":[]
         }
-    }
+    }, "binds":{}
 }

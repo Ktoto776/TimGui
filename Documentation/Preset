@@ -1,65 +1,79 @@
 {
-    "description":"Класс для создания пресетов, например цветов и размеров",
     "type":"class",
-    "classes":["TClass","Preset"],
-    "writeSameMode":true,
+    "description":"Example class",
+    "description-ru":"Пример класса",
+    "class":"Example",
+    "inherited":["TClass"],
     "deprecated":false,
     "properties":{
         "PresetName":{
             "type":"string",
-            "description":"Имя пресета",
-            "canChange":true,
+            "description":"Preset name, default 'Default'",
+            "description-ru":"Имя пресета, по умолчанию 'Default'",
+            "readonly":false,
             "deprecated":false
         },"Default":{
             "type":"table",
-            "description":"Стандартный пресет, нету отдельных функций в его сохранение.",
-            "canChange":true,
+            "description":"Standard preset, no separate functions for saving it.",
+            "description-ru":"Стандартный пресет, нету отдельных функций в его сохранение.",
+            "readonly":false,
             "deprecated":false
         }
     }, "methods":{
-       "Refresh":{
-            "description":"Обновляет все пресеты",
-            "args":[{
-                    "name":"Preset",
-                    "type":"table",
-                    "description":"Таблица с значениями(может быть массивом с [type,...]), если есть запускает :Load()",
-                    "required":false
-                }
-            ],"return":[], 
-            "deprecated":false
-        },"Load":{
-            "description":"Обновляет все пресеты",
-            "args":[{
-                    "name":"Preset",
-                    "type":"table",
-                    "description":"Таблица с значениями(может быть массивом с [type,...])",
-                    "required":true
-                }
-            ],"return":[], 
-            "deprecated":false
-        }, "GetPreset":{
-            "description":"Получает все значения в пресете",
-            "args":[{
-                    "name":"dontUseRBXValues",
-                    "type":"boolean",
-                    "description":"Если true, то возвращает массив с массивами [type,...]",
-                    "required":false
-                }
-            ],"return":[
+        "Load":{
+            "description":"Load preset",
+            "description-ru":"Загружает пресет",
+            "deprecated":false,
+            "args":[
                 {
                     "name":"Preset",
-                    "description":"Загруженный пресет",
-                    "type":"table"
+                    "type":"table",
+                    "description":"The table with values(the value can be an array with [type,...] - an alternative for preserving types from rb), if any, runs :Load()",
+                    "description-ru":"Таблица с значениями(значение может быть массивом с [type,...]-альтернатива для сохранения типов из рб), если есть запускает :Load()",
+                    "required":true
                 }
-            ], 
-            "deprecated":false
+            ],"returns":[]
+        },"Refresh":{
+            "description":"Update preset",
+            "description-ru":"Обновляет пресет",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"Preset",
+                    "type":"table",
+                    "description":"The table with values(the value can be an array with [type,...] - an alternative for preserving types from rb), if any, runs :Load()",
+                    "description-ru":"Таблица с значениями(значение может быть массивом с [type,...]-альтернатива для сохранения типов из рб), если есть запускает :Load()",
+                    "required":false
+                }
+            ],"returns":[]
+        },"GetPreset":{
+            "description":"Gets all values in a preset",
+            "description-ru":"Получает все значения в пресете",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"dontUseRBXValues",
+                    "type":"boolean",
+                    "description":"If true, it returns a table with data (if the type is from Roblox, it will become an array [type,...])",
+                    "description-ru":"Если true, то возвращает таблицу с данными (если тип из роблокса то станет массивом [type,...])",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"Preset",
+                    "type":"table",
+                    "description":"Loaded preset",
+                    "description-ru":"Загруженный пресет"
+                }
+            ]
         }
     }, "events":{
         "OnRefresh":{
-            "description":"Запускается при Preset.Refresh",
-            "type":"RBXScriptEvent",
-            "args":[],
-            "deprecated":false
+            "type":"RBXScriptSignal",
+            "description":"Fired on Preset:Refresh() or Preset:Load()",
+            "description-ru":"Запускается при Preset:Refresh() или Preset:Load()",
+            "deprecated":false,
+            "args":[]
         }
-    }
+    }, "binds":{}
 }

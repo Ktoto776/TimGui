@@ -1,8 +1,12 @@
-local result = "---@meta"
-local DocumentationPath = "TimGUI-V3/NewDocumentation/"
+local result = ""
+local data = _G.DefinitionSetup
+local DocumentationPath = (data and data.DocsPath) or "TimGUI-V3/Documentation/"
 local HttpService = game:GetService("HttpService")
-local russianLang = false
+local russianLang = data and data.russianLang
 local tab = "    "
+if data and data.noUnknownTypesWarn then
+    result = result.."---@diagnostic disable: undefined-type\n"
+end result = result.."---@meta"
 
 local function NewProperty(k,v)
     local prop = ""
@@ -14,11 +18,13 @@ local function NewProperty(k,v)
         prop = "--[["..desc.." ]]\n"
     end if v.readonly then
         prop = prop.."--*[ReadOnly]*\n"
+    end if v.isWriteSameModeException then
+        prop = prop.."--*[Exception for WriteSameMode]*\n"
     end -- Set deprecated
     if v.deprecated then
         prop = prop.."--@deprecated\n"
     end -- MAIN + type
-    prop = prop.."---@field "..k.." "..(v.class or v.type)
+    prop = prop.."---@field "..k.." "..(v.dType or v.class or v.type)
     return prop
 end
 local function NewMethod(k,v,ClassName)
@@ -42,7 +48,7 @@ local function NewMethod(k,v,ClassName)
                 desc = arg["description-ru"]
             end if not desc then
                 desc = ""
-            end prop = prop.."---@param "..arg.name.." "..(arg.class or arg.type).." "..desc
+            end prop = prop.."---@param "..arg.name.." "..(arg.dType or arg.class or arg.type).." "..desc
             if not arg.required then
                 prop = prop.."?"
             end prop = prop.."\n"
@@ -55,7 +61,7 @@ local function NewMethod(k,v,ClassName)
                 desc = ret["description-ru"]
             end if not desc then
                 desc = ""
-            end prop = prop.."---@return "..(ret.class or ret.type).." "..ret.name.." "..desc.."\n"
+            end prop = prop.."---@return "..(ret.dType or ret.class or ret.type).." "..ret.name.." "..desc.."\n"
         end
     end
     -- MAIN + type
@@ -92,13 +98,68 @@ local function NewEvent(k,v,ClassName)
     if v.args then
         for k,v in v.args do
             if k~=1 then args = args.."," returnArgs = returnArgs.."\n" end
-            args = args..v.name..": "..v.type
-            returnArgs = returnArgs.."---@return "..(v.class or v.type).." "..v.name
+            args = args..v.name..":"..(v.class or v.type)
+            returnArgs = returnArgs.."---@return "..(v.dType or v.class or v.type).." "..v.name
         end
     end
     prop = string.gsub(prop,"%%callback%%",args)
     prop = string.gsub(prop,"%%returnCallback%%",returnArgs)
-    prop = prop.."\n"..ClassName.."."..k.."="..signalName
+    prop = prop.."\n"..ClassName.."['"..k.."']="..signalName
+    return prop
+end
+---@return TClass name
+-- callback: Arg:any, returnCallback RunF: ---@param, Bind: string
+local BindInstance = [[
+%Bind% = {}
+---@param callback fun(%callback%)
+---*return (%returnArgsDesc%)*
+function %Bind%:Bind(callback:(%callback%)->()) end
+%RunF%
+function %Bind%:Run(%callback%) end
+
+%Bind%_OnRun = {}
+---@param callback fun(%callback%)
+---@return RBXScriptConnection
+function %Bind%_OnRun:Connect(callback:(%callback%)->()) end
+---@param callback fun(%callback%)
+---@return RBXScriptConnection
+function %Bind%_OnRun:Once(callback:(%callback%)->()) end
+%returnCallback%
+function %Bind%_OnRun:Wait() end
+%Bind%.OnRun = %Bind%_OnRun
+]]
+local function NewBind(k,v,ClassName)
+    local prop = "---@type Bind\n"
+    -- Set Description
+    local desc = v.description
+    if not desc or russianLang then
+        desc = v["description-ru"]
+    end if desc then
+        prop = prop.."--[["..desc.." ]]\n"
+    end -- Set deprecated
+    if v.deprecated then
+        prop = prop.."--@deprecated\n"
+    end -- MAIN + type
+    prop = prop..BindInstance
+    local BindName = k.."_Bind"
+    prop = string.gsub(prop,"%%Bind%%",BindName)
+    local callback,retCall,RunF = "","",""
+    for k,v in v.args do
+        if k~=1 then callback = callback.."," retCall = retCall.."\n" RunF=RunF.."\n" end
+        callback = callback..v.name..": "..(v.class or v.type)
+        retCall = retCall.."---@return "..(v.dType or v.class or v.type).." "..v.name
+        RunF=RunF.."---@param "..v.name.." "..(v.dType or v.class or v.type)
+    end prop = string.gsub(prop,"%%callback%%",callback)
+    prop = string.gsub(prop,"%%returnCallback%%",retCall)
+    local returnArgsDesc = ""
+    for k,v in v.returns do
+        if k~=1 then returnArgsDesc=returnArgsDesc..", " end
+        RunF=RunF.."\n"
+        RunF=RunF.."---@return "..(v.dType or v.class or v.type).." "..v.name
+        returnArgsDesc = returnArgsDesc..v.name..": "..(v.class or v.type)
+    end prop = string.gsub(prop,"%%RunF%%",RunF)
+    prop = string.gsub(prop,"%%returnArgsDesc%%",returnArgsDesc)
+    prop = prop..ClassName.."['"..k.."']= "..BindName
     return prop
 end
 
@@ -144,6 +205,12 @@ local function NewObject(ClassName) print(ClassName)
         for k,v in data.events do
             print(tab..k.." [event]")
             Object = Object.."\n"..NewEvent(k,v,ClassName)
+        end
+    end -- Binds(class)
+    if data.binds then
+        for k,v in data.binds do
+            print(tab..k.." [bind]")
+            Object = Object.."\n"..NewBind(k,v,ClassName)
         end
     end
     return Object

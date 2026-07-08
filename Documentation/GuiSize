@@ -1,201 +1,241 @@
 {
-    "description":"Класс для цветов, использующий пресеты",
     "type":"class",
-    "classes":["TClass","Preset","GuiSize"],
-    "writeSameMode":true,
+    "description":"Class for customizing interface dimensions",
+    "description-ru":"Класс для кастомизации размеров интерфейса",
+    "class":"GuiSize",
+    "inherited":["TClass","Preset"],
     "deprecated":false,
     "properties":{
         "ButtonCornerRadius":{
             "type":"UDim",
-            "description":"Радиус скруглённых кнопок",
-            "canChange":true,
+            "description":"Button rounding corner radius",
+            "description-ru":"Радиус скруглённых углов у кнопок",
+            "readonly":false,
             "deprecated":false
         },"HeaderSize":{
             "type":"UDim",
-            "description":"Высота заголовка",
-            "canChange":true,
+            "description":"Header height",
+            "description-ru":"Высота заголовка окна",
+            "readonly":false,
             "deprecated":false
         },"SayingFontSize":{
             "type":"UDim",
-            "description":"Размер шрифта текста над кнопкой открытия(Scale - размер кнопки)",
-            "canChange":true,
+            "description":"Font size of the text above the open button (Scale – button size)",
+            "description-ru":"Размер шрифта текста над кнопкой открытия(Scale - размер кнопки)",
+            "readonly":false,
             "deprecated":false
         },"AnchorPoint":{
-            "type":"UDim2",
-            "description":"Размер заголовка",
-            "canChange":true,
+            "type":"Vector2",
+            "description":"AnchorPoint of main Frame",
+            "description-ru":"Точка крепления основного Frame",
+            "readonly":false,
             "deprecated":false
         },"Height":{
             "type":"UDim",
-            "description":"Высота основы(без заголовка)",
-            "canChange":true,
+            "description":"Base height (without header)",
+            "description-ru":"Высота основы(без заголовка)",
+            "readonly":false,
             "deprecated":false
         },"Width":{
             "type":"UDim",
-            "description":"Ширина основы",
-            "canChange":true,
+            "description":"Base width",
+            "description-ru":"Ширина основы",
+            "readonly":false,
             "deprecated":false
         },"XPosition":{
             "type":"UDim",
-            "description":"X координата для позиции",
-            "canChange":true,
+            "description":"X Base position",
+            "description-ru":"X Позиция основы",
+            "readonly":false,
             "deprecated":false
         },"YPosition":{
             "type":"UDim",
-            "description":"X координата для позиции",
-            "canChange":true,
+            "description":"Y Base position",
+            "description-ru":"Y Позиция основы",
+            "readonly":false,
             "deprecated":false
         },"GroupsSize":{
             "type":"UDim",
-            "description":"Размер для групп",
-            "canChange":true,
+            "description":"Global groups scroll height",
+            "description-ru":"Ширина скролла глобальных групп",
+            "readonly":false,
             "deprecated":false
         },"DefaultPositionEnabled":{
             "type":"boolean",
-            "description":"Включены ли позиции по умолчанию",
-            "canChange":true,
+            "description":"Are the default size and position settings for the main frame enabled?",
+            "description-ru":"Включена ли стандартная установка размеру и позиции основному Frame",
+            "readonly":false,
             "deprecated":false
         },"GroupOpenImageSize":{
             "type":"UDim",
-            "description":"Размер для статуса открытия не глобальных групп. Scale - Y размер кнопки",
-            "canChange":true,
+            "description":"Size for the open-state icon of non-global groups. Scale — Y-dimension of the button.",
+            "description-ru":"Размер для иконки статуса открытия не глобальных групп. Scale - Y размер кнопки",
+            "readonly":false,
             "deprecated":false
         },"NotGlobalGroupIndent":{
             "type":"UDim",
-            "description":"Размер отступа не глобальных групп",
-            "canChange":true,
+            "description":"Size of the invisible part of the margin for non-global groups (on one side only)",
+            "description-ru":"Размер невидимой части отступа не глобальных групп(только с одной стороны)",
+            "readonly":false,
             "deprecated":false
         },"NotGlobalGroupVisibleIndent":{
             "type":"UDim",
-            "description":"Размер видимого отступа не глобальных групп",
-            "canChange":true,
+            "description":"Size of the visible part of the margin for non-global groups",
+            "description-ru":"Размер видимой части отступа не глобальных групп",
+            "readonly":false,
             "deprecated":false
         },"SequenceOpenImageSize":{
             "type":"UDim",
-            "description":"Размер для статуса открытия TSequence. Scale - Y размер кнопки",
-            "canChange":true,
+            "description":"Size for the open-state icon of TSequence. Scale — Y-dimension of the button.",
+            "description-ru":"Размер для иконки статуса открытия не TSequence. Scale - Y размер кнопки",
+            "readonly":false,
             "deprecated":false
         },"NotGlobalSequenceIndent":{
             "type":"UDim",
-            "description":"Размер отступа TSequence",
-            "canChange":true,
+            "description":"Size of the invisible part of the margin for TSequence (on one side only)",
+            "description-ru":"Размер невидимой части отступа не TSequence(только с одной стороны)",
+            "readonly":false,
             "deprecated":false
         },"NotGlobalSequenceVisibleIndent":{
             "type":"UDim",
-            "description":"Размер видимого отступа TSequence",
-            "canChange":true,
+            "description":"Size of the visible part of the margin for TSequence",
+            "description-ru":"Размер видимой части отступа не TSequence",
+            "readonly":false,
             "deprecated":false
         },"SequenceObjectSize":{
             "type":"UDim2",
-            "description":"Размер обьектов в TSequence",
-            "canChange":true,
+            "description":"Size of objects in TSequence",
+            "description-ru":"Размер обьектов в TSequence",
+            "readonly":false,
             "deprecated":false
         },"SequenceObjectGrabSize":{
             "type":"UDim",
-            "description":"Размер кнопки для перемещения дли обьекта TSequence. Scale - Y всего frame",
-            "canChange":true,
-            "deprecated":false
-        },"TWindowCornerRadius":{
-            "type":"UDim",
-            "description":"Скругление верхних углов(заголовка) TWindow",
-            "canChange":true,
+            "description":"Size of the movement handle for the TSequence object. Scale - Y of the entire frame.",
+            "description-ru":"Размер кнопки для перемещения для обьекта TSequence. Scale - Y всего frame",
+            "readonly":false,
             "deprecated":false
         },"TWindowHeaderCornerRadius":{
             "type":"UDim",
-            "description":"Скругление нижних углов(фона) TWindow",
-            "canChange":true,
+            "description":"Rounding radius the top corners (header) of TWindow",
+            "description-ru":"Радиус скругления верхних углов(заголовка) TWindow",
+            "readonly":false,
+            "deprecated":false
+        },"TWindowCornerRadius":{
+            "type":"UDim",
+            "description":"Rounding radius the bottom corners (header) of TWindow",
+            "description-ru":"Радиус скругления нижних углов(заголовка) TWindow",
+            "readonly":false,
             "deprecated":false
         },"ConfigsWindowConfigsSize":{
             "type":"UDim",
-            "description":"Y Размер кнопки конфигурации",
-            "canChange":true,
+            "description":"Y Configuration size within the configurator",
+            "description-ru":"Y Размер конфигураций в размере конфигуратора",
+            "readonly":false,
             "deprecated":false
         },"ConfigsWindowConfigsFrameSize":{
             "type":"UDim",
-            "description":"X Размер левой части окна, там где находится список конфигураций",
-            "canChange":true,
+            "description":"X size of the configuration list (on the left) in the configurator",
+            "description-ru":"X размер списка конфигураций(слево) в конфигураторе",
+            "readonly":false,
             "deprecated":false
         },"ConfigsSeparatorSize":{
             "type":"UDim",
-            "description":"X Размер разделения окна конфигураций(между списком конфигов и выбранным конфигом)",
-            "canChange":true,
+            "description":"X Configuration window split size (between the list of configurations and the selected configuration)",
+            "description-ru":"X Размер разделения окна конфигураций(между списком конфигов и выбранным конфигом)",
+            "readonly":false,
             "deprecated":false
         },"ConfigsTitleSize":{
             "type":"UDim2",
-            "description":"Размер заголовка(названия) выбранного конфига",
-            "canChange":true,
+            "description":"Size of the selected config's header (name) in configurator",
+            "description-ru":"Размер заголовка(названия) выбранного конфига в конфигураторе",
+            "readonly":false,
             "deprecated":false
         },"PromptYIndent":{
-            "type":"UDim",
-            "description":"Отступ промта сверху и снизу",
-            "canChange":true,
+            "type":"UDim2",
+            "description":"Top and bottom prompt spacing",
+            "description-ru":"Отступ промта сверху и снизу",
+            "readonly":false,
             "deprecated":false
         },"TextBoxPromptSize":{
             "type":"UDim2",
-            "description":"Размер TextBox'а в TextPrompt'е",
-            "canChange":true,
+            "description":"TextBox size in TextPrompt",
+            "description-ru":"Размер TextBox'а в TextPrompt'е",
+            "readonly":false,
             "deprecated":false
         },"TextPromptButtonsSize":{
             "type":"UDim2",
-            "description":"Размер Frame с кнопками в TextPrompt'е",
-            "canChange":true,
+            "description":"Frame with buttons size in TextPrompt",
+            "description-ru":"Размер Frame с кнопками в TextPrompt'е",
+            "readonly":false,
             "deprecated":false
         },"TextPromptXAnchor":{
             "type":"number",
-            "description":"XAlign, к чему прикрепить кнопки и TextBox в TextPrompt(0-лево,0.5-центр,1-право)",
-            "canChange":true,
+            "description":"XAlign: where to anchor the buttons and TextBox within the TextPrompt (0 = left, 0.5 = center, 1 = right).",
+            "description-ru":"XAlign, к чему прикрепить кнопки и TextBox в TextPrompt(0-лево,0.5-центр,1-право)",
+            "readonly":false,
             "deprecated":false
         },"TextPromptDescriptionTextSize":{
             "type":"number",
-            "description":"Размер текста для описания в TextPrompt",
-            "canChange":true,
+            "description":"Text size for the description in TextPrompt",
+            "description-ru":"Размер текста для описания в TextPrompt",
+            "readonly":false,
             "deprecated":false
         },"MenuItemYSize":{
             "type":"number",
-            "description":"Размер Y MenuItem'а",
-            "canChange":true,
+            "description":"Y-size of the MenuItem",
+            "description-ru":"Размер Y MenuItem'а",
+            "readonly":false,
             "deprecated":false
         },"MenuItemTextSize":{
             "type":"number",
-            "description":"Размер текста MenuItem'а",
-            "canChange":true,
+            "description":"MenuItem text size",
+            "description-ru":"Размер текста MenuItem'а",
+            "readonly":false,
             "deprecated":false
         },"MenuTextTextSize":{
             "type":"number",
-            "description":"Размер текста MenuText'а",
-            "canChange":true,
+            "description":"MenuText text size",
+            "description-ru":"Размер текста MenuText'а",
+            "readonly":false,
             "deprecated":false
         },"KeybindYSize":{
             "type":"UDim",
-            "description":"Y размер Keybind в Keybinder",
-            "canChange":true,
+            "description":"Y size Keybind in Keybinder",
+            "description-ru":"Y размер Keybind в Keybinder",
+            "readonly":false,
             "deprecated":false
         },"KeybindCornerRadius":{
             "type":"UDim",
-            "description":"Радиус скругления Keybind",
-            "canChange":true,
+            "description":"Keybind for corner radius",
+            "description-ru":"Радиус скругления Keybind",
+            "readonly":false,
             "deprecated":false
         },"KeybindButtonsCornerRadius":{
             "type":"UDim",
-            "description":"Радиус скругления кнопок внутри Keybind",
-            "canChange":true,
+            "description":"Button corner radius within the keybind",
+            "description-ru":"Радиус скругления кнопок внутри Keybind",
+            "readonly":false,
             "deprecated":false
         },"KeybinderScrollBarThickness":{
             "type":"number",
-            "description":"Толщина ScrollBar'а в Keybinder'е",
-            "canChange":true,
+            "description":"Scrollbar thickness in the keybinder",
+            "description-ru":"Толщина ScrollBar'а в Keybinder'е",
+            "readonly":false,
             "deprecated":false
         },"KeybinderTitleSize":{
             "type":"UDim2",
-            "description":"Размер заголовка в Keybinder'е",
-            "canChange":true,
+            "description":"Header size in Keybinder",
+            "description-ru":"Размер заголовка в Keybinder'е",
+            "readonly":false,
             "deprecated":false
         },"KeybinderButtonsYSize":{
             "type":"UDim",
-            "description":"Y Размер нижних кнопок в Keybinder'е",
-            "canChange":true,
+            "description":"Y Size of the bottom buttons in the Keybinder",
+            "description-ru":"Y Размер нижних кнопок в Keybinder'е",
+            "readonly":false,
             "deprecated":false
         }
     }, "methods":{}, 
-    "events":{}
+    "events":{}, 
+    "binds":{}
 }

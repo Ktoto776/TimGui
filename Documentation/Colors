@@ -1,161 +1,193 @@
 {
-    "description":"Класс для цветов, использующий пресеты",
     "type":"class",
-    "classes":["TClass","Preset","Colors"],
-    "writeSameMode":true,
+    "description":"Class for colors, using preset",
+    "description-ru":"Класс для цветов, использующий пресет",
+    "class":"Colors",
+    "inherited":["TClass","Preset"],
     "deprecated":false,
     "properties":{
         "ArrowColor":{
             "type":"Color3",
-            "description":"Цвет стрелочки открытия",
-            "canChange":true,
+            "description":"Open arrow color",
+            "description-ru":"Цвет стрелочки открытия",
+            "readonly":false,
             "deprecated":false
         },"HeaderSeparatorColor":{
             "type":"Color3",
-            "description":"Цвет разделителя в заголовке",
-            "canChange":true,
+            "description":"Header separator color",
+            "description-ru":"Цвет разделителя в заголовке",
+            "readonly":false,
             "deprecated":false
         },"HeaderFirstNameColor":{
             "type":"Color3",
-            "description":"Цвет первой части имени в заголовке",
-            "canChange":true,
+            "description":"Color of the first part of the name in the header",
+            "description-ru":"Цвет первой части имени в заголовке",
+            "readonly":false,
             "deprecated":false
         },"HeaderSecondNameColor":{
             "type":"Color3",
-            "description":"Цвет второй части имени в заголовке",
-            "canChange":true,
+            "description":"Color of the second part of the name in the header",
+            "description-ru":"Цвет второй части имени в заголовке",
+            "readonly":false,
             "deprecated":false
         },"HeaderBackgroundColor":{
             "type":"Color3",
-            "description":"Цвет фона в заголовке",
-            "canChange":true,
+            "description":"Header background color",
+            "description-ru":"Цвет фона в заголовке",
+            "readonly":false,
             "deprecated":false
         },"MainBackgroundColor":{
             "type":"Color3",
-            "description":"Цвет фона",
-            "canChange":true,
+            "description":"Background color",
+            "description-ru":"Цвет фона",
+            "readonly":false,
             "deprecated":false
         },"GroupsBackgroundColor":{
             "type":"Color3",
-            "description":"Цвет фона в Группах",
-            "canChange":true,
+            "description":"Groups background color",
+            "description-ru":"Цвет фона в Группах",
+            "readonly":false,
             "deprecated":false
         },"ErrorColor":{
             "type":"Color3",
-            "description":"Цвет ошибки на кнопке открытия",
-            "canChange":true,
+            "description":"Error color on the status button (instead of Open button)",
+            "description-ru":"Цвет ошибки на кнопке статуса(вместо кнопки открытия)",
+            "readonly":false,
             "deprecated":false
         },"ButtonBackground":{
             "type":"Color3",
-            "description":"Цвет фона кнопок",
-            "canChange":true,
+            "description":"Button background color",
+            "description-ru":"Цвет фона кнопок",
+            "readonly":false,
             "deprecated":false
         },"TextColor":{
             "type":"Color3",
-            "description":"Цвет текста кнопок",
-            "canChange":true,
+            "description":"Button text color",
+            "description-ru":"Цвет текста кнопок",
+            "readonly":false,
             "deprecated":false
         },"GroupOpenArrowColor":{
             "type":"Color3",
-            "description":"Цвет стрелочки для статуса открытия не глобальных групп",
-            "canChange":true,
+            "description":"Color of the arrow for the expansion status of non-global groups",
+            "description-ru":"Цвет стрелочки для статуса открытия не глобальных групп",
+            "readonly":false,
             "deprecated":false
         },"GroupVisibleIndent":{
             "type":"Color3",
-            "description":"Цвет видимого отступа не глобальных групп",
-            "canChange":true,
+            "description":"Color of the visible indentation for non-global groups",
+            "description-ru":"Цвет видимого отступа не глобальных групп",
+            "readonly":false,
             "deprecated":false
         },"TTextColor":{
             "type":"Color3",
-            "description":"Цвет текста для Обьектов без фона, например TText",
-            "canChange":true,
+            "description":"Text color for objects without background, for example: TText",
+            "description-ru":"Цвет текста для Обьектов без фона, например: TText",
+            "readonly":false,
             "deprecated":false
         },"TWindowBackgroundColor":{
             "type":"Color3",
-            "description":"Цвет фона у TWindow",
-            "canChange":true,
+            "description":"TWindow background color",
+            "description-ru":"Цвет фона у TWindow",
+            "readonly":false,
             "deprecated":false
         },"TWindowHeaderBackgroundColor":{
             "type":"Color3",
-            "description":"Цвет фона у Header в TWindow",
-            "canChange":true,
+            "description":"Header background color in TWindow",
+            "description-ru":"Цвет фона у Header в TWindow",
+            "readonly":false,
             "deprecated":false
         },"TWindowCloseColor":{
             "type":"Color3",
-            "description":"Цвет картинки закрытия окна TWindow",
-            "canChange":true,
+            "description":"TWindow close button picture color",
+            "description-ru":"Цвет картинки у кнопки закрытия окна TWindow",
+            "readonly":false,
             "deprecated":false
         },"TWindowBackgroundCloseColor":{
             "type":"Color3",
-            "description":"Цвет фона закрытия окна TWindow(появляется при наводке)",
-            "canChange":true,
+            "description":"Background color of the TWindow close button on hover",
+            "description-ru":"Цвет фона у кнопки закрытия TWindow, появляющийся при наводке",
+            "readonly":false,
             "deprecated":false
         },"TWindowHeaderTextColor":{
             "type":"Color3",
-            "description":"Цвет текста в заголовке",
-            "canChange":true,
+            "description":"Header text color in TWindow",
+            "description-ru":"Цвет текста заголовка в TWindow",
+            "readonly":false,
             "deprecated":false
         },"OnTWindowTextColor":{
             "type":"Color3",
-            "description":"Цвет текстов на окнах(TWindow)",
-            "canChange":true,
+            "description":"Text color for TWindow's",
+            "description-ru":"Цвет текстов на TWindow'ах",
+            "readonly":false,
             "deprecated":false
         },"OnTWindowTextBoxBackgroundColor":{
             "type":"Color3",
-            "description":"Цвет фона TextBox'а на окне",
-            "canChange":true,
+            "description":"Background color of the TextBox on TWindow",
+            "description-ru":"Цвет фона TextBox'а на окне",
+            "readonly":false,
             "deprecated":false
         },"OnTWindowTextBoxTextColor":{
             "type":"Color3",
-            "description":"Цвет текста TextBox'а на окне",
-            "canChange":true,
+            "description":"Text color of the TextBox on TWindow",
+            "description-ru":"Цвет текста TextBox'а на окне",
+            "readonly":false,
             "deprecated":false
         },"OnTWindowConfirmButtonColor":{
             "type":"Color3",
-            "description":"Цвет кнопки подтверждения на окне(обычно промтах)",
-            "canChange":true,
+            "description":"Confirm button color in a TWindow(usually in prompts)",
+            "description-ru":"Цвет кнопки подтверждения на окне(обычно промтах)",
+            "readonly":false,
             "deprecated":false
         },"OnTWindowConfirmButtonTextColor":{
             "type":"Color3",
-            "description":"Цвет текста кнопки подтверждения на окне(обычно промтах)",
-            "canChange":true,
+            "description":"Text color of the confirm button in a TWindow(usually in prompts)",
+            "description-ru":"Цвет текста кнопки подтверждения на окне(обычно промтах)",
+            "readonly":false,
             "deprecated":false
         },"OnTWindowCancelButtonColor":{
             "type":"Color3",
-            "description":"Цвет кнопки отмены на окне(обычно промтах)",
-            "canChange":true,
+            "description":"Cancel button color in a TWindow(usually in prompts)",
+            "description-ru":"Цвет кнопки отмены на окне(обычно промтах)",
+            "readonly":false,
             "deprecated":false
         },"OnTWindowCancelButtonTextColor":{
             "type":"Color3",
-            "description":"Цвет текста кнопки отмены на окне(обычно промтах)",
-            "canChange":true,
+            "description":"Text color of the cancel button in a TWindow(usually in prompts)",
+            "description-ru":"Цвет текста кнопки отмены на окне(обычно промтах)",
+            "readonly":false,
             "deprecated":false
         },"MenuBackgroundTextColor":{
             "type":"Color3",
-            "description":"Цвет фона MenuItem в Menu",
-            "canChange":true,
+            "description":"MenuItem background color in a Menu",
+            "description-ru":"Цвет фона MenuItem в Menu",
+            "readonly":false,
             "deprecated":false
         },"MenuItemTextColor":{
             "type":"Color3",
-            "description":"Цвет текста MenuItem в Menu",
-            "canChange":true,
+            "description":"MenuItem text color in a Menu",
+            "description-ru":"Цвет текста MenuItem в Menu",
+            "readonly":false,
             "deprecated":false
         },"MenuTextTextColor":{
             "type":"Color3",
-            "description":"Цвет текста MenuText в Menu",
-            "canChange":true,
+            "description":"MenuText text color in a Menu",
+            "description-ru":"Цвет текста MenuText в Menu",
+            "readonly":false,
             "deprecated":false
         },"ButtonOnButtonBackground":{
             "type":"Color3",
-            "description":"Цвет кнопки в кнопке",
-            "canChange":true,
+            "description":"Color of button on button",
+            "description-ru":"Цвет кнопки в кнопке",
+            "readonly":false,
             "deprecated":false
         },"ButtonOnButtonMain":{
             "type":"Color3",
-            "description":"Цвет чего либо(текста, картинки и тд) кнопки в кнопки",
-            "canChange":true,
+            "description":"Main color(Text/Image or other) button on button",
+            "description-ru":"Основной цвет(текст/картинка или другое) кнопки в кнопки",
+            "readonly":false,
             "deprecated":false
         }
     }, "methods":{}, 
-    "events":{}
+    "events":{},
+    "binds":{}
 }

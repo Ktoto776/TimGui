@@ -1,27 +1,53 @@
 {
-    "description":"Класс для цветов, использующий пресеты",
     "type":"class",
-    "classes":["TClass","Preset","Colors","SpecialColors"],
-    "writeSameMode":true,
+    "description":"Color class using presets",
+    "description-ru":"Класс для цветов, использующий пресеты.",
+    "class":"SpecialColors",
+    "inherited":["TClass","Preset","Colors"],
     "deprecated":false,
-    "properties":{},
+    "properties":{}, 
     "methods":{
         "GetColor":{
-            "description":"Получает цвет, если нету здесь то глобальный",
-            "args":[{
-                    "name":"propertyName",
+            "description":"Gets the color, if it is not here, then the global one",
+            "description-ru":"Получает цвет, если нету здесь то глобальный",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"colorName",
                     "type":"string",
-                    "description":"Имя цвета",
+                    "description":"Color name",
+                    "description-ru":"Имя цвета",
                     "required":true
                 }
-            ],
-            "return":[{
+            ],"returns":[
+                {
                     "name":"response",
-                    "type":"Color3 | nil",
-                    "description":"Цвет"
+                    "type":"Color3?",
+                    "description":"Color",
+                    "description-ru":"Цвет"
                 }
-            ], "deprecated":false
+            ]
+        },"GetColorChangedSignal":{
+            "description":"Returns an that is fires when the color changes.",
+            "description-ru":"Возвращает RBXScriptSignal, который запускается при смене цвета",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"colorName",
+                    "type":"string",
+                    "description":"Color name",
+                    "description-ru":"Имя цвета",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"event",
+                    "type":"RBXScriptSignal",
+                    "description":"An event fires when the selected color changes",
+                    "description-ru":"Эвент, запускаемый при смене выбранного цвета"
+                }
+            ]
         }
-    },
-    "events":{}
+    }, "events":{},
+    "binds":{}
 }

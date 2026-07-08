@@ -36,6 +36,7 @@
                 {
                     "name":"response",
                     "type":"table",
+                    "dType":"table<number,string>",
                     "description":"Array: {string,...}",
                     "description-ru":"Массив {string,...}"
                 }
@@ -124,5 +125,5 @@
                 }
             ]
         }
-    }
+    }, "binds":{}
 }

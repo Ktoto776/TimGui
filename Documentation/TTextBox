@@ -1,82 +1,118 @@
 {
-    "description":"Класс кнопок в интерфейсе, просто пустая кнопка",
     "type":"class",
-    "classes":["TClass","TGuiObject","TextObject","TextboxObject","TText"],
-    "writeSameMode":true,
+    "description":"TGuiObject class with a TextBox that allows the user to enter text or numbers.",
+    "description-ru":"TGuiObject класс с TextBox, позволяющий пользователю вводить текст/цифры",
+    "class":"TTextBox",
+    "inherited":["TClass","ConfigObject","TGuiObject","TextObject","TextboxObject"],
     "deprecated":false,
     "properties":{
         "Type":{
             "type":"string",
-            "description":"Равен \"Textbox\". Нужен для определения типа обьекта",
-            "canChange":false,
-            "deprecated":false
-        },"SpecialRefreshTextBoxSizes":{
-            "type":"Bind",
-            "description":"Специальный бинд для установки позиции названия и поля для ввода, работает как в Binder.RefreshTextBoxSizes",
-            "canChange":true,
+            "description":"set to `TextBox`. Needs to check object type",
+            "description-ru":"Равен `TextBox`. Нужен для определения типа обьекта",
+            "readonly":true,
             "deprecated":false
         },"Value":{
-            "type":"string | number",
-            "description":"Значение, убран writeSameMode",
-            "canChange":false,
+            "type":"string",
+            "description":"Value",
+            "description-ru":"Значение",
+            "isWriteSameModeException":true,
+            "readonly":false,
             "deprecated":false
         },"InputType":{
             "type":"string",
-            "description":"Тип ввода, может быть 'string'(по умолчаню),'number'. Если не поддерживается, то 'string'",
-            "canChange":false,
+            "description":"Input type, can be `string`(default),`number`. If it is not supported, it will be treated as a `string`.",
+            "description-ru":"Тип ввода, может быть `string`(по умолчаню),`number`. Если не поддерживается, то будет восприниматься как `string`",
+            "readonly":false,
             "deprecated":false
         },"Buttons":{
-            "type":"Instance: Frame",
-            "description":"Кнопки + и - для разных типов ввода",
-            "canChange":false,
+            "type":"Frame",
+            "description":"Button `+` and `-`",
+            "description-ru":"Кнопки `+` и `-`",
+            "readonly":true,
             "deprecated":false
         },"ButtonsEnabled":{
             "type":"boolean",
-            "description":"Включены ли кнопки",
-            "canChange":true,
+            "description":"Are buttons enabled?",
+            "description-ru":"Включены ли кнопки?",
+            "readonly":false,
             "deprecated":false
         },"ScaleOfButtons":{
             "type":"number",
-            "description":"Размер изменения через кнопки",
-            "canChange":true,
+            "description":"Change increment via buttons",
+            "description-ru":"Размер изменения через кнопки",
+            "readonly":false,
             "deprecated":false
         },"DefaultValue":{
             "type":"string | number",
-            "description":"Стандартное значения, изменяется на .Value через task.wait()",
-            "canChange":true,
+            "description":"The default value is changed via `.Value` using `task.wait()`.",
+            "description-ru":"Стандартное значения, изменяется на `.Value` через `task.wait()`",
+            "readonly":false,
             "deprecated":false
         }
-    }, 
-    "methods":{
+    }, "methods":{
         "FireButton":{
-            "description":"Запускает кнопку около ввода",
-            "args":[{
+            "description":"Activates the button next to the input field.",
+            "description-ru":"Запускает кнопку около ввода",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"ButtonType",
-                    "description":"Тип кнопки: \"add\" или \"subtract\"",
                     "type":"string",
+                    "description":"Button type: \"add\" or \"subtract\"",
+                    "description-ru":"Тип кнопки: \"add\" или \"subtract\"",
                     "required":true
                 }
-            ],
-            "return":[], 
-            "deprecated":false
+            ],"returns":[]
         }
-    }, 
-    "events":{
+    }, "events":{
         "Changed":{
-            "description":"Запускается когда Value изменилось",
-            "type":"RBXScriptEvent",
-            "args":[],
-            "deprecated":false
+            "type":"RBXScriptSignal",
+            "description":"Fires when `.Value` has been changed",
+            "description-ru":"Запускается когда `.Value` изменилось",
+            "deprecated":false,
+            "args":[]
         },"ButtonClicked":{
-            "description":"Запускается когда кнопка была нажата(или запущен :FireButton)",
-            "type":"RBXScriptEvent",
-            "args":[{
+            "type":"RBXScriptSignal",
+            "description":"Fires when button clicked(or fired `:FireButton(...)`)",
+            "description-ru":"Запускается когда кнопка была нажата(или запущен `:FireButton(...)`)",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"ButtonType",
-                    "description":"Тип кнопки: \"add\" или \"subtract\"",
-                    "type":"string"
+                    "type":"string",
+                    "description":"Button type: \"add\" or \"subtract\"",
+                    "description-ru":"Тип кнопки: \"add\" или \"subtract\""
                 }
-            ],
-            "deprecated":false
+            ]
+        }
+    }, "binds":{
+        "SpecialRefreshTextBoxSizes":{
+            "description":"Special bind for setting name position and input field, works like Binder.RefreshTextBoxSizes",
+            "description-ru":"Специальный бинд для установки позиции названия и поля для ввода, работает как в Binder.RefreshTextBoxSizes",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"TextBox",
+                    "type":"class",
+                    "class":"TTextBox",
+                    "description":"TTextBox for set the position of the name and input field.",
+                    "description-ru":"TTextBox для установки позиций названия и поля для ввода.",
+                    "required":true
+                },{
+                    "name":"TextLabel",
+                    "type":"TextLabel",
+                    "description":"TextLabel of this TTextBox",
+                    "description-ru":"TextLabel этого TTextBox",
+                    "required":true
+                },{
+                    "name":"TextBox",
+                    "type":"TextBox",
+                    "description":"TextBox of this TTextBox",
+                    "description-ru":"TextBox этого TTextBox",
+                    "required":true
+                }
+            ],"returns":[]
         }
     }
 }

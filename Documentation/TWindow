@@ -1,198 +1,277 @@
 {
-    "description":"Класс для создания окн, по умолчанию пустое окно. Устанавливает ConfigSaveName на Name через task.wait() и делает его только для чтения",
     "type":"class",
-    "classes":["TClass","ConfigObject","TWindow"],
-    "writeSameMode":true,
+    "description":"A class for creating windows; by default, it creates an empty window. It sets `ConfigSaveName` to `Name` via `task.wait()` and makes it read-only.",
+    "description-ru":"Класс для создания окн, по умолчанию пустое окно. Устанавливает `ConfigSaveName` на `Name` через `task.wait()` и делает его только для чтения",
+    "class":"TWindow",
+    "inherited":["TClass","ConfigObject"],
     "deprecated":false,
     "properties":{
         "WindowFrame":{
-            "type":"Instance: Frame",
-            "description":"Frame Самого окна",
-            "canChange":false,
-            "deprecated":false
-        },"Name":{
-            "type":"string",
-            "description":"Имя окна",
-            "canChange":false,
+            "type":"Frame",
+            "description":"Window frame",
+            "description-ru":"Frame окна",
+            "readonly":true,
             "deprecated":false
         },"Title":{
             "type":"class",
             "class":"Translator",
-            "description":"Заголовок окна",
-            "canChange":false,
+            "description":"Title of window",
+            "description-ru":"Заголовок окна",
+            "readonly":true,
+            "deprecated":false
+        },"Name":{
+            "type":"string",
+            "description":"Window name",
+            "description-ru":"Имя окна",
+            "readonly":true,
             "deprecated":false
         },"SpecialColors":{
             "type":"class",
             "class":"SpecialColors",
-            "description":"Специальные цвета",
-            "canChange":false,
+            "description":"Special Colors",
+            "description-ru":"Специальные цвета",
+            "readonly":true,
             "deprecated":false
         },"HeaderFrame":{
-            "type":"Instance: Frame",
-            "description":"Frame Заголовка окна",
-            "canChange":false,
-            "deprecated":false
-        },"Size":{
-            "type":"UDim2",
-            "description":"Размер окна(только .Frame)",
-            "canChange":true,
-            "deprecated":false
-        },"HeaderSize":{
-            "type":"UDim2",
-            "description":"Y Размер заголовка",
-            "canChange":true,
+            "type":"Frame",
+            "description":"Header frame of window",
+            "description-ru":"Frame заголовка окна",
+            "readonly":true,
             "deprecated":false
         },"HeaderUICorner":{
-            "type":"Instance: UICorner",
-            "description":"UiCorner для Заголовка окна",
-            "canChange":false,
+            "type":"UICorner",
+            "description":"UICorner for window header",
+            "description-ru":"UICorner для Заголовка окна",
+            "readonly":true,
             "deprecated":false
         },"HeaderDownFrame":{
-            "type":"Instance: Frame",
-            "description":"Нижняя часть заголовка(чтоб нижнии углы не были скруглены)",
-            "canChange":false,
+            "type":"Frame",
+            "description":"The bottom part of the header (so that the bottom corners of the header are not rounded)",
+            "description-ru":"Нижняя часть заголовка(чтоб нижнии углы заголовка не были скруглены)",
+            "readonly":true,
             "deprecated":false
         },"BackgroundFrame":{
-            "type":"Instance: Frame",
-            "description":"Задний фон окна",
-            "canChange":false,
+            "type":"Frame",
+            "description":"Window background",
+            "description-ru":"Задний фон окна",
+            "readonly":true,
             "deprecated":false
         },"BackgroundUICorner":{
-            "type":"Instance: UICorner",
-            "description":"UICorner для скругления нижних углов",
-            "canChange":false,
+            "type":"UICorner",
+            "description":"UICorner for background",
+            "description-ru":"UICorner для заднего фона",
+            "readonly":true,
             "deprecated":false
         },"BackgroundUpFrame":{
-            "type":"Instance: Frame",
-            "description":"Верхняя часть фона(чтоб верхние углы не были скруглены)",
-            "canChange":false,
+            "type":"Frame",
+            "description":"The top part of the background (so the top corners aren't rounded)",
+            "description-ru":"Верхняя часть фона(чтоб верхние углы фона не были скруглены)",
+            "readonly":true,
             "deprecated":false
         },"Header":{
-            "type":"Instance: Frame",
-            "description":"Свободная часть заголовка, которая обычно занята Названием",
-            "canChange":false,
+            "type":"Frame",
+            "description":"The free part of the header, which is usually occupied by the Title(`.HeaderText`).",
+            "description-ru":"Свободная часть заголовка, которая обычно занята Названием(`.HeaderText`)",
+            "readonly":true,
             "deprecated":false
         },"HeaderText":{
-            "type":"Instance: TextLabel",
-            "description":"Название в заголовке. По умолчанию полность закрывает .Header",
-            "canChange":false,
+            "type":"TextLabel",
+            "description":"Title in the header. By default, it completely covers the `.Header`.",
+            "description-ru":"Название в заголовке. По умолчанию полность закрывает `.Header`",
+            "readonly":true,
             "deprecated":false
         },"Frame":{
-            "type":"Instance: Frame",
-            "description":"Свободная и основная часть окна",
-            "canChange":false,
+            "type":"TextLabel",
+            "description":"Free and main part of the window",
+            "description-ru":"Свободная и основная часть окна",
+            "readonly":true,
             "deprecated":false
         },"DragDetector":{
-            "type":"Instance: DragDetector",
-            "description":"DragDetector для перемещения окна",
-            "canChange":false,
+            "type":"DragDetector",
+            "description":"DragDetector to moving window",
+            "description-ru":"DragDetector для перемещения окна",
+            "readonly":true,
             "deprecated":false
         },"DefaultDragEventsEnabled":{
             "type":"boolean",
-            "description":"Включён ли обычные эвенты перемещения для DragDetector",
-            "canChange":false,
-            "deprecated":false
-        },"SpecialHideArrowAnimation":{
-            "type":"class",
-            "class":"Bind",
-            "description":"Специальный бинд для обновления размеров окна. Работает как в Binder.HideArrowAnimation",
-            "canChange":false,
+            "description":"Is default drag window events enabled?",
+            "description-ru":"Включены ли обычные эвенты перемещения окна?",
+            "readonly":false,
             "deprecated":false
         },"CloseButton":{
-            "type":"Instance: ImageButton",
-            "description":"ImageButton для закрытия окна",
-            "canChange":false,
+            "type":"ImageButton",
+            "description":"ImageButton to closing this window",
+            "description-ru":"ImageButton для закрытия этого окна",
+            "readonly":true,
             "deprecated":false
         },"HideButton":{
-            "type":"Instance: ImageButton",
-            "description":"ImageButton для сворачивания окна.Если сменено на false то меняет фокус на true",
-            "canChange":false,
+            "type":"ImageButton",
+            "description":"ImageButton to minimize this window",
+            "description-ru":"ImageButton для сворачивания этого окна",
+            "readonly":true,
             "deprecated":false
         },"CanHide":{
             "type":"boolean",
-            "description":"Обычно true, будет ли показываться кнопка 'спрятать'(то есть можно ли скрыть окно)",
-            "canChange":true,
+            "description":"Is can minimaze this window? If changed to `false`, sets `Hidden` property to `false`",
+            "description-ru":"Включены ли обычные эвенты перемещения окна? Если изменено на `false`, устанавливает `Hidden` на `false`",
+            "readonly":false,
             "deprecated":false
         },"Focused":{
             "type":"boolean",
-            "description":"Есть ли фокус на окне, обычно окно с фокусом находится выше других окон +Сохраняется в конфиге",
-            "canChange":true,
+            "description":"Is window focused?",
+            "description-ru":"Есть ли фокус на окне?",
+            "readonly":false,
             "deprecated":false
         },"Opened":{
             "type":"boolean",
-            "description":"Открыто ли окно(то есть видно ли окно пользователю). Если сменено на true то также меняет и фокус на true",
-            "canChange":true,
+            "description":"Is window opened?",
+            "description-ru":"Открыто ли окно?",
+            "readonly":false,
+            "deprecated":false
+        },"Hidden":{
+            "type":"boolean",
+            "description":"Is window minimazed(hidden)? [saving to config]",
+            "description-ru":"Свёрнуто(спрятано) ли окно? [сохраняется в конфиге]",
+            "readonly":false,
+            "deprecated":false
+        },"Size":{
+            "type":"UDim2",
+            "description":"Size of `.Frame`",
+            "description-ru":"Размер `.Frame`",
+            "readonly":false,
+            "deprecated":false
+        },"HeaderSize":{
+            "type":"UDim",
+            "description":"Y Size of header",
+            "description-ru":"Y Размер заголовка",
+            "readonly":false,
             "deprecated":false
         },"Position":{
-            "type":"boolean",
-            "description":"Позиция относительно левого верхнего угла окна. +Сохраняется в конфиге",
-            "canChange":true,
+            "type":"UDim2",
+            "description":"Position relative to the top-left corner of the window. [saving to config]",
+            "description-ru":"Позиция относительно левого верхнего угла окна. [сохраняется в конфиге]",
+            "readonly":false,
             "deprecated":false
         },"DisplayOrder":{
             "type":"number",
-            "description":"+ZOrder для окна, обычно 1, а для Prompt 2",
-            "canChange":true,
+            "description":"+ZOrder for window, usually 1, and for Prompt 2",
+            "description-ru":"+ZOrder для окна, обычно 1, а для Prompt 2",
+            "readonly":false,
             "deprecated":false
         },"UserCanClose":{
             "type":"boolean",
-            "description":"Может ли пользователь закрыть это окно. Обычно true",
-            "canChange":true,
+            "description":"Is user can close this window? Usually `true`",
+            "description-ru":"Может ли пользователь закрыть это окно. Обычно `true`",
+            "readonly":false,
             "deprecated":false
         }
     }, "methods":{
-        "Destroy":{
-            "description":"Удаляет окно и запускает Destroyed евент",
-            "args":[],
-            "return":[], 
-            "deprecated":false
-        },"Move":{
-            "description":"Возвращает наличия свойства только для чтения",
-            "args":[{
+        "Move":{
+            "description":"Move this window to the specified position",
+            "description-ru":"Двигает это окно в заданную позицию",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"Position",
                     "type":"UDim2",
-                    "description":"Позиция",
+                    "description":"Position",
+                    "description-ru":"Позиция",
                     "required":true
                 },{
                     "name":"AnchorPoint",
                     "type":"Vector2",
-                    "description":"Точка крепления(По умолчанию Vector2.new(0.5,0.5))",
+                    "description":"Anchor point (default `Vector2.new(0.5,0.5)`)",
+                    "description-ru":"Точка крепления (По умолчанию `Vector2.new(0.5,0.5)`)",
                     "required":false
                 }
-            ],"return":[], 
-            "deprecated":false
+            ],"returns":[]
+        },"Destroy":{
+            "description":"Destroys the window",
+            "description-ru":"Удаляет окно",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"Position",
+                    "type":"UDim2",
+                    "description":"Position",
+                    "description-ru":"Позиция",
+                    "required":true
+                },{
+                    "name":"AnchorPoint",
+                    "type":"Vector2",
+                    "description":"Anchor point (default `Vector2.new(0.5,0.5)`)",
+                    "description-ru":"Точка крепления (По умолчанию `Vector2.new(0.5,0.5)`)",
+                    "required":false
+                }
+            ],"returns":[]
         }
-    }, 
-    "events":{
+    }, "events":{
         "OnOpened":{
-            "description":"Запускается если окно открыто(.Opened=true)",
-            "type":"RBXScriptEvent",
+            "type":"RBXScriptSignal",
+            "description":"Fires if window is opened(`.Opened=true`)",
+            "description-ru":"Запускается если окно открыто(`.Opened=true`)",
             "deprecated":false,
             "args":[]
         },"OnClose":{
-            "description":"Запускается если окно закрыто(.Opened=false)",
-            "type":"RBXScriptEvent",
+            "type":"RBXScriptSignal",
+            "description":"Fires if window is closed(`.Opened=false`)",
+            "description-ru":"Запускается если окно закрыто(`.Opened=false`)",
             "deprecated":false,
             "args":[]
-        },"OnMoved":{
-            "description":"Запускается если окно было подвинуто, через :Move или через drag detector в заголовке",
-            "type":"RBXScriptEvent",
-            "deprecated":false,
-            "args":[]
-        },"Destroyed":{
-            "description":"Запускается при запуске :Destroy()",
-            "type":"RBXScriptEvent",
-            "args":[],
-            "deprecated":false
         },"OnFocus":{
-            "description":"Запускается если .Focused стало true",
-            "type":"RBXScriptEvent",
+            "type":"RBXScriptSignal",
+            "description":"Fires on window focus(`.Focus=true`)",
+            "description-ru":"Запускается при фокусе окна(`.Focus=true`)",
             "deprecated":false,
             "args":[]
         },"OnFocusLost":{
-            "description":"Запускается если .Focused стало false",
-            "type":"RBXScriptEvent",
-            "args":[],
-            "deprecated":false
+            "type":"RBXScriptSignal",
+            "description":"Fires on window focus lost(`.Focus=false`)",
+            "description-ru":"Запускается при потере фокуса окна(`.Focus=false`)",
+            "deprecated":false,
+            "args":[]
+        },"Destroyed":{
+            "type":"RBXScriptSignal",
+            "description":"Fires when window destroying (on `:Destroy()`)",
+            "description-ru":"Запускается когда окно удаляется (при `:Destroy()`)",
+            "deprecated":false,
+            "args":[]
+        },"OnMoved":{
+            "type":"RBXScriptSignal",
+            "description":"Fires when window has been moved",
+            "description-ru":"Запускается когда окно было подвинуто",
+            "deprecated":false,
+            "args":[]
+        }
+    }, "binds":{
+        "SpecialTWindowSizeRefresh":{
+            "description":"Special bind for button size refresh. Works like Binder.WindowSizeRefresh",
+            "description-ru":"Специальный бинд для обновления размера окна. Работает как в Binder.WindowSizeRefresh",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"Window",
+                    "type":"class",
+                    "class":"TWindow",
+                    "description":"TWindow which needs to refresh size",
+                    "description-ru":"TWindow которому нужно изменить размер.",
+                    "required":true
+                }
+            ],"returns":[]
+        },"SpecialHideArrowAnimation":{
+            "description":"Special bind for hide arrow animation. Works like Binder.TWindowHideArrowAnimation",
+            "description-ru":"Специальный бинд для анимации стрелочки скрытия. Работает как в Binder.TWindowHideArrowAnimation",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"Window",
+                    "type":"class",
+                    "class":"TWindow",
+                    "description":"TWindow which needs to animate hide arrow",
+                    "description-ru":"TWindow которому нужно анимировать стрелку скрытия.",
+                    "required":true
+                }
+            ],"returns":[]
         }
     }
 }

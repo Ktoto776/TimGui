@@ -1,44 +1,44 @@
 {
     "type":"class",
+    "description":"A custom Event like Bindable Event to pass timgui types without errors (if you don't encounter stupid errors like with table.clone, then use the built-in BindableEvent)",
+    "description-ru":"Кастомный Event по типу Bindable Event, чтобы передавать timgui типы без ошибок(если ты не сталкиваешься с тупыми ошибками, как при table.clone, то используй встроенный BindableEvent)",
     "class":"TEvent",
-    "description":"Кастомный Event по типу Bindable Event, чтобы передавать таблицы без ошибок(если ты не сталкиваешься с тупыми ошибками, как при table.clone, то используй встроенный BindableEvent)",
+    "writeSameMode":false,
     "deprecated":false,
     "properties":{
-        "Event":{
-            "type":"table (TEvent.Event)",
-            "description":"Таблица с функциями как в bindableEvent, но без ConnectParallel: :Connect(callback); :Once(callback); :Wait()",
-            "canChange":true,
+        "Args":{
+            "type":"table",
+            "description":"A table with arrays, with the last args {[number]={...}}. Disappears 1 second after launch.",
+            "description-ru":"Таблица с массивами, с последними args {[number]={...}}. Исчезают через 1 секунду после запуска",
+            "readonly":false,
             "deprecated":false
         },"args":{
             "type":"table",
-            "description":"Массив, с последними args [Новая версия .Args]",
-            "canChange":true,
-            "deprecated":true
-        },"Args":{
-            "type":"table",
-            "description":"Таблица с массивами, с последними args {[number]={...}}. Исчезают через 1 секунду после запуска",
-            "canChange":true,
+            "description":"Array with latest args *New version .Args*",
+            "description-ru":"Массив, с последними args *Новая версия .Args*",
+            "readonly":false,
             "deprecated":false
         },"BEvent":{
-            "type":"Instance: BindableEvent",
-            "description":"BindableEvent с помощью которого работают ожидания :Fire()",
-            "canChange":true,
+            "type":"BindableEvent",
+            "description":"BindableEvent, which is used to implement :Fire() waits",
+            "description-ru":"BindableEvent с помощью которого работают ожидания :Fire()",
+            "readonly":false,
             "deprecated":false
         }
-    },
-    "methods":{
-        "Fire":{ 
-            "description":"",
-            "args":[{
-                    "name":"...",
-                    "type":"any",
-                    "description":"...",
-                    "required":false
-                }
-            ],
-            "return":[],
-            "deprecated":false
+    }, "methods":{
+        "Fire":{
+            "description":"Runs with any parameters passed to .Event",
+            "description-ru":"Запускается с любыми параметрами, которые передаются в .Event",
+            "deprecated":false,
+            "args":[],"returns":[]
         }
-    },
-    "events":{}
+    }, "events":{
+        "Event":{
+            "type":"TSignal",
+            "description":"The main signal of this TEvent, triggered via :Fire(...), with parameters ... taken from :Fire",
+            "description-ru":"Основной сигнал этого TEvent, запускаемый через :Fire(...), с параметрами ... взятыми из :Fire",
+            "deprecated":false,
+            "args":[]
+        }
+    }, "binds":{}
 }

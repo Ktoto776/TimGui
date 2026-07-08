@@ -1,17 +1,20 @@
 {
-    "description":"Класс текста(или заголовка) в интерфейсе, просто текст",
     "type":"class",
-    "classes":["TClass","ConfigObject","TGuiObject","TextObject","TText"],
-    "writeSameMode":true,
+    "description":"TGuiObject class for texts or titles",
+    "description-ru":"Класс текста(или заголовка) в интерфейсе, просто текст",
+    "class":"TText",
+    "inherited":["TClass","ConfigObject","TGuiObject","TextObject"],
     "deprecated":false,
     "properties":{
         "Type":{
             "type":"string",
-            "description":"Равен \"Text\". Нужен для определения типа обьекта",
-            "canChange":false,
+            "description":"set to `Text`. Needs to check object type",
+            "description-ru":"Равен `Text`. Нужен для определения типа обьекта",
+            "readonly":true,
             "deprecated":false
         }
-    }, 
-    "methods":{}, 
-    "events":{}
+    },
+    "methods":{},
+    "events":{}, 
+    "binds":{}
 }

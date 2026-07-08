@@ -1,102 +1,142 @@
 {
-    "description":"Класс для создания prompt окна. Находится в TimGui.Prompts",
     "type":"class",
-    "classes":["TClass","Prompts"],
-    "writeSameMode":true,
+    "description":"A class for creating a Prompt. Located in TimGui.Prompts.",
+    "description-ru":"Класс для создания Prompt. Находится в TimGui.Prompts",
+    "class":"Prompts",
+    "inherited":["TClass"],
     "deprecated":false,
     "properties":{}, 
     "methods":{
         "CreateTextPrompt":{
-            "description":"Создаёт текстовый промпт",
-            "args":[{
+            "description":"Creating a text prompt",
+            "description-ru":"Создаёт текстовый промпт",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"Name",
                     "type":"string",
-                    "description":"Имя промпта",
+                    "description":"Prompt name",
+                    "description-ru":"Название промпта",
                     "required":true
                 },{
                     "name":"Title",
-                    "type":"string | Translator | {langCode=string}",
-                    "description":"Название которое видит пользователь, если nil берёт из Name, string-только англ",
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"A title",
+                    "description-ru":"Заголовок",
                     "required":false
                 },{
                     "name":"Description",
-                    "type":"string | Translator | {langCode=string}",
-                    "description":"Описание промпта",
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"A prompt description",
+                    "description-ru":"Описания промпта",
                     "required":false
                 },{
                     "name":"disableDefaultConfigSettingsRefresh",
                     "type":"boolean",
-                    "description":"Выключены ли стандартные настройки сохранения",
+                    "description":"Is the standard save update disabled when changing config settings?",
+                    "description-ru":"Выключены ли стандартное обновление сохранений при смене настроек конфига",
                     "required":false
                 }
-            ],
-            "return":[{
-                    "name":"response",
-                    "type":"TextPrompt",
-                    "description":"Текстовый промпт"
+            ],"returns":[
+                {
+                    "name":"return",
+                    "type":"class",
+                    "class":"TextPrompt",
+                    "description":"TextPrompt class",
+                    "description-ru":"Класс TextPrompt"
                 }
-            ], "deprecated":false
+            ]
         },"CreateConfirmationPrompt":{
-            "description":"Создаёт промпт-подтверждение",
-            "args":[{
+            "description":"Creating a confirmation prompt",
+            "description-ru":"Создаёт промпт-подтверждение",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"Name",
                     "type":"string",
-                    "description":"Имя промпта",
+                    "description":"Prompt name",
+                    "description-ru":"Название промпта",
                     "required":true
                 },{
                     "name":"Title",
-                    "type":"string | Translator | {langCode=string}",
-                    "description":"Название которое видит пользователь, если nil берёт из Name, string-только англ",
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"A title",
+                    "description-ru":"Заголовок",
                     "required":false
                 },{
                     "name":"Description",
-                    "type":"string | Translator | {langCode=string}",
-                    "description":"Описание промпта",
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"A prompt description",
+                    "description-ru":"Описания промпта",
                     "required":false
                 },{
                     "name":"disableDefaultConfigSettingsRefresh",
                     "type":"boolean",
-                    "description":"Выключены ли стандартные настройки сохранения",
+                    "description":"Is the standard save update disabled when changing config settings?",
+                    "description-ru":"Выключены ли стандартное обновление сохранений при смене настроек конфига",
                     "required":false
                 }
-            ],
-            "return":[{
-                    "name":"response",
-                    "type":"ConfirmationPrompt",
-                    "description":"Текстовый промпт"
+            ],"returns":[
+                {
+                    "name":"return",
+                    "type":"class",
+                    "class":"ConfirmationPrompt",
+                    "description":"ConfirmationPrompt",
+                    "description-ru":"Промпт-подтверждение"
                 }
-            ], "deprecated":false
+            ]
         },"CreateKeyPrompt":{
-            "description":"Создаёт промпт для выбора кнопки",
-            "args":[{
+            "description":"Creates a prompt to select a keyboard button.",
+            "description-ru":"Создаёт промпт для выбора кнопки на клавиатуре",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"Name",
                     "type":"string",
-                    "description":"Имя промпта",
+                    "description":"Prompt name",
+                    "description-ru":"Название промпта",
                     "required":true
                 },{
                     "name":"Title",
-                    "type":"string | Translator | {langCode=string}",
-                    "description":"Название которое видит пользователь, если nil берёт из Name, string-только англ",
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"A title",
+                    "description-ru":"Заголовок",
                     "required":false
                 },{
                     "name":"Description",
-                    "type":"string | Translator | {langCode=string}",
-                    "description":"Описание промпта",
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"A prompt description",
+                    "description-ru":"Описания промпта",
                     "required":false
                 },{
                     "name":"disableDefaultConfigSettingsRefresh",
                     "type":"boolean",
-                    "description":"Выключены ли стандартные настройки сохранения",
+                    "description":"Is the standard save update disabled when changing config settings?",
+                    "description-ru":"Выключены ли стандартное обновление сохранений при смене настроек конфига",
                     "required":false
                 }
-            ],
-            "return":[{
-                    "name":"response",
-                    "type":"KeyPrompt",
-                    "description":"Промпт для выбора кнопки"
+            ],"returns":[
+                {
+                    "name":"return",
+                    "type":"class",
+                    "class":"KeyPrompt",
+                    "description":"Prompt to select a keyboard button.",
+                    "description-ru":"Промпт для выбора кнопки на клавиатуре"
                 }
-            ], "deprecated":false
+            ]
         }
-    }, 
-    "events":{}
+    }, "events":{}, 
+    "binds":{}
 }

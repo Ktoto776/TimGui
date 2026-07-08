@@ -163,11 +163,11 @@ end
 -- #FIND_POINT Logger
 local LoggersReadOnly = {"Log"}
 local LoggerReadOnly = {"Log","Id"}
-local Loggers = GetClassMetatable("TimGui.Loggers",{},LoggersReadOnly,true)
+local Loggers = GetClassMetatable("Loggers",{},LoggersReadOnly,true)
 Loggers.Log = {}
 local loggersTable = {}
 function Loggers:IsA(class:string)
-    return class=="TimGui.Loggers"or class=="Loggers"
+    return class=="Loggers"
 end local function ToStringer(data:any)
     local stringData = tostring(data)
     local dataType = typeof(data)
@@ -238,8 +238,8 @@ function Loggers.New(self:any?,scriptName:string)
         local log = self:log("critical_error",placeName,data)
         error(log.result)
     end return logger
-end TimGui.Logger = Loggers
-table.insert(TimGuiReadOnly,"Logger")
+end TimGui.Loggers = Loggers
+table.insert(TimGuiReadOnly,"Loggers")
 local logger = Loggers:New("TimGUI-Core")
 logger:info("TimGUI-V3 is starting")
 logger:info("Stats","Core-Version: "..TimGui.CoreVersion)
@@ -492,10 +492,15 @@ function Classes:CreateValueBinder(DefaultValue)
         else VBinder.Value = DefaultValue
         end
     end VBinder:GetPropertyChangedEvent("ListenId"):Connect(refreshBind)
+    local OnBind = Instance.new("BindableEvent")
+    VBinder.OnBind = OnBind.Event
+    VBinder:SetReadOnly("OnBind")
     function VBinder:Bind(SetToListen:boolean?)
         local Bind = Classes:CreateTClass(nil,nil,{"Value"})
         local OnEnabled = Instance.new("BindableEvent")
         local OnDisabled = Instance.new("BindableEvent")
+        Bind.Parent = VBinder
+        Bind:SetReadOnly("Parent")
         Bind.OnEnabled = OnEnabled.Event
         Bind.OnDisabled = OnDisabled.Event
         Bind:SetReadOnly("OnEnabled")
@@ -535,6 +540,7 @@ function Classes:CreateValueBinder(DefaultValue)
                 VBinder.ListenId = 0
             end VBinder.ListenId = Bind.Id
         end refreshBind()
+        OnBind:Fire(Bind.Id)
         return Bind
     end
     return VBinder
@@ -839,7 +845,7 @@ end) OnExitEvent.Event:Connect(function()
     STGui:Destroy()
 end)
 -- #FIND_POINT Header + GUI Header
-local Header = Classes:CreatePreset()
+local Header = Classes:CreateTClass()
 Header:AddClassName("Header")
 local HeaderSeparator = Instance.new("Frame",HeaderFrame)
 HeaderSeparator.Position = UDim2.new(0.5,0,0,0)
@@ -892,7 +898,7 @@ elseif TimGui.SetupData["FirstHeaderName"]~=nil then
 end FirstName.Text = Header.FirstName:Translate()
 Header.FirstName.TranslateValueChanged:Connect(function()
     FirstName.Text = Header.FirstName:Translate()
-end)
+end) Header:SetReadOnly("FirstName")
 Header.SecondName = Classes:CreateTranslator("Gui")
 if type(TimGui.SetupData["SecondHeaderName"])=="table" then
     Header.SecondName:Load(TimGui.SetupData["SecondHeaderName"])
@@ -901,7 +907,7 @@ elseif TimGui.SetupData["SecondHeaderName"]~=nil then
 end TwoName.Text = Header.SecondName:Translate()
 Header.SecondName.TranslateValueChanged:Connect(function()
     TwoName.Text = Header.SecondName:Translate()
-end)
+end) Header:SetReadOnly("SecondName")
 TimGui.Header = Header
 table.insert(TimGuiReadOnly,"Header")
 local HeaderInfo = Instance.new("TextLabel",HeaderFrame)
@@ -1509,7 +1515,7 @@ end function Classes:CreateMenuText(Name:string,Title:{[string]:string}|string?)
     return Item
 end function Classes:CreateMenuToggle(Name:string,Title:{[string]:string}|string?)
     local Item = Classes:CreateMenuButton(Name,Title,true)
-    Item:AddClassName("MenuButton")
+    Item:AddClassName("MenuToggle")
     local SColors = Item.SpecialColors
     Item.CloseMenuOnActivated = false
     Item.Value = false
@@ -2301,7 +2307,7 @@ function GuiObjects:CreateToggle(Name:string,Title:string|{[string]:string}?,Par
     local Button = TGuiObjectClass(Name,Title,Parent)
     Button = MakeKeybindingForTGuiObject(Button)
     Button = CreateButtonForTGuiObject(Button,true)
-    Button:AddClassName("Toggle")
+    Button:AddClassName("TToggle")
     Button.Type = "Toggle"
     Button:SetReadOnly("Type")
     Button.Value = false
@@ -2377,6 +2383,7 @@ local function MakeTextObject(Text:any)
     TextLabel.TextScaled = true
     TextLabel.Size = UDim2.new(1,0,1,0)
     Text.TextLabel = TextLabel
+    Text:AddClassName("TextObject")
     Text:SetReadOnly("TextLabel")
     local destroyed = false
     Text.Destroying:Connect(function()
@@ -2462,11 +2469,11 @@ function GuiObjects:CreateTextbox(Name:string,Title:string|{[string]:string}?,Pa
     if type(Title)=="function" then func=Title Title=nil end
     if type(Parent)=="function" then func=Parent Parent=nil end
     local Textbox = TGuiObjectClass(Name,Title,Parent,Classes:CreateTClass(nil,nil,{"Value","DefaultValue"}))
-    Textbox:AddClassName("TTextBox")
     Textbox.Type = "TextBox"
     Textbox:SetReadOnly("Type")
     Textbox = MakeTextObject(Textbox)
     Textbox = MakeTextBoxObject(Textbox)
+    Textbox:AddClassName("TTextBox")
     Textbox.Value = ""
     Textbox:GetPropertyChangedEvent("DefaultValue"):Connect(function()
         Textbox:AddPropertyToConfigSave("Value",Textbox.DefaultValue)
@@ -2584,7 +2591,7 @@ Binder:SetReadOnly("SequenceOpenArrowBind")
 local SequenceCreateObject = Classes:CreateBind()
 Binder.SequenceCreateObject = SequenceCreateObject
 Binder:SetReadOnly("SequenceCreateObject")
-function GuiObjects:CreateSequence(Name:string,Title:string|{[string]:string}?,Parent:any?,func:(any,{string})->()?,Buttons:{[string]:{[string]:string}|string})
+function GuiObjects:CreateSequence(Name:string,Title:string|{[string]:string}?,Parent:any?,func:(any,{string})->()?,Buttons:{[string]:{[string]:string}|string}?)
     local Sequence = TGuiObjectClass(Name,Title,Parent)
     Sequence = CreateButtonForTGuiObject(Sequence)
     Sequence:AddClassName("TSequence")
@@ -3308,9 +3315,6 @@ function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?,disab
     Window.HeaderFrame = HeaderFrame
     Window:SetReadOnly("HeaderFrame")
     local HeaderUICorner = Instance.new("UICorner",HeaderFrame)
-    GuiSize:GetPropertyChangedEvent("TWindowHeaderCornerRadius"):Connect(function()
-        HeaderUICorner.CornerRadius = GuiSize.TWindowHeaderCornerRadius
-    end) HeaderUICorner.CornerRadius = GuiSize.TWindowHeaderCornerRadius
     Window.HeaderUICorner = HeaderUICorner
     Window:SetReadOnly("HeaderUICorner")
     local HeaderDownFrame = Instance.new("Frame",HeaderFrame)
@@ -3346,7 +3350,7 @@ function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?,disab
         CloseButton.ImageColor3 = SpecialColors:GetColor("TWindowCloseColor")
     end) CloseButton.ImageColor3 = SpecialColors:GetColor("TWindowCloseColor")
     local CloseUICorner = Instance.new("UICorner",CloseButton)
-    CloseUICorner.CornerRadius = GuiSize.TWindowCornerRadius
+    CloseUICorner.CornerRadius = GuiSize.TWindowHeaderCornerRadius
     Window.CloseButton = CloseButton
     Window:SetReadOnly("CloseButton")
     local SpecialHideArrowAnimation = Classes:CreateBind()
@@ -3377,7 +3381,7 @@ function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?,disab
         HideButton.ImageColor3 = SpecialColors:GetColor("TWindowHideColor")
     end) HideButton.ImageColor3 = SpecialColors:GetColor("TWindowHideColor")
     local HideUICorner = Instance.new("UICorner",HideButton)
-    HideUICorner.CornerRadius = GuiSize.TWindowCornerRadius
+    HideUICorner.CornerRadius = GuiSize.TWindowHeaderCornerRadius
     Window.HideButton = HideButton
     Window:SetReadOnly("HideButton")
     local Header = Instance.new("Frame",HeaderFrame)
@@ -3406,9 +3410,12 @@ function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?,disab
     local BackgroundUICorner = Instance.new("UICorner",BackgroundFrame)
     GuiSize:GetPropertyChangedEvent("TWindowCornerRadius"):Connect(function()
         BackgroundUICorner.CornerRadius = GuiSize.TWindowCornerRadius
-        CloseUICorner.CornerRadius = GuiSize.TWindowCornerRadius
-        HideUICorner.CornerRadius = GuiSize.TWindowCornerRadius
     end) BackgroundUICorner.CornerRadius = GuiSize.TWindowCornerRadius
+    GuiSize:GetPropertyChangedEvent("TWindowHeaderCornerRadius"):Connect(function()
+        CloseUICorner.CornerRadius = GuiSize.TWindowHeaderCornerRadius
+        HideUICorner.CornerRadius = GuiSize.TWindowHeaderCornerRadius
+        HeaderUICorner.CornerRadius = GuiSize.TWindowHeaderCornerRadius
+    end) HeaderUICorner.CornerRadius = GuiSize.TWindowHeaderCornerRadius
     Window.BackgroundUICorner = BackgroundUICorner
     Window:SetReadOnly("BackgroundUICorner")
     local BackgroundUpFrame = Instance.new("Frame",BackgroundFrame)
@@ -4143,7 +4150,7 @@ function Prompts:CreateKeyPrompt(Name:string,Title:string | {[string]: string}?,
     Prompt:SetReadOnly("DescriptionLabel")
     local SpecDescriptionSizeBind = Classes:CreateBind()
     SpecDescriptionSizeBind:Bind(function(...)
-        return TextPromptDescriptionSizeBind:Run(...)
+        return KeyPromptDescriptionSizeBind:Run(...)
     end) Prompt.SpecialDescriptionSizeBind = SpecDescriptionSizeBind
     Prompt:SetReadOnly("SpecialDescriptionSizeBind")
     local Buttons = Instance.new("Frame",Prompt.Frame)
@@ -4230,7 +4237,7 @@ function Prompts:CreateKeyPrompt(Name:string,Title:string | {[string]: string}?,
             Prompt.Size = UDim2.new(Prompt.Size.X,YPos+GuiSize.PromptYIndent)
         end SizeRefreshed:Fire()
     end refreshSize()
-    TextPromptDescriptionSizeBind.OnBinded:Connect(refreshSize)
+    KeyPromptDescriptionSizeBind.OnBinded:Connect(refreshSize)
     SpecDescriptionSizeBind.OnBinded:Connect(refreshSize)
     GuiSize:GetPropertyChangedEvent("NotifyKeyPromptSize"):Connect(refreshSize)
     GuiSize:GetPropertyChangedEvent("PromptYIndent"):Connect(refreshSize)
@@ -4316,7 +4323,8 @@ function Prompts:CreateKeyPrompt(Name:string,Title:string | {[string]: string}?,
         end
     end)
     return Prompt
-end local KeybindStatesAndTranslate = { --#LANG_REQUIRED
+end KeyPromptDescriptionSizeBind:Bind(DefaultPromptDescSizeF)
+local KeybindStatesAndTranslate = { --#LANG_REQUIRED
     Change={
         ru="При нажатии или отпуске",
         en="On pressed or released"
@@ -5398,6 +5406,7 @@ testG:CreateTextbox("Test cfg on number box",{
 }).InputType = "number"
 task.wait(2.5)
 State:ResetToDefault()
+return TimGui
 --[[
 План:
     Сделать старые функции:

@@ -1,61 +1,93 @@
 {
-    "description":"Класс кнопок в интерфейсе, просто пустая кнопка",
     "type":"class",
-    "classes":["TClass","TGuiObject","ButtonObject","TToggle"],
-    "writeSameMode":true,
+    "description":"Toggle switch in the main interface",
+    "description-ru":"Кнопка-переключатель в главном интерфейсе",
+    "class":"TToggle",
+    "inherited":["TClass","ConfigObject","TGuiObject","ButtonObject","GuiKeybindingObject"],
     "deprecated":false,
     "properties":{
-        "SpecialTextColorForToggle":{
-            "type":"Bind",
-            "description":"Бинд для (анимации) цвета текста в зависимости от значения. Работает как в Binder.TextColorForToggle",
-            "canChange":true,
+        "Type":{
+            "type":"string",
+            "description":"set to `Toggle`. Needs to check object type",
+            "description-ru":"Равен `Toggle`. Нужен для определения типа обьекта",
+            "readonly":true,
             "deprecated":false
         },"Value":{
             "type":"boolean",
-            "description":"Значение",
-            "canChange":true,
+            "description":"Value",
+            "description-ru":"Значение",
+            "readonly":false,
             "deprecated":false
         },"DefaultValue":{
             "type":"boolean",
-            "description":"Стандартное значения, изменяется на .Value через task.wait()",
-            "canChange":true,
+            "description":"This is the default value; it is assigned to the `Value` property after `task.wait()` when the object is created.",
+            "description-ru":"Стандартное значение, ставится как в `Value` после `task.wait()` при создании обьекта",
+            "readonly":false,
             "deprecated":false
         }
-    }, 
-    "methods":{
+    }, "methods":{
         "RefreshTextColorFromValue":{
-            "description":"Обновляет цвет текста",
-            "args":[{
-                    "name":"NotAnimate",
+            "description":"Refreshes text color",
+            "description-ru":"Обновляет цвет текста",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"DoNotAnimate",
                     "type":"boolean",
-                    "description":"Не анимировать(если true, резко установит цвет на нужный)",
+                    "description":"Do not animate? (If `true`, will abruptly set the color to the desired one)",
+                    "description-ru":"Не анимировать?(если `true`, резко установит цвет на нужный)",
                     "required":false
                 }
-            ],"return":[], 
-            "deprecated":false
+            ],"returns":[]
         }
-    }, 
-    "events":{
+    }, "events":{
         "Changed":{
-            "description":"Запускается когда Value изменилось",
-            "type":"RBXScriptEvent",
-            "args":[{
-                    "name":"value",
+            "type":"RBXScriptSignal",
+            "description":"Fires when Value changes",
+            "description-ru":"Запускается когда Value изменилось",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"Value",
                     "type":"boolean",
-                    "description":"Значение"
+                    "description":"Value",
+                    "description-ru":"Значение"
                 }
-            ],
-            "deprecated":false
+            ]
         },"OnTrue":{
-            "description":"Запускается когда Value изменилось на true",
-            "type":"RBXScriptEvent",
-            "args":[],
-            "deprecated":false
+            "type":"RBXScriptSignal",
+            "description":"Fires when Value changes on `true`",
+            "description-ru":"Запускается когда Value изменилось на `true`",
+            "deprecated":false,
+            "args":[]
         },"OnFalse":{
-            "description":"Запускается когда Value изменилось на false",
-            "type":"RBXScriptEvent",
-            "args":[],
-            "deprecated":false
+            "type":"RBXScriptSignal",
+            "description":"Fires when Value changes on `false`",
+            "description-ru":"Запускается когда Value изменилось на `false`",
+            "deprecated":false,
+            "args":[]
+        }
+    }, "binds":{
+        "SpecialTextColorForToggle":{
+            "description":"Bind for (animation) text color depending on the value. Working like Binder.TextColorForToggle",
+            "description-ru":"Бинд для (анимации) цвета текста в зависимости от значения. Работает как в Binder.TextColorForToggle",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"Toggle",
+                    "type":"class",
+                    "class":"TToggle",
+                    "description":"TToggle for animation",
+                    "description-ru":"TToggle для анимации",
+                    "required":true
+                },{
+                    "name":"enableAnimation",
+                    "type":"boolean",
+                    "description":"whether animate(if false simply sharp change color)",
+                    "description-ru":"стоит ли анимировать(если false просто резкая смена цвета)",
+                    "required":true
+                }
+            ],"returns":[]
         }
     }
 }

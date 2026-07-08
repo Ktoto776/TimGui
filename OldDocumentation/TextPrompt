@@ -1,0 +1,10 @@
+{
+    "RunArgs":[],
+    "InputArgs":[
+        {
+            "name":"text",
+            "type":"string?",
+            "description":"Текст который ввёл пользователь, если вызвана отмена, то nil"
+        }
+    ]
+}

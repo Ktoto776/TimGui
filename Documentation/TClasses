@@ -1,287 +1,395 @@
 {
     "type":"class",
+    "description":"The TClasses class is designed for creating your own classes",
+    "description-ru":"Класс TClasses, предназначен для создания своих классов",
     "class":"TClasses",
-    "description":"Класс TClasses, предназначен для создания своих классов",
+    "inherited":["TClass"],
     "deprecated":false,
-    "properties":{},
+    "properties":{}, 
     "methods":{
         "IsA":{
-            "description":"Сравнивает имя класса 1 параметра со 2 параметром. И если оно даже не относится к TClass выдает false",
-            "args":[{
+            "description":"",
+            "description-ru":"",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"object",
                     "type":"any",
-                    "description":"Обьект для сравнения",
+                    "description":"Object for comparison",
+                    "description-ru":"Обьект для сравнения",
                     "required":true
                 },{
                     "name":"className",
                     "type":"string",
-                    "description":"Имя класса для сравнения",
+                    "description":"Name of the class to compare",
+                    "description-ru":"Имя класса для сравнения",
                     "required":true
                 }
-            ],
-            "return":[{
+            ],"returns":[
+                {
                     "name":"response",
                     "type":"boolean",
-                    "description":"Является ли потомком этого класса(или самим классом)"
+                    "description":"Is it a descendant of this class (or the class itself)",
+                    "description-ru":"Является ли потомком этого класса(или самим классом)"
                 }
-            ], "deprecated":false
-        }, "CreateTEvent":{ 
-            "description":"Кастомный Event по типу Bindable Event, чтобы передавать таблицы без ошибок(если ты не сталкиваешься с тупыми ошибками, как при table.clone, то используй встроенный BindableEvent)",
-            "args":[{
+            ]
+        },"CreateTEvent":{
+            "description":"A custom Event like Bindable Event to transfer tables without errors (if you don't encounter stupid errors like with table.clone, then use the built-in BindableEvent)",
+            "description-ru":"Кастомный Event по типу Bindable Event, чтобы передавать таблицы без ошибок(если ты не сталкиваешься с тупыми ошибками, как при table.clone, то используй встроенный BindableEvent)",
+            "deprecated":false,
+            "args":[],
+            "returns":[
+                {
                     "name":"Event",
-                    "type":"TEvent",
-                    "description":"TEvent класс",
-                    "required":false
-                }
-            ],
-            "return":[{
-                    "name":"response",
                     "type":"class",
-                    "class":"TClass",
-                    "description":"Класс TClass, база других классов"
+                    "class":"TEvent",
+                    "description":"TEvent class",
+                    "description-ru":"TEvent класс"
                 }
-            ],"deprecated":false
-        },"CreateTClass":{ 
-            "description":"База. Создаёт пустой TClass",
-            "args":[{
+            ]
+        },"CreateTClass":{
+            "description":"Creates an empty TClass.",
+            "description-ru":"Создаёт пустой TClass",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"rawData",
                     "type":"table",
-                    "description":"Сырая таблица",
+                    "description":"The raw table that will become the basis for the TClass",
+                    "description-ru":"Сырая таблица, которая станет основой для TClass'а",
                     "required":false
                 },{
                     "name":"metatable",
                     "type":"table",
-                    "description":"Мета-таблица, ставится поверх стандартной у TClass'ов",
+                    "description":"Meta table, placed on top of the standard one for TClasses",
+                    "description-ru":"Мета-таблица, ставится поверх стандартной у TClass'ов",
                     "required":false
                 },{
                     "name":"writeSameModeExclude",
                     "type":"boolean | table",
-                    "description":"Таблица с исключениями для записывания только одинаковых типов, если true полностью отключает функцию",
+                    "description":"Table with exceptions to write only identical types, or if true disables the feature completely",
+                    "description-ru":"Таблица с исключениями для записывания только одинаковых типов, или если true полностью отключает функцию",
                     "required":false
                 }
-            ],
-            "return":[{
+            ],"returns":[
+                {
                     "name":"response",
                     "type":"class",
                     "class":"TClass",
-                    "description":"Класс TClass, база других классов"
+                    "description":"TClass class, the base of other classes",
+                    "description-ru":"Класс TClass, база других классов"
                 }
-            ],"deprecated":false
-        },"CreatePreset":{ 
-            "description":"Создаёт Preset класс, помогает кастомизировать что угодно",
-            "args":[{
+            ]
+        },"CreatePreset":{
+            "description":"Creates a Preset class, helps customize anything",
+            "description-ru":"Создаёт Preset класс, помогает кастомизировать всё что угодно",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"clearAllOnLoad",
                     "type":"boolean",
-                    "description":"Заменять ли все значения при :Load()?",
+                    "description":"Should all values be replaced on :Load()?",
+                    "description-ru":"Заменять ли все значения при :Load()?",
                     "required":false
                 },{
                     "name":"rawData",
                     "type":"table",
-                    "description":"Сырая таблица",
+                    "description":"The raw table that will become the basis",
+                    "description-ru":"Сырая таблица, которая станет основой",
                     "required":false
                 }
-            ],
-            "return":[{
+            ],"returns":[
+                {
                     "name":"response",
                     "type":"class",
                     "class":"Preset",
-                    "description":"Класс Preset"
+                    "description":"Preset class",
+                    "description-ru":"Класс Preset"
                 }
-            ],"deprecated":false
-        },"CreateBind":{ 
-            "description":"Создаёт Bind класс, помогает заменять функции для кастомизации через дополнения",
-            "args":[{
+            ]
+        },"CreateBind":{
+            "description":"Creates a Bind class, helps replace functions for customization through add-ons",
+            "description-ru":"Создаёт Bind класс, помогает заменять функции для кастомизации через дополнения",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"rawData",
                     "type":"table",
-                    "description":"Сырая таблица",
+                    "description":"The raw table",
+                    "description-ru":"Сырая таблица",
                     "required":false
                 }
-            ],
-            "return":[{
+            ],"returns":[
+                {
                     "name":"response",
                     "type":"class",
                     "class":"Bind",
-                    "description":"Класс Bind"
+                    "description":"Bind class",
+                    "description-ru":"Класс Bind"
                 }
-            ],"deprecated":false
-        },"CreateTranslator":{ 
-            "description":"Создаёт Translator класс, помогает переводить всё что угодно на любой поддерживаемый язык",
+            ]
+        },"CreateSpecialColors":{
+            "description":"Creates a class for special colors",
+            "description-ru":"Создаёт класс для специальных цветов",
+            "deprecated":false,
+            "args":[],
+            "returns":[
+                {
+                    "name":"response",
+                    "type":"class",
+                    "class":"SpecialColors",
+                    "description":"Class for special colors",
+                    "description-ru":"Класс для специальных цветов"
+                }
+            ]
+        },"CreateTranslator":{
+            "description":"Creates a Translator class, helps translate anything to user language",
+            "description-ru":"Создаёт Translator класс, помогает переводить всё что угодно на язык пользователя",
+            "deprecated":false,
             "args":[
                 {
                     "name":"englishData",
                     "type":"any",
-                    "description":"Английское значение",
+                    "description":"English variant(default)",
+                    "description-ru":"Английский вариант(по умолчанию)",
                     "required":true
                 },{
                     "name":"rawData",
                     "type":"table",
-                    "description":"Сырая таблица",
+                    "description":"The raw table",
+                    "description-ru":"Сырая таблица",
                     "required":false
                 }
-            ],
-            "return":[{
+            ],"returns":[
+                {
                     "name":"response",
                     "type":"class",
                     "class":"Translator",
-                    "description":"Класс Translator"
+                    "description":"Translator class",
+                    "description-ru":"Класс Translator"
                 }
-            ],"deprecated":false
-        },"CreateWindow":{ 
-            "description":"Создаёт пустое окно",
+            ]
+        },"CreateWindow":{
+            "description":"Creates a empty window",
+            "description-ru":"Создаёт пустое окно",
+            "deprecated":false,
             "args":[
                 {
                     "name":"Name",
                     "type":"string",
-                    "description":"Название окна",
+                    "description":"Window name",
+                    "description-ru":"Название окна",
                     "required":true
                 },{
                     "name":"Title",
-                    "type":"string | Translator | table",
-                    "description":"Заголовок окна",
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"A header title of window",
+                    "description-ru":"Заголовок окна",
                     "required":false
                 },{
                     "name":"disableDefaultConfigSettingsRefresh",
                     "type":"boolean",
-                    "description":"Выключены ли стандартное обновление сохранений при смене настроек конфига",
+                    "description":"Is the standard save update disabled when changing config settings?",
+                    "description-ru":"Выключены ли стандартное обновление сохранений при смене настроек конфига",
                     "required":false
                 }
-            ],
-            "return":[{
+            ],"returns":[
+                {
                     "name":"response",
                     "type":"class",
                     "class":"TWindow",
-                    "description":"Класс TWindow"
+                    "description":"TWindow class",
+                    "description-ru":"Класс TWindow"
                 }
-            ],"deprecated":false
-        },"CreateSpecialColors":{ 
-            "description":"Создаёт класс для специальных цветов",
-            "args":[],
-            "return":[{
-                    "name":"response",
-                    "type":"class",
-                    "class":"SpecialColors",
-                    "description":"Класс для специальных цветов"
-                }
-            ],"deprecated":false
-        },"CreatePrompt":{ 
-            "description":"Создаёт пустой prompt",
+            ]
+        },"CreatePrompt":{
+            "description":"Creates a empty prompt",
+            "description-ru":"Создаёт пустой prompt",
+            "deprecated":false,
             "args":[
                 {
                     "name":"PromptType",
                     "type":"string",
-                    "description":"Тип промта",
+                    "description":"Prompt type",
+                    "description-ru":"Тип промта",
                     "required":true
                 },{
                     "name":"Name",
                     "type":"string",
-                    "description":"Название",
+                    "description":"Prompt name",
+                    "description-ru":"Название промпта",
                     "required":true
                 },{
                     "name":"Title",
-                    "type":"string | Translator | table",
-                    "description":"Заголовок окна",
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"A title",
+                    "description-ru":"Заголовок",
                     "required":false
                 },{
                     "name":"Description",
-                    "type":"string | Translator | table",
-                    "description":"Описание",
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"A prompt description",
+                    "description-ru":"Описания промпта",
                     "required":false
                 },{
                     "name":"disableDefaultConfigSettingsRefresh",
                     "type":"boolean",
-                    "description":"Выключены ли стандартное обновление сохранений при смене настроек конфига",
+                    "description":"Is the standard save update disabled when changing config settings?",
+                    "description-ru":"Выключены ли стандартное обновление сохранений при смене настроек конфига",
                     "required":false
                 }
-            ],
-            "return":[{
+            ],"returns":[
+                {
                     "name":"response",
                     "type":"class",
                     "class":"Prompt",
-                    "description":"Класс Prompt"
+                    "description":"Prompt class",
+                    "description-ru":"Класс Prompt"
                 }
-            ],"deprecated":false
-        },"CreateMenu":{ 
-            "description":"Создаёт Menu класс",
+            ]
+        },"CreateMenu":{
+            "description":"Creates a empty menu",
+            "description-ru":"Создаёт пустое меню",
+            "deprecated":false,
             "args":[],
-            "return":[{
+            "returns":[
+                {
                     "name":"response",
                     "type":"class",
                     "class":"Menu",
-                    "description":"Класс Menu"
+                    "description":"Menu class",
+                    "description-ru":"Класс Menu"
                 }
-            ],"deprecated":false
-        },"CreateMenuItem":{ 
-            "description":"Создаёт menu item",
+            ]
+        },"CreateMenuItem":{
+            "description":"Creates a MenuItem",
+            "description-ru":"Создаёт MenuItem",
+            "deprecated":false,
             "args":[
                 {
                     "name":"Name",
                     "type":"string",
-                    "description":"Название",
+                    "description":"Name",
+                    "description-ru":"Название",
                     "required":true
                 },{
                     "name":"Title",
-                    "type":"string | Translator | table",
-                    "description":"Заголовок(имя которое видит пользователь)",
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"A title",
+                    "description-ru":"Заголовок",
                     "required":false
                 },{
                     "name":"disableTextColorChanged",
                     "type":"boolean",
-                    "description":"Включено ли изменение цвета текста",
+                    "description":"Is text color change included?",
+                    "description-ru":"Включено ли изменение цвета текста",
                     "required":false
                 }
-            ],
-            "return":[{
+            ],"returns":[
+                {
                     "name":"response",
                     "type":"class",
                     "class":"MenuItem",
-                    "description":"Класс MenuItem"
+                    "description":"MenuItem class",
+                    "description-ru":"Класс MenuItem"
                 }
-            ],"deprecated":false
-        },"CreateMenuButton":{ 
-            "description":"Создаёт menu button",
+            ]
+        },"CreateMenuButton":{
+            "description":"Creates a MenuButton",
+            "description-ru":"Создаёт MenuButton",
+            "deprecated":false,
             "args":[
                 {
                     "name":"Name",
                     "type":"string",
-                    "description":"Название",
+                    "description":"Name",
+                    "description-ru":"Название",
                     "required":true
                 },{
                     "name":"Title",
-                    "type":"string | Translator | table",
-                    "description":"Заголовок(имя которое видит пользователь)",
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"A title",
+                    "description-ru":"Заголовок",
                     "required":false
                 }
-            ],
-            "return":[{
+            ],"returns":[
+                {
                     "name":"response",
                     "type":"class",
                     "class":"MenuButton",
-                    "description":"Класс MenuButton"
+                    "description":"MenuButton class",
+                    "description-ru":"Класс MenuButton"
                 }
-            ],"deprecated":false
-        },"CreateMenuText":{ 
-            "description":"Создаёт menu text",
+            ]
+        },"CreateMenuText":{
+            "description":"Creates a MenuText",
+            "description-ru":"Создаёт MenuText",
+            "deprecated":false,
             "args":[
                 {
                     "name":"Name",
                     "type":"string",
-                    "description":"Название",
+                    "description":"Name",
+                    "description-ru":"Название",
                     "required":true
                 },{
                     "name":"Title",
-                    "type":"string | Translator | table",
-                    "description":"Заголовок(имя которое видит пользователь)",
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"A title",
+                    "description-ru":"Заголовок",
                     "required":false
                 }
-            ],
-            "return":[{
+            ],"returns":[
+                {
                     "name":"response",
                     "type":"class",
                     "class":"MenuText",
-                    "description":"Класс MenuText"
+                    "description":"MenuText class",
+                    "description-ru":"Класс MenuText"
                 }
-            ],"deprecated":false
+            ]
+        },"CreateMenuToggle":{
+            "description":"Creates a MenuToggle",
+            "description-ru":"Создаёт MenuToggle",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Name",
+                    "description-ru":"Название",
+                    "required":true
+                },{
+                    "name":"Title",
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"A title",
+                    "description-ru":"Заголовок",
+                    "required":false
+                }
+            ],"returns":[
+                {
+                    "name":"response",
+                    "type":"class",
+                    "class":"MenuToggle",
+                    "description":"MenuToggle class",
+                    "description-ru":"Класс MenuToggle"
+                }
+            ]
         }
-    },
-    "events":{}
+    }, "events":{}, 
+    "binds":{}
 }

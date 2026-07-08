@@ -1,118 +1,149 @@
 {
-    "description":"Сохранение для TClass параметров. При создании класса возможно был выключен параметр otherClassesSaving, и поэтому обьект должен состоять из одинаковых классов при сохранении и загрузке",
     "type":"class",
-    "classes":["TClass","...","ConfigObject"],
-    "writeSameMode":true,
+    "description":"Saving parameters for TClass. The `otherClassesSaving` parameter may have been disabled when the class was created; therefore, the object must consist of the same classes during both saving and loading.",
+    "description-ru":"Сохранение для TClass параметров. При создании класса возможно был выключен параметр otherClassesSaving, и поэтому обьект должен состоять из одинаковых классов при сохранении и загрузке",
+    "class":"ConfigObject",
+    "inherited":["TClass"],
     "deprecated":false,
     "properties":{
         "ConfigSaveName":{
             "type":"string",
-            "description":"Имя сохранения в конфиге(если используется уже существующее, просто не сохраняет)",
-            "canChange":true,
+            "description":"Save name in the config (if an existing one is used, it simply doesn't save)",
+            "description-ru":"Имя сохранения в конфиге(если используется уже существующее, просто не сохраняет)",
+            "readonly":false,
             "deprecated":false
         },"ConfigSavingEnabled":{
-            "type":"string",
-            "description":"Включено ли сохранение(P.S: загрузка тоже)?[Может не сохраняться изза одинакого имени но всё равно стоять true]",
-            "canChange":true,
+            "type":"boolean",
+            "description":"Is saving (P.S.: and loading) enabled? [It might fail to save due to a duplicate name, even if set to 'true'.]",
+            "description-ru":"Включено ли сохранение(P.S: загрузка тоже)?[Может не сохраняться изза одинакого имени но всё равно стоять true]",
+            "readonly":false,
             "deprecated":false
         },"ConfigSavingDelay":{
             "type":"number",
-            "description":"Задержка для сохранения(чтобы убрать спам при сменах свойств), по умолчанию 0.25. Отрицательные значения выключают автосохранения",
-            "canChange":true,
+            "description":"Save delay (to prevent spam during property changes); defaults to 0.25. Negative values disable autosaving.",
+            "description-ru":"Задержка для сохранения(чтобы убрать спам при сменах свойств), по умолчанию 0.25. Отрицательные значения выключают автосохранения",
+            "readonly":false,
             "deprecated":false
         }
-    }, 
-    "methods":{
+    }, "methods":{
         "IsConfigSavingEnabled":{
-            "description":"Выдает false если имя используется другим обьектом, или вернёт ConfigSavingEnabled",
+            "description":"Returns `false` if the name is used by another object, or returns `ConfigSavingEnabled`.",
+            "description-ru":"Выдает `false` если имя используется другим обьектом, или вернёт `ConfigSavingEnabled`",
+            "deprecated":false,
             "args":[],
-            "return":[{
+            "returns":[
+                {
                     "name":"result",
                     "type":"boolean",
-                    "description":"Включено ли сохранение?"
+                    "description":"Is saving enabled?",
+                    "description-ru":"Включено ли сохранение?"
                 }
-            ], "deprecated":false
+            ]
         },"IsSavingProperty":{
-            "description":"Для проверки сохраняется ли свойство",
-            "args":[{
+            "description":"To check whether the property is saving",
+            "description-ru":"Для проверки сохраняется ли свойство",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"PropertyName",
                     "type":"string",
-                    "description":"Имя свойства",
+                    "description":"Property name",
+                    "description-ru":"Имя свойства",
                     "required":true
                 }
-            ],
-            "return":[{
+            ],"returns":[
+                {
                     "name":"result",
                     "type":"boolean",
-                    "description":"Сохраняется ли значение"
+                    "description":"Does the value saving?",
+                    "description-ru":"Сохраняется ли значение?"
                 }
-            ], "deprecated":false
+            ]
         },"IsEnabledAutosaveFor":{
-            "description":"Проверяет включено ли автосохранение свойства",
-            "args":[{
+            "description":"To check whether the property is autosaving",
+            "description-ru":"Для проверки автосохраняется ли свойство",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"PropertyName",
                     "type":"string",
-                    "description":"Имя свойства",
+                    "description":"Property name",
+                    "description-ru":"Имя свойства",
                     "required":true
                 }
-            ],
-            "return":[{
+            ],"returns":[
+                {
                     "name":"result",
                     "type":"boolean",
-                    "description":"Включено ли автосохранение для свойства"
+                    "description":"Does the value autosaving?",
+                    "description-ru":"Включено ли автосохранение для свойства"
                 }
-            ], "deprecated":false
+            ]
         },"SetEnabledAutosaveFor":{
-            "description":"Включает/выключает автосохранения свойству",
-            "args":[{
+            "description":"To set up autosave for a property",
+            "description-ru":"Для установки автосохранения для свойства",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"PropertyName",
                     "type":"string",
-                    "description":"Имя свойства",
+                    "description":"Property name",
+                    "description-ru":"Имя свойства",
                     "required":true
                 },{
                     "name":"IsEnabled",
                     "type":"boolean",
-                    "description":"Включено ли автосохранение для свойства",
+                    "description":"Does the value must autosaving?",
+                    "description-ru":"Включено ли автосохранение для свойства",
                     "required":true
                 }
-            ],
-            "return":[], "deprecated":false
+            ],"returns":[]
         },"AddPropertyToConfigSave":{
-            "description":"Добавляет свойство в сохранение конфигураций, может использоваться для смены стандартного значения",
-            "args":[{
+            "description":"Adds a property to the configuration save; can also be used to change the default value.",
+            "description-ru":"Добавляет свойство в сохранение конфигураций, может также использоваться для смены стандартного значения",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"PropertyName",
                     "type":"string",
-                    "description":"Название свойства",
+                    "description":"Property name",
+                    "description-ru":"Имя свойства",
                     "required":true
                 },{
                     "name":"defaultValue",
                     "type":"any",
-                    "description":"Стандартное значение, если его нет в конфиге, то загружает его. Если nil, то не сбрасывает его",
+                    "description":"A default value; if it is missing from the config, it loads it. If it is `nil`, it does not reset it.",
+                    "description-ru":"Стандартное значение, если его нет в конфиге, то загружает его. Если `nil`, то не сбрасывает его",
                     "required":false
                 }
-            ],
-            "return":[{
+            ],"returns":[
+                {
                     "name":"success",
                     "type":"boolean",
-                    "description":"Возвращает true если было установленно впервые(то есть до этого не следилось)."
+                    "description":"Returns true if it was set for the first time (i.e., it was not being tracked previously).",
+                    "description-ru":"Возвращает true если было установленно впервые(то есть до этого не следилось)."
                 }
-            ], "deprecated":false
+            ]
         },"LoadConfigSave":{
-            "description":"Устанавливает свойство по значению сохранённому в конфигурации(Сразу загружает из конфига, но не сбрасывает)",
-            "args":[{
+            "description":"Sets the property based on the value saved in the configuration.",
+            "description-ru":"Устанавливает свойство по значению сохранённому в конфигурации",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"PropertyName",
                     "type":"string",
-                    "description":"Имя свойства, если нету устанавливает всё",
+                    "description":"Property name",
+                    "description-ru":"Имя свойства",
                     "required":false
                 },{
-                    "name":"resetToDefault",
+                    "name":"doResetValueToDefault",
                     "type":"boolean",
-                    "description":"Сбрасывать ли для стандартного, если не указано/nil будет восприниматься как true",
+                    "description":"Should it be reset to the default if not specified? `nil` will be treated as `true`.",
+                    "description-ru":"Сбрасывать ли для стандартного, если не указано? `nil` будет восприниматься как `true`",
                     "required":false
                 }
-            ],
-            "return":[], "deprecated":false
+            ],"returns":[]
         }
-    }, 
-    "events":{}
+    }, "events":{}, 
+    "binds":{}
 }

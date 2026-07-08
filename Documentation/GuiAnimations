@@ -1,83 +1,100 @@
 {
-    "description":"Класс для анимаций, использующий пресеты",
     "type":"class",
-    "classes":["TClass","Preset","GuiAnimations"],
-    "writeSameMode":true,
+    "description":"Class for customizing animations, using presets",
+    "description-ru":"Класс для кастомизации анимаций, использующий пресеты",
+    "class":"GuiAnimations",
+    "inherited":["TClass","Preset"],
     "deprecated":false,
     "properties":{
         "ArrowRotateAnimationEnabled":{
             "type":"boolean",
-            "description":"Включена ли анимация поворота стрелочки",
-            "canChange":true,
+            "description":"Is the arrow rotation animation enabled?",
+            "description-ru":"Включена ли анимация поворота стрелочки",
+            "readonly":false,
             "deprecated":false
-        }, "OpenAnimationEnabled":{
+        },"OpenAnimationEnabled":{
             "type":"boolean",
-            "description":"Включена ли анимация открытия",
-            "canChange":true,
+            "description":"Is the opening animation enabled?",
+            "description-ru":"Включена ли анимация открытия",
+            "readonly":false,
             "deprecated":false
-        }, "EnableGroupAnimation":{
+        },"EnableGroupAnimation":{
             "type":"boolean",
-            "description":"Включена ли анимация открытия/закрытия групп",
-            "canChange":true,
+            "description":"Is the group open/close animation enabled?",
+            "description-ru":"Включена ли анимация открытия/закрытия групп",
+            "readonly":false,
             "deprecated":false
-        }, "EnableTextColorForToggleAnimation":{
+        },"EnableTextColorForToggleAnimation":{
             "type":"boolean",
-            "description":"Включена ли анимация смены цвет Toggle",
-            "canChange":true,
+            "description":"Color transition animation enabled toggle",
+            "description-ru":"Включена ли анимация смены цвет Toggle",
+            "readonly":false,
             "deprecated":false
-        }, "ArrowRotateTI":{
-            "type":"TweenInfo",
-            "description":"TweenInfo поворота стрелочки",
-            "canChange":true,
-            "deprecated":false
-        }, "OpenTI":{
-            "type":"TweenInfo",
-            "description":"TweenInfo открытия",
-            "canChange":true,
-            "deprecated":false
-        }, "TextColorForToggleTI":{
-            "type":"TweenInfo",
-            "description":"TweenInfo анимации цвета Toggle",
-            "canChange":true,
-            "deprecated":false
-        }, "GroupOpenArrowTI":{
-            "type":"TweenInfo",
-            "description":"TweenInfo анимации стрелочки групп",
-            "canChange":true,
-            "deprecated":false
-        }, "TWindowHideArrowTI":{
-            "type":"TweenInfo",
-            "description":"TweenInfo анимации стрелочки окна TWindow",
-            "canChange":true,
-            "deprecated":false
-        }, "EnableArrowTWindowAnimation":{
+        },"EnableArrowTWindowAnimation":{
             "type":"boolean",
-            "description":"Включена ли анимация прятанья окна",
-            "canChange":true,
+            "description":"Is the arrow animation enabled when showing or hiding the window?",
+            "description-ru":"Включена ли анимация стрелочки при показе/скрытии окна",
+            "readonly":false,
+            "deprecated":false
+        },"ArrowRotateTI":{
+            "type":"TweenInfo",
+            "description":"Arrow rotation TweenInfo",
+            "description-ru":"TweenInfo поворота стрелочки",
+            "readonly":false,
+            "deprecated":false
+        },"OpenTI":{
+            "type":"TweenInfo",
+            "description":"Open TweenInfo",
+            "description-ru":"TweenInfo открытия",
+            "readonly":false,
+            "deprecated":false
+        },"TextColorForToggleTI":{
+            "type":"TweenInfo",
+            "description":"Text Color Animation TweenInfo Toggle",
+            "description-ru":"TweenInfo анимации цвета текста Toggle",
+            "readonly":false,
+            "deprecated":false
+        },"GroupOpenArrowTI":{
+            "type":"TweenInfo",
+            "description":"TweenInfo for group arrow animations",
+            "description-ru":"TweenInfo анимации стрелочки групп",
+            "readonly":false,
+            "deprecated":false
+        },"TWindowHideArrowTI":{
+            "type":"TweenInfo",
+            "description":"TweenInfo for the TWindow showing or hiding arrow animation",
+            "description-ru":"TweenInfo анимации стрелочки показа/скрытия окна TWindow",
+            "readonly":false,
             "deprecated":false
         }
     }, "methods":{
         "ArrowRotateAnimation":{
-            "description":"Анимировать прокрутку стрелочки(как при открытии)",
-            "args":[{
+            "description":"Animate the arrow's rotation (like when opening).",
+            "description-ru":"Анимировать прокрутку стрелочки(как при открытии)",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"isOpened",
                     "type":"boolean",
-                    "description":"Состояние стрелки, если nil то возьмёт из _G.TimGui.Opened",
+                    "description":"The state of the arrow; if `nil`, it will be taken from `_G.TimGui.Opened`.",
+                    "description-ru":"Состояние стрелки, если `nil` то возьмёт из `_G.TimGui.Opened`",
                     "required":false
                 }
-            ],
-            "return":[], "deprecated":false
+            ],"returns":[]
         },"OpenAnimation":{
-            "description":"Анимировать открытие",
-            "args":[{
+            "description":"Animate open",
+            "description-ru":"Анимировать открытие",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"isOpened",
                     "type":"boolean",
-                    "description":"Состояние открытия, если nil то возьмёт из _G.TimGui.Opened",
+                    "description":"The state of open; if `nil`, it will be taken from `_G.TimGui.Opened`.",
+                    "description-ru":"Состояние открытия, если `nil` то возьмёт из `_G.TimGui.Opened`",
                     "required":false
                 }
-            ],
-            "return":[], "deprecated":false
+            ],"returns":[]
         }
-    }, 
-    "events":{}
+    }, "events":{}, 
+    "binds":{}
 }

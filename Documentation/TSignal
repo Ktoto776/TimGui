@@ -39,5 +39,6 @@
             "args":[],
             "returns":[]
         }
-    }, "events":{}
+    }, "events":{}, 
+    "binds":{}
 }

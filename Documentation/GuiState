@@ -1,60 +1,77 @@
 {
-    "description":"Класс для создания пресетов, например цветов и размеров",
     "type":"class",
-    "classes":["TClass","GuiState"],
-    "writeSameMode":true,
+    "description":"A class for changing the open button to a status state—such as 'loading' or 'error'—while blocking the open.",
+    "description-ru":"Класс для изменения кнопки открытия в статус, например 'загрузка' или 'ошибка'(Блокирует открытие)",
+    "class":"GuiState",
+    "inherited":["TClass"],
     "deprecated":false,
     "properties":{
         "ActiveState":{
             "type":"string",
-            "description":"Активный статус: Error/Loading/None",
-            "canChange":true,
+            "description":"Active state: Error/Loading/None",
+            "description-ru":"Активный статус: Error/Loading/None",
+            "readonly":false,
             "deprecated":false
-        },"LoadingSpeed":{
-            "type":"string",
-            "description":"За сколько секунд loading сделает круг.",
-            "canChange":true,
+        },"OpenEnabled":{
+            "type":"boolean",
+            "description":"Is open enabled?",
+            "description-ru":"Включено ли открытие?",
+            "readonly":false,
             "deprecated":false
         },"SayEnabled":{
             "type":"boolean",
-            "description":"Служит для включения/выключения надписи при наводке на кнопку открытия",
-            "canChange":true,
+            "description":"Used to toggle the label when hovering over the open button.",
+            "description-ru":"Служит для включения/выключения надписи при наводке на кнопку открытия",
+            "readonly":false,
             "deprecated":false
         },"Saying":{
-            "type":"Translator",
-            "description":"Текст из переводчика который будет появляться при наводе если SayEnabled==true",
-            "canChange":false,
+            "type":"class",
+            "class":"Translator",
+            "description":"Text from the translator that will appear on hover if `SayEnabled == true`",
+            "description-ru":"Текст из переводчика который будет появляться при наводе если `SayEnabled==true`",
+            "readonly":false,
+            "deprecated":false
+        },"LoadingSpeed":{
+            "type":"number",
+            "description":"How many seconds does it take for the loading indicator to complete a full circle?",
+            "description-ru":"За сколько секунд loading сделает круг.",
+            "readonly":false,
             "deprecated":false
         }
     }, "methods":{
-       "ResetToDefault":{
-            "description":"Сбрасывает статус на None",
+        "ResetToDefault":{
+            "description":"Reset values to default(ActiveStatus=`None`,OpenEnabled=`true`)",
+            "description-ru":"Сбрасывает на значения по умолчанию(ActiveStatus=`None`,OpenEnabled=`true`)",
+            "deprecated":false,
             "args":[],
-            "return":[], 
-            "deprecated":false
-        }, "GetPreset":{
-            "description":"Получает все значения в пресете",
-            "args":[{
-                    "name":"dontUseRBXValues",
-                    "type":"boolean",
-                    "description":"Если true, то возвращает массив с массивами [type,...]",
-                    "required":false
-                }
-            ],"return":[
-                {
-                    "name":"Preset",
-                    "description":"Загруженный пресет",
-                    "type":"table"
-                }
-            ], 
-            "deprecated":false
+            "returns":[]
+        },"SetLoadingState":{
+            "description":"Sets the status to loading(ActiveStatus=`Loading`)",
+            "description-ru":"Устанавливает статус на загрузку(ActiveStatus=`Loading`)",
+            "deprecated":false,
+            "args":[],
+            "returns":[]
+        },"SetErrorState":{
+            "description":"Sets the status to error(ActiveStatus=`Error`)",
+            "description-ru":"Устанавливает статус на ошибку(ActiveStatus=`Error`)",
+            "deprecated":false,
+            "args":[],
+            "returns":[]
         }
     }, "events":{
         "onStateChanged":{
-            "description":"Запускается когда изменился статус через любой метод в классе",
-            "type":"RBXScriptEvent",
-            "args":[],
-            "deprecated":false
+            "type":"RBXScriptSignal",
+            "description":"Fires when the status changes via any method in the class.",
+            "description-ru":"Запускается когда изменился статус через любой метод в классе",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"arg",
+                    "type":"any",
+                    "description":"",
+                    "description-ru":""
+                }
+            ]
         }
-    }
+    }, "binds":{}
 }

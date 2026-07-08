@@ -1,0 +1,61 @@
+{
+    "type":"class",
+    "description":"Class for create loggers and read logs",
+    "description-ru":"Класс для создания логгеров и чтения логов",
+    "class":"Loggers",
+    "deprecated":false,
+    "properties":{
+        "Log":{
+            "type":"table",
+            "dType":"table<number,LogMessage>",
+            "description":"Log of all loggers",
+            "description-ru":"Весь лог всех логгеров",
+            "readonly":false,
+            "deprecated":false
+        }
+    }, "methods":{
+        "IsA":{
+            "description":"Compare class name(Loggers) with 1 arg and returns result",
+            "description-ru":"Сравнивает имя класса(Loggers) с 1 параметром и выдаёт результат",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"className",
+                    "type":"string",
+                    "description":"Class name",
+                    "description-ru":"Имя класса",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"result",
+                    "type":"boolean",
+                    "description":"Is it a descendant of this class (or the class itself)",
+                    "description-ru":"Является ли потомком этого класса(или самим классом)"
+                }
+            ]
+        },"New":{
+            "description":"Creates new logger",
+            "description-ru":"Создаёт новый логгер",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"loggerName",
+                    "type":"string",
+                    "description":"Logger name",
+                    "description-ru":"Имя логгера",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"logger",
+                    "type":"class",
+                    "class":"TGuiLogger",
+                    "description":"Logger",
+                    "description-ru":"Логгер"
+                }
+            ]
+        }
+    }, "events":{}, 
+    "binds":{}
+}

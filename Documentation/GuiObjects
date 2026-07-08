@@ -1,174 +1,264 @@
 {
-    "description":"Класс для создания групп и кнопок. Находится в TimGui.GuiObjects",
     "type":"class",
-    "classes":["TClass","GuiObjects"],
-    "writeSameMode":true,
+    "description":"A class for creating groups and buttons. Located in TimGui.GuiObjects.",
+    "description-ru":"Класс для создания групп и кнопок. Находится в TimGui.GuiObjects",
+    "class":"Example",
+    "inherited":["TClass"],
     "deprecated":false,
     "properties":{}, 
     "methods":{
         "CreateGroup":{
-            "description":"Создаёт группу",
-            "args":[{
+            "description":"Creates group",
+            "description-ru":"Создаёт группу",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"Name",
                     "type":"string",
-                    "description":"Имя группы",
+                    "description":"Object name",
+                    "description-ru":"Имя обьекта",
                     "required":true
                 },{
                     "name":"Title",
-                    "type":"string | Translator | {langCode=string}",
-                    "description":"Название которое видит пользователь, если nil берёт из Name, string-только англ",
-                    "required":false
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"Object title",
+                    "description-ru":"Заголовок обьекта",
+                    "required":true
                 },{
                     "name":"Parent",
-                    "type":"GUIArchitecture",
-                    "description":"Parent для новой группы",
+                    "type":"class",
+                    "class":"GUIArchitecture",
+                    "description":"Parent of this object",
+                    "description-ru":"Parent для этого обьекта",
                     "required":false
                 }
-            ],
-            "return":[{
-                    "name":"response",
-                    "type":"TGroup",
-                    "description":"Глобальная группа"
+            ],"returns":[
+                {
+                    "name":"return",
+                    "type":"class",
+                    "class":"TGroup",
+                    "description":"Group",
+                    "description-ru":"Группа"
                 }
-            ], "deprecated":false
+            ]
         },"CreateToggle":{
-            "description":"Создаёт переключатель",
-            "args":[{
+            "description":"Creates toggle switch",
+            "description-ru":"Создаёт переключатель(тумблер)",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"Name",
                     "type":"string",
-                    "description":"Имя переключателя",
+                    "description":"Object name",
+                    "description-ru":"Имя обьекта",
                     "required":true
                 },{
                     "name":"Title",
-                    "type":"string | Translator | {langCode=string}",
-                    "description":"Название которое видит пользователь, если nil берёт из Name, string-только англ",
-                    "required":false
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"Object title",
+                    "description-ru":"Заголовок обьекта",
+                    "required":true
                 },{
                     "name":"Parent",
-                    "type":"GUIArchitecture",
-                    "description":"Parent для новой переключателя",
+                    "type":"class",
+                    "class":"GUIArchitecture",
+                    "description":"Parent of this object",
+                    "description-ru":"Parent для этого обьекта",
                     "required":false
                 },{
-                    "name":"function",
-                    "type":"(TButton)->()",
-                    "description":"Функция, для установки на клик, запускается с этой же кнопкой(нужно, чтобы не нагружать код лишними переменными)",
+                    "name":"callback",
+                    "type":"(self: TToggle)->()",
+                    "dType":"fun(self: TToggle)",
+                    "description":"The function assigned to the click action is triggered by that same toggle.",
+                    "description-ru":"Функция, для установки на клик, запускается с этим же переключателем",
                     "required":false
                 }
-            ],
-            "return":[{
-                    "name":"response",
-                    "type":"TToggle",
-                    "description":"Переключатель"
+            ],"returns":[
+                {
+                    "name":"return",
+                    "type":"class",
+                    "class":"TToggle",
+                    "description":"Toggle switch",
+                    "description-ru":"Переключатель(тумблер)"
                 }
-            ], "deprecated":false
+            ]
         },"CreateButton":{
-            "description":"Создаёт кнопку",
-            "args":[{
+            "description":"Creates button",
+            "description-ru":"Создаёт кнопку",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"Name",
                     "type":"string",
-                    "description":"Имя кнопки",
+                    "description":"Object name",
+                    "description-ru":"Имя обьекта",
                     "required":true
                 },{
                     "name":"Title",
-                    "type":"string | Translator | {langCode=string}",
-                    "description":"Название которое видит пользователь, если nil берёт из Name, string-только англ",
-                    "required":false
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"Object title",
+                    "description-ru":"Заголовок обьекта",
+                    "required":true
                 },{
                     "name":"Parent",
-                    "type":"GUIArchitecture",
-                    "description":"Parent для новой кнопки",
+                    "type":"class",
+                    "class":"GUIArchitecture",
+                    "description":"Parent of this object",
+                    "description-ru":"Parent для этого обьекта",
                     "required":false
                 },{
-                    "name":"function",
-                    "type":"(TButton)->()",
-                    "description":"Функция, для установки на клик, запускается с этой же кнопкой(нужно, чтобы не нагружать код лишними переменными)",
+                    "name":"callback",
+                    "type":"(self: TButton)->()",
+                    "dType":"fun(self: TButton)",
+                    "description":"The function assigned to the click action is triggered by that same button.",
+                    "description-ru":"Функция, для установки на клик, запускается с этой же кнопкой",
                     "required":false
                 }
-            ],
-            "return":[{
-                    "name":"response",
-                    "type":"TButton",
-                    "description":"Кнопка"
+            ],"returns":[
+                {
+                    "name":"return",
+                    "type":"class",
+                    "class":"TButton",
+                    "description":"Button",
+                    "description-ru":"Кнопка"
                 }
-            ], "deprecated":false
+            ]
         },"CreateText":{
-            "description":"Создаёт текст",
-            "args":[{
+            "description":"Creates just text",
+            "description-ru":"Создаёт просто текст",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"Name",
                     "type":"string",
-                    "description":"Имя текста",
+                    "description":"Object name",
+                    "description-ru":"Имя обьекта",
                     "required":true
                 },{
                     "name":"Title",
-                    "type":"string | Translator | {langCode=string}",
-                    "description":"Текст который видит пользователь, если nil берёт из Name, string-только англ",
-                    "required":false
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"Object title",
+                    "description-ru":"Заголовок обьекта",
+                    "required":true
                 },{
                     "name":"Parent",
-                    "type":"GUIArchitecture",
-                    "description":"Parent для нового текста",
+                    "type":"class",
+                    "class":"GUIArchitecture",
+                    "description":"Parent of this object",
+                    "description-ru":"Parent для этого обьекта",
                     "required":false
                 }
-            ],
-            "return":[{
-                    "name":"response",
-                    "type":"TText",
-                    "description":"Текст"
+            ],"returns":[
+                {
+                    "name":"return",
+                    "type":"class",
+                    "class":"TText",
+                    "description":"Text",
+                    "description-ru":"Текст"
                 }
-            ], "deprecated":false
+            ]
         },"CreateTextbox":{
-            "description":"Создаёт поле для ввода данных(TextBox), данные могут быть не только текстовыми",
-            "args":[{
+            "description":"Creates field for input data(TextBox), data can be not only 'string'",
+            "description-ru":"Создаёт поле для ввода данных(TextBox), данные могут быть не только текстовыми",
+            "deprecated":false,
+            "args":[
+                {
                     "name":"Name",
                     "type":"string",
-                    "description":"Имя",
+                    "description":"Object name",
+                    "description-ru":"Имя обьекта",
                     "required":true
                 },{
                     "name":"Title",
-                    "type":"string | Translator | {langCode=string}",
-                    "description":"Название которое видит пользователь, если nil берёт из Name, string-только англ",
-                    "required":false
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"Object title",
+                    "description-ru":"Заголовок обьекта",
+                    "required":true
                 },{
                     "name":"Parent",
-                    "type":"GUIArchitecture",
-                    "description":"Parent для нового для ввода данных",
+                    "type":"class",
+                    "class":"GUIArchitecture",
+                    "description":"Parent of this object",
+                    "description-ru":"Parent для этого обьекта",
                     "required":false
                 },{
-                    "name":"function",
-                    "type":"(TToggle)->()",
-                    "description":"Функция, для установки на смену значения, запускается с этим же TTextBox(нужно, чтобы не нагружать код лишними переменными)",
+                    "name":"callback",
+                    "type":"(self: TTextBox)->()",
+                    "dType":"fun(self: TTextBox)",
+                    "description":"The function for handling the value change is triggered with the same TTextBox.",
+                    "description-ru":"Функция, для установки на смену значения, запускается с этим же TTextBox",
                     "required":false
                 }
-            ],
-            "return":[{
-                    "name":"response",
-                    "type":"TTextBox",
-                    "description":"Поле для ввода данных"
+            ],"returns":[
+                {
+                    "name":"return",
+                    "type":"class",
+                    "class":"TTextBox",
+                    "description":"TextBox",
+                    "description-ru":"TextBox"
                 }
-            ], "deprecated":false
+            ]
+        },"CreateSequence":{
+            "description":"Creates a sequence button that allows you to create a sequence of actions",
+            "description-ru":"Создаёт кнопку-последовательность, благодаря которой можно создать последовательность действий",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Object name",
+                    "description-ru":"Имя обьекта",
+                    "required":true
+                },{
+                    "name":"Title",
+                    "type":"string | table | class",
+                    "class":"Translator",
+                    "dType":"string | table<string,string> | Translator",
+                    "description":"Object title",
+                    "description-ru":"Заголовок обьекта",
+                    "required":true
+                },{
+                    "name":"Parent",
+                    "type":"class",
+                    "class":"GUIArchitecture",
+                    "description":"Parent of this object",
+                    "description-ru":"Parent для этого обьекта",
+                    "required":false
+                },{
+                    "name":"callback",
+                    "type":"(self: TSequence)->()",
+                    "dType":"fun(self: TSequence)",
+                    "description":"The function for handling the value change",
+                    "description-ru":"Функция, для установки на смену значения",
+                    "required":false
+                },{
+                    "name":"Objects",
+                    "type":"table",
+                    "dType":"table<string,string> | table<string,table<string,string>>",
+                    "description":"A table of objects where the key is the button name and the value is either a translation table or a title.",
+                    "description-ru":"Таблица с обьектами, где ключ - имя кнопки, а значение - либо таблица переводов, либо заголовок",
+                    "required":false
+                }
+            ],"returns":[
+                {
+                    "name":"return",
+                    "type":"class",
+                    "class":"TSequence",
+                    "description":"Sequence button",
+                    "description-ru":"Кнопка-последовательность"
+                }
+            ]
         }
-    }, 
-    "events":{
-        "ChildAdded":{
-            "description":"Запускается когда добавлен новый ребёнок",
-            "type":"RBXScriptEvent",
-            "args":[{
-                    "name":"child",
-                    "type":"TGuiObject",
-                    "description":"TGuiObject который теперь в этой архитектуре"
-                }
-            ],
-            "deprecated":false
-        },"ChildRemoved":{
-            "description":"Запускается когда убран ребёнок",
-            "type":"RBXScriptEvent",
-            "args":[{
-                    "name":"child",
-                    "type":"TGuiObject",
-                    "description":"TGuiObject который теперь не в этой архитектуре"
-                }
-            ],
-            "deprecated":false
-        }
-    }
+    }, "events":{}, 
+    "binds":{}
 }

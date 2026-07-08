@@ -1,80 +1,100 @@
 {
-    "description":"Класс ConfirmationPrompt, для подтверждения действия. Отмена = закрытие окна",
     "type":"class",
-    "classes":["TClass","ConfigObject","TWindow","Prompt","ConfirmationPrompt"],
-    "writeSameMode":true,
+    "description":"The ConfirmationPrompt class is used to confirm an action. Cancel = closing the window.",
+    "description-ru":"Класс ConfirmationPrompt, для подтверждения действия. Отмена = закрытие окна",
+    "class":"ConfirmationPrompt",
+    "inherited":["TClass","ConfigObject","TWindow","Prompt"],
     "deprecated":false,
-    "RunArgs":[],
-    "InputArgs":[
-        {
-            "name":"result",
-            "type":"boolean?",
-            "description":"Выбрал ли пользователь confirm(false если выберет Reject), если окно закрыто, то nil"
-        }
-    ],
     "properties":{
         "Buttons":{
             "type":"Frame",
-            "description":"Frame в котором находятся кнопки 'подтвердить' и 'отменить'",
-            "canChange":false,
+            "description":"The frame containing the 'Confirm' and 'Reject' buttons.",
+            "description-ru":"Frame в котором находятся кнопки 'Подтвердить' и 'Отклонить'",
+            "readonly":true,
             "deprecated":false
         },"ConfirmButton":{
             "type":"TextButton",
-            "description":"TextButton кнопки подтверждения(берёт текст из .ConfirmText)",
-            "canChange":false,
+            "description":"Confirm button (takes text from `.ConfirmText`)",
+            "description-ru":"Кнопка подтверждения(берёт текст из `.ConfirmText`)",
+            "readonly":true,
             "deprecated":false
         },"ConfirmText":{
             "type":"class",
-            "class":"Translator",
-            "description":"Текст для кнопки подтверждения",
-            "canChange":false,
+            "class":"Translate",
+            "description":"Text for confirm button",
+            "description-ru":"Текст для кнопки подтверждения",
+            "readonly":true,
             "deprecated":false
         },"DescriptionLabel":{
             "type":"TextLabel",
-            "description":"TextLabel описания",
-            "canChange":true,
+            "description":"TextLabel description",
+            "description-ru":"TextLabel описания",
+            "readonly":true,
             "deprecated":false
         },"DescriptionTextSize":{
             "type":"number",
-            "description":"Размер текста описания",
-            "canChange":true,
-            "deprecated":false
-        },"SpecialDescriptionSizeBind":{
-            "type":"class",
-            "class":"Bind",
-            "description":"Bind для установки размера описанию. См Binder.TextPromptDescriptionSizeBind",
-            "canChange":true,
-            "deprecated":false
-        },"Value":{
-            "type":"string",
-            "description":"То что находится в TextBox(если изменить изменится и там)",
-            "canChange":true,
+            "description":"Description text size",
+            "description-ru":"Размер текста описания",
+            "readonly":false,
             "deprecated":false
         },"RejectButton":{
             "type":"TextButton",
-            "description":"TextButton для отклонения",
-            "canChange":false,
-            "deprecated":false
-        },"CancelEnabled":{
-            "type":"boolean",
-            "description":"Если true, то пользователь может отменить окно",
-            "canChange":true,
+            "description":"Reject button (takes text from `.RejectText`)",
+            "description-ru":"Кнопка отклонения(берёт текст из `.RejectText`)",
+            "readonly":true,
             "deprecated":false
         },"RejectText":{
             "type":"class",
-            "class":"Translator",
-            "description":"Текст для кнопки отклонения",
-            "canChange":false,
+            "class":"Translate",
+            "description":"Text for reject button",
+            "description-ru":"Текст для кнопки отклонения",
+            "readonly":true,
+            "deprecated":false
+        },"CancelEnabled":{
+            "type":"boolean",
+            "description":"Can the user cancel using the window close button?",
+            "description-ru":"Может ли пользователь отменить, через кнопку закрытия окна?",
+            "readonly":false,
             "deprecated":false
         }
-    }, 
-    "methods":{}, 
+    }, "methods":{}, 
     "events":{
         "OnSizeRefreshed":{
-            "description":"Запускается когда обновился размер(описания и тд) и позиции",
-            "type":"RBXScriptEvent",
-            "args":[],
-            "deprecated":false
+            "type":"RBXScriptSignal",
+            "description":"Fires when the size (description, etc.) and positions have been updated.",
+            "description-ru":"Запускается когда обновился размер(описания и тд) и позиции",
+            "deprecated":false,
+            "args":[]
+        }
+    }, 
+    "binds":{
+        "SpecialDescriptionSizeBind":{
+            "description":"Special Bind for setting description size. Working like Binder.ConfirmationPromptDescriptionSizeBind",
+            "description-ru":"Специальный Bind для установки размера описанию. Работает как в Binder.ConfirmationPromptDescriptionSizeBind",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"ConfirmationPrompt",
+                    "type":"class",
+                    "class":"ConfirmationPrompt",
+                    "description":"ConfirmationPrompt which needs to set description size",
+                    "description-ru":"ConfirmationPrompt которому нужно установить размер для описания",
+                    "required":true
+                },{
+                    "name":"startYPos",
+                    "type":"UDim",
+                    "description":"The Y position of start this object",
+                    "description-ru":"Позиция Y начала этого объекта",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"lastYPos",
+                    "type":"UDim",
+                    "description":"Y position after this object",
+                    "description-ru":"Y позиция после этого обьекта"
+                }
+            ]
         }
     }
 }

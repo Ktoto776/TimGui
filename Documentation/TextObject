@@ -1,17 +1,19 @@
 {
-    "description":"Класс для TextLabel, не устанавливает цвета самостоятельно",
     "type":"class",
-    "classes":["TClass","TGuiObject","TextObject"],
-    "writeSameMode":true,
+    "description":"Class using for create TGuiObjects with TextLabel(don't change colors)",
+    "description-ru":"Класс использющийся для создание TGuiObjects с TextLabel(не меняет цвета)",
+    "class":"TextObject",
+    "inherited":["TClass","TGuiObject"],
     "deprecated":false,
     "properties":{
         "TextLabel":{
-            "type":"Instance: TextLabel",
-            "description":"Основной TextLabel",
-            "canChange":false,
+            "type":"TextLabel",
+            "description":"TextLabel",
+            "description-ru":"TextLabel",
+            "readonly":true,
             "deprecated":false
         }
-    }, 
-    "methods":{}, 
-    "events":{}
+    }, "methods":{}, 
+    "events":{}, 
+    "binds":{}
 }

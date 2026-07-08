@@ -1,124 +1,455 @@
 {
-    "description":"Класс для замены стандартных функций.",
     "type":"class",
-    "classes":["TClass","Binder"],
-    "writeSameMode":true,
+    "description":"A class for global replacement of standard functions(or a collection of Binds)",
+    "description-ru":"Класс для глобальной замены стандартных функций(или же сборник Binds)",
+    "class":"Binder",
+    "inherited":["TClass"],
     "deprecated":false,
-    "properties":{
-        "ArrowAnimation":{
-            "type":"class",
-            "class":"Bind",
-            "description":"Бинд для Анимации стрелочки. Не забывай про TimGui.GuiAnimations.ArrowRotateAnimationEnabled(при выкл просто тп)/ArrowRotateTI. Параметры: Arrow:UIBase,isOpen:boolean",
-            "canChange":false,
-            "deprecated":false
-        },"OpenAnimation":{
-            "type":"class",
-            "class":"Bind",
-            "description":"Бинд для Анимации открытия. Не забывай про TimGui.GuiAnimations.OpenAnimationEnabled(при выкл просто тп)/OpenTI. Параметры: Frame:UIBase,isOpen:boolean",
-            "canChange":false,
-            "deprecated":false
-        },"TObjectSize":{
-            "type":"class",
-            "class":"Bind",
-            "description":"Бинд для установки размера кнопкам. Не забывай про TimGui.GuiSize.ButtonSize! Параметры: TGuiObject:TGuiObject",
-            "canChange":false,
-            "deprecated":false
-        },"ButtonPositionBind":{
-            "type":"class",
-            "class":"Bind",
-            "description":"Бинд для установки позиции кнопкам(или не глобальным группам). Не забывай про ВСЕ(ну или почти) параметры в TGuiObject. Параметры: child:TGuiObject,pos:UDim2 --pos=то что вернул, последний запуск бинда, по умолчанию следующая позиция",
-            "canChange":false,
-            "deprecated":false
-        },"GlobalGroupRefreshPosition":{
-            "type":"class",
-            "class":"Bind",
-            "description":"Бинд для установки позиции глобальным группам. Параметры: GlobalGroup:TGuiObject+GUIArchitecture,pos:UDim2 --pos=то что вернул, последний запуск бинда, по умолчанию следующая позиция",
-            "canChange":false,
-            "deprecated":false
-        },"GlobalGroupRefreshSize":{
-            "type":"class",
-            "class":"Bind",
-            "description":"Бинд для установки размера глобальным группам. Не забывай про TimGui.GuiSize.ButtonSize. Параметры: GlobalGroup:TGuiObject+GUIArchitecture",
-            "canChange":false,
-            "deprecated":false
-        },"RefreshingBind":{
-            "type":"class",
-            "class":"Bind",
-            "description":"Бинд для запуска обновлений. Параметры: Children:[TGuiObject,...], FromObject:TGuiObject--От какого обьекта начинать. Должно вернуть UDim2 с концом(после последнего обьекта)",
-            "canChange":false,
-            "deprecated":false
-        },"VisibleBind":{
-            "type":"class",
-            "class":"Bind",
-            "description":"Бинд для подсчёта видимости обьекта(свойство Visible работает поверх и его подсчитывать не нужно). Ну забудь про TGuiObject.Parent.Opened(и про проверки что Parent группа). Параметры: TGuiObject:TGuiObject--От какого обьекта начинать. Должно вернуть UDim2 с концом(после последнего обьекта)",
-            "canChange":false,
-            "deprecated":false
-        },"GroupOpenArrowBind":{
-            "type":"class",
-            "class":"Bind",
-            "description":"Бинд для анимации открытия не глобальных групп. Параметры: TGroup:TGroup. Не забудь TimGui.GuiAnimations.EnableGroupAnimation",
-            "canChange":false,
-            "deprecated":false
-        },"TextColorForToggle":{
-            "type":"class",
-            "class":"Bind",
-            "description":"Бинд для (анимации) смены цвета в Toggle в зависимости от значения. Параметры: Toggle:TTogle, enableAnimate:boolean--стоит ли анимировать(если false просто резкая смена цвета)",
-            "canChange":false,
-            "deprecated":false
-        },"RefreshTextBoxSizes":{
-            "type":"class",
-            "class":"Bind",
-            "description":"Бинд для установки позиций названия и поля для ввода. Параметры: TTextBox:TTextBox, TextLabel:TextLabel, TextBox: TextBox",
-            "canChange":false,
-            "deprecated":false
-        },"SequenceCreateObject":{
-            "type":"class",
-            "class":"Bind",
-            "description":"Бинд для создания обьекта. Параметры: TSequence:TSequence, Name:string, Position:number. Должен вернуть таблицу с Button:Frame, OnNewPosition:RBXScriptSignal(args= NewPos:number) и с функциями: SetTitle(Title:string)--устанавливает новое название; SetPosition(Pos:number)--устанавливает позицию; GetNextPos=()->(UDim2) возвращает позицию после этого обьекта",
-            "canChange":false,
-            "deprecated":false
-        },"WindowSizeRefresh":{
-            "type":"class",
-            "class":"Bind",
-            "description":"Бинд для обновления размера окна. Не забудь про TWindow.Size,TWindow.HeaderSize. Параметры: TWindow:TWindow.",
-            "canChange":false,
-            "deprecated":false
-        },"TWindowHideArrowAnimation":{
-            "type":"class",
-            "class":"Bind",
-            "description":"Анимация стрелочки для открытия/закрытия TWindow. Параметры: TWindow:TWindow.",
-            "canChange":false,
-            "deprecated":false
-        },"TextPromptDescriptionSizeBind":{
-            "type":"class",
-            "class":"Bind",
-            "description":"Бинд для установки размера описанию TextPrompt'а. Параметры: TextPrompt:TextPrompt, startYPos:UDim(Позиция начала описания). Должно вернуть самую нижнюю точку y(UDim)",
-            "canChange":false,
-            "deprecated":false
-        },"MenuItemRefreshSizeBind":{
-            "type":"class",
-            "class":"Bind",
-            "description":"Бинд для установки размера MenuItem. Параметры: MenuItem:MenuItem. Не забывай про GuiSize.MenuItemYSize. Должно вернуть XOffset(number)",
-            "canChange":false,
-            "deprecated":false
-        },"MenuItemRefreshPositionBind":{
-            "type":"class",
-            "class":"Bind",
-            "description":"Бинд для установки позиции MenuItem. Параметры: MenuItem:MenuItem,YPosition:UDim, pos:number(позиция в Parent:GetChildren). Должно вернуть Y(UDim) -- Y после этого обьекта",
-            "canChange":false,
-            "deprecated":false
-        }
-    }, "methods":{
+    "properties":{}, 
+    "methods":{
         "New":{
-            "description":"Создаёт класс Bind",
+            "description":"Creates a new Bind class",
+            "description-ru":"Создаёт новый класс Bind",
+            "deprecated":false,
             "args":[],
-            "return":[{
+            "returns":[
+                {
                     "name":"Bind",
-                    "type":"Bind",
-                    "description":"Класс Bind"
+                    "type":"class",
+                    "class":"Bind",
+                    "description":"Bind class",
+                    "description-ru":"Класс Bind"
                 }
-            ], "deprecated":false
+            ]
         }
-    }, 
-    "events":{}
+    }, "events":{}, 
+    "binds":{
+        "ArrowAnimation":{
+            "description":"Bind for arrow animation. (Don't forget TimGui.GuiAnimation.ArrowRotateEnabled/ArrowRotateTI)",
+            "description-ru":"Бинд для анимации стрелочки. Не забывай про TimGui.GuiAnimations.ArrowRotateAnimationEnabled(при выкл просто тп)/ArrowRotateTI.",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"Arrow",
+                    "type":"UIBase",
+                    "description":"UI arrow object",
+                    "description-ru":"UI объект стрелочки",
+                    "required":true
+                },{
+                    "name":"isOpen",
+                    "type":"boolean",
+                    "description":"Status",
+                    "description-ru":"Состояние",
+                    "required":true
+                }
+            ],"returns":[]
+        },"OpenAnimation":{
+            "description":"Bind for open animation. (Don't forget TimGui.GuiAnimations.OpenAnimationEnabled/OpenTI)",
+            "description-ru":"Бинд для анимации открытия. Не забывай про TimGui.GuiAnimations.OpenAnimationEnabled(при выкл просто тп)/OpenTI.",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"Frame",
+                    "type":"UIBase",
+                    "description":"UI object",
+                    "description-ru":"UI объект",
+                    "required":true
+                },{
+                    "name":"isOpen",
+                    "type":"boolean",
+                    "description":"Status",
+                    "description-ru":"Состояние",
+                    "required":true
+                }
+            ],"returns":[]
+        },"TObjectSize":{
+            "description":"Bind for set object size. (Don't forget TimGui.GuiSize.ButtonSize)",
+            "description-ru":"Бинд для установки размера объектам. Не забывай про TimGui.GuiSize.ButtonSize!",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"TGuiObject",
+                    "type":"class",
+                    "class":"TGuiObject",
+                    "description":"TGuiObject which needs to change size",
+                    "description-ru":"TGuiObject которому нужно установить размер",
+                    "required":true
+                }
+            ],"returns":[]
+        },"ButtonPositionBind":{
+            "description":"Bind for set object position(and not global TGroups)",
+            "description-ru":"Бинд для установки позиции объектам(и не глобальным группам)",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"child",
+                    "type":"class",
+                    "class":"TGuiObject",
+                    "description":"TGuiObject which needs to change position",
+                    "description-ru":"Объект для установки позиций",
+                    "required":true
+                },{
+                    "name":"pos",
+                    "type":"UDim2",
+                    "description":"The position of this object (what it returned, the last launch of the bind)",
+                    "description-ru":"Позиция этого объекта (то что вернул, последний запуск бинда)",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"nextPos",
+                    "type":"UDim2",
+                    "description":"Position after that object",
+                    "description-ru":"Позиция после этого объекта"
+                }
+            ]
+        },"GlobalGroupRefreshPosition":{
+            "description":"Bind for set global groups position",
+            "description-ru":"Бинд для установки позиции глобальным группам. ",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"GlobalGroup",
+                    "type":"class",
+                    "class":"TGroup",
+                    "description":"Group which needs to change position",
+                    "description-ru":"Группа которой нужно установить позицию",
+                    "required":true
+                },{
+                    "name":"pos",
+                    "type":"UDim2",
+                    "description":"The position of this object (what it returned, the last launch of the bind)",
+                    "description-ru":"Позиция этого объекта (то что вернул, последний запуск бинда)",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"nextPos",
+                    "type":"UDim2",
+                    "description":"Position after that group",
+                    "description-ru":"Позиция после этой группы"
+                }
+            ]
+        },"GlobalGroupRefreshSize":{
+            "description":"Bind for set global groups position",
+            "description-ru":"Бинд для установки размера глобальным группам",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"group",
+                    "type":"class",
+                    "class":"TGroup",
+                    "description":"Group which needs to change size",
+                    "description-ru":"Группа для установки размера",
+                    "required":true
+                }
+            ],"returns":[]
+        },"RefreshingBind":{
+            "description":"Bind for running updates button positions",
+            "description-ru":"Бинд для запуска обновлений позиций кнопок.",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"children",
+                    "type":"table",
+                    "dType":"table<number,TGuiObject>",
+                    "description":"Group which needs to change position",
+                    "description-ru":"Группа которой нужно установить позицию",
+                    "required":true
+                },{
+                    "name":"FromObject",
+                    "type":"class",
+                    "class":"TGuiObject",
+                    "description":"The position of this object (what it returned, the last launch of the bind)",
+                    "description-ru":"Позиция этого объекта (то что вернул, последний запуск бинда)",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"lastPos",
+                    "type":"UDim2",
+                    "description":"Last position",
+                    "description-ru":"Последняя позиция"
+                }
+            ]
+        },"VisibleBind":{
+            "description":"Bind for counting the view of the object(the Visible property works over and counting is not necessary).",
+            "description-ru":"Бинд для подсчёта видимости обьекта(свойство Visible работает поверх и его подсчитывать не нужно).",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"Object",
+                    "type":"class",
+                    "class":"TGuiObject",
+                    "description":"TGuiObject which needs to count visible",
+                    "description-ru":"Объект для подсчёта видимости",
+                    "required":true
+                }
+            ],"returns":[]
+        },"GroupOpenArrowBind":{
+            "description":"Bind for not global group animation",
+            "description-ru":"Бинд для анимации открытия не глобальных групп. Не забудь TimGui.GuiAnimations.EnableGroupAnimation",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"group",
+                    "type":"class",
+                    "class":"TGroup",
+                    "description":"TGroup which needs to animate",
+                    "description-ru":"TGroup которую нужно анимировать",
+                    "required":true
+                }
+            ],"returns":[]
+        },"TextColorForToggle":{
+            "description":"",
+            "description-ru":"Бинд для (анимации) смены цвета в Toggle в зависимости от значения.",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"Toggle",
+                    "type":"class",
+                    "class":"TToggle",
+                    "description":"TToggle for animation",
+                    "description-ru":"TToggle для анимации",
+                    "required":true
+                },{
+                    "name":"enableAnimation",
+                    "type":"boolean",
+                    "description":"whether animate(if false simply sharp change color)",
+                    "description-ru":"стоит ли анимировать(если false просто резкая смена цвета)",
+                    "required":true
+                }
+            ],"returns":[]
+        },"RefreshTextBoxSizes":{
+            "description":"Bind to set the position of the name and input field.",
+            "description-ru":"Бинд для установки позиций названия и поля для ввода.",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"TextBox",
+                    "type":"class",
+                    "class":"TTextBox",
+                    "description":"TTextBox for set the position of the name and input field.",
+                    "description-ru":"TTextBox для установки позиций названия и поля для ввода.",
+                    "required":true
+                },{
+                    "name":"TextLabel",
+                    "type":"TextLabel",
+                    "description":"TextLabel of this TTextBox",
+                    "description-ru":"TextLabel этого TTextBox",
+                    "required":true
+                },{
+                    "name":"TextBox",
+                    "type":"TextBox",
+                    "description":"TextBox of this TTextBox",
+                    "description-ru":"TextBox этого TTextBox",
+                    "required":true
+                }
+            ],"returns":[]
+        },"WindowSizeRefresh":{
+            "description":"Bind for button size refresh. Don't forget: TWindow.Size,TWindow.HeaderSize",
+            "description-ru":"Бинд для обновления размера окна. Не забудь про TWindow.Size,TWindow.HeaderSize",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"Window",
+                    "type":"class",
+                    "class":"TWindow",
+                    "description":"TWindow which needs to refresh size",
+                    "description-ru":"TWindow которому нужно изменить размер.",
+                    "required":true
+                }
+            ],"returns":[]
+        },"TWindowHideArrowAnimation":{
+            "description":"Hide arrow animation",
+            "description-ru":"Анимация стрелочки скрытия",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"Window",
+                    "type":"class",
+                    "class":"TWindow",
+                    "description":"TWindow which needs to animate hide arrow",
+                    "description-ru":"TWindow которому нужно анимировать стрелку скрытия.",
+                    "required":true
+                }
+            ],"returns":[]
+        },"TextPromptDescriptionSizeBind":{
+            "description":"Bind for setting description size for TextPrompt",
+            "description-ru":"Бинд для установки размера описанию TextPrompt'а.",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"TextPrompt",
+                    "type":"class",
+                    "class":"TextPrompt",
+                    "description":"TextPrompt which needs to set description size",
+                    "description-ru":"TextPrompt которому нужно установить размер для описания",
+                    "required":true
+                },{
+                    "name":"startYPos",
+                    "type":"UDim",
+                    "description":"The Y position of start this object",
+                    "description-ru":"Позиция Y начала этого объекта",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"lastYPos",
+                    "type":"UDim",
+                    "description":"Y position after this object",
+                    "description-ru":"Y позиция после этого обьекта"
+                }
+            ]
+        },"KeyPromptDescriptionSizeBind":{
+            "description":"Bind for setting description size for KeyPrompt",
+            "description-ru":"Бинд для установки размера описанию KeyPrompt'а.",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"KeyPrompt",
+                    "type":"class",
+                    "class":"KeyPrompt",
+                    "description":"KeyPrompt which needs to set description size",
+                    "description-ru":"KeyPrompt которому нужно установить размер для описания",
+                    "required":true
+                },{
+                    "name":"startYPos",
+                    "type":"UDim",
+                    "description":"The Y position of start this object",
+                    "description-ru":"Позиция Y начала этого объекта",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"lastYPos",
+                    "type":"UDim",
+                    "description":"Y position after this object",
+                    "description-ru":"Y позиция после этого обьекта"
+                }
+            ]
+        },"ConfirmationPromptDescriptionSizeBind":{
+            "description":"Bind for setting description size for ConfirmationPrompt",
+            "description-ru":"Бинд для установки размера описанию ConfirmationPrompt'а.",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"ConfirmationPrompt",
+                    "type":"class",
+                    "class":"ConfirmationPrompt",
+                    "description":"ConfirmationPrompt which needs to set description size",
+                    "description-ru":"ConfirmationPrompt которому нужно установить размер для описания",
+                    "required":true
+                },{
+                    "name":"startYPos",
+                    "type":"UDim",
+                    "description":"The Y position of start this object",
+                    "description-ru":"Позиция Y начала этого объекта",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"lastYPos",
+                    "type":"UDim",
+                    "description":"Y position after this object",
+                    "description-ru":"Y позиция после этого обьекта"
+                }
+            ]
+        },"MenuItemRefreshPositionBind":{
+            "description":"Bind for setting MenuItem position.",
+            "description-ru":"Бинд для установки позиции MenuItem.",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"MenuItem",
+                    "type":"class",
+                    "class":"MenuItem",
+                    "description":"MenuItem which needs to set position",
+                    "description-ru":"MenuItem которому нужно установить позицию",
+                    "required":true
+                },{
+                    "name":"YPosition",
+                    "type":"UDim",
+                    "description":"The Y position of start this object (what it returned, the last launch of the bind)",
+                    "description-ru":"Позиция Y начала этого объекта (то что вернул, последний запуск бинда)",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"lastYPos",
+                    "type":"UDim",
+                    "description":"Y position after this object",
+                    "description-ru":"Y позиция после этого обьекта"
+                }
+            ]
+        },"MenuItemRefreshSizeBind":{
+            "description":"Bind for setting MenuItem size. Don't forget: GuiSize.MenuItemYSize.",
+            "description-ru":"Бинд для установки размера MenuItem. Не забывай про GuiSize.MenuItemYSize.",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"MenuItem",
+                    "type":"class",
+                    "class":"MenuItem",
+                    "description":"MenuItem which needs to set size",
+                    "description-ru":"MenuItem которому нужно установить размер",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"XSizeOffset",
+                    "type":"number",
+                    "description":"X Offset Size",
+                    "description-ru":"X Offset Размер"
+                }
+            ]
+        },"SequenceCreateObject":{
+            "description":"Bind for creating Sequence object",
+            "description-ru":"Бинд для создания обьекта в Sequence.",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"TSequence",
+                    "type":"class",
+                    "class":"TSequence",
+                    "description":"TSequence in which an object needs to be created.",
+                    "description-ru":"TSequence в котором нужно создать обьект",
+                    "required":true
+                },{
+                    "name":"Name",
+                    "type":"string",
+                    "description":"",
+                    "description-ru":"",
+                    "required":true
+                },{
+                    "name":"Position",
+                    "type":"number",
+                    "description":"Start position",
+                    "description-ru":"Стартовая позиция",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"SequenceObject",
+                    "type":"table",
+                    "description":"A table with a `Button: Frame` and an `OnNewPosition: RBXScriptSignal(args= NewPos: number)` event, along with the following functions: `SetTitle(Title: string)` (sets a new title), `SetPosition(Pos: number)` (sets the position), and `GetNextPos=()->(UDim2)` (returns the position following this object).",
+                    "description-ru":"Таблица с Button:Frame, OnNewPosition:RBXScriptSignal(args= NewPos:number) и с функциями: SetTitle(Title:string)--устанавливает новое название; SetPosition(Pos:number)--устанавливает позицию; GetNextPos=()->(UDim2) возвращает позицию после этого обьекта"
+                }
+            ]
+        },"SequenceOpenArrowBind":{
+            "description":"Bind for arrow animation",
+            "description-ru":"Бинд для анимации стрелочки",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"TSequence",
+                    "type":"class",
+                    "class":"TSequence",
+                    "description":"TSequence in which needs animate arrow",
+                    "description-ru":"TSequence в котором нужно анимировать стрелочку",
+                    "required":true
+                }
+            ],"returns":[]
+        }
+    }
 }

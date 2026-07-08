@@ -1,16 +1,19 @@
 {
-    "description":"Класс меню.",
     "type":"class",
-    "classes":["TClass","MenuObject","Menu"],
-    "writeSameMode":true,
+    "description":"Just menu",
+    "description-ru":"Просто меню",
+    "class":"Menu",
+    "inherited":["TClass","MenuObject"],
     "deprecated":false,
     "properties":{
         "Position":{
             "type":"UDim2",
-            "description":"Позиция меню",
-            "canChange":true,
+            "description":"Position of menu",
+            "description-ru":"Позиция меню",
+            "readonly":false,
             "deprecated":false
         }
     }, "methods":{}, 
-    "events":{}
+    "events":{}, 
+    "binds":{}
 }

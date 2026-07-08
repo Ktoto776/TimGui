@@ -1,32 +1,40 @@
 {
-    "description":"Класс для кастомизации заголовка",
     "type":"class",
-    "classes":["TClass","Preset","Header"],
-    "writeSameMode":true,
+    "description":"Class for customizing the header",
+    "description-ru":"Класс для кастомизации заголовка",
+    "class":"Header",
+    "inherited":["TClass"],
     "deprecated":false,
     "properties":{
         "SeparatorSize":{
             "type":"number",
-            "description":"Ширина разделителя(может быть 0 или меньше)",
-            "canChange":true,
+            "description":"Separator width (can be 0 or less)",
+            "description-ru":"Ширина разделителя(может быть 0 или меньше)",
+            "readonly":false,
             "deprecated":false
         },"FirstName":{
-            "type":"string",
-            "description":"Первая часть Имени",
-            "canChange":true,
+            "type":"class",
+            "class":"Translator",
+            "description":"First part of the Name",
+            "description-ru":"Первая часть Имени",
+            "readonly":true,
             "deprecated":false
         },"SecondName":{
-            "type":"string",
-            "description":"Вторая часть Имени",
-            "canChange":true,
+            "type":"class",
+            "class":"Translator",
+            "description":"Second part of the Name",
+            "description-ru":"Вторая часть Имени",
+            "readonly":true,
             "deprecated":false
         },"InfoValue":{
             "type":"class",
             "class":"ValueBinder",
-            "description":"Информация в заголовке(По умолчанию время).Если не string, то конвертирует в string. Listeners: 1-clock, 2-fps",
-            "canChange":false,
+            "description":"Header information (default: time). If not a string, it is converted to a string. Listeners: 1-clock, 2-fps",
+            "description-ru":"Информация в заголовке(По умолчанию время).Если не string, то конвертирует в string. Listeners: 1-clock, 2-fps",
+            "readonly":true,
             "deprecated":false
         }
-    }, "methods":{}, 
-    "events":{}
+    }, "methods":{},
+    "events":{}, 
+    "binds":{}
 }

@@ -1,0 +1,61 @@
+{
+    "type":"class",
+    "description":"Log message",
+    "description-ru":"Сообщения лога",
+    "class":"LogMessage",
+    "writeSameMode":false,
+    "deprecated":false,
+    "properties":{
+        "time":{
+            "type":"number",
+            "description":"Time of creation log",
+            "description-ru":"Время создания лога",
+            "readonly":false,
+            "deprecated":false
+        },"type":{
+            "type":"string",
+            "description":"Log type",
+            "description-ru":"Тип лога",
+            "readonly":false,
+            "deprecated":false
+        },"result":{
+            "type":"string",
+            "description":"Log result, containing all the information, can be used in print",
+            "description-ru":"Результат лога, содержащий всю информацию, который можно использовать в print",
+            "readonly":false,
+            "deprecated":false
+        },"place":{
+            "type":"string",
+            "description":"Place name",
+            "description-ru":"Названия места",
+            "readonly":false,
+            "deprecated":false
+        },"data":{
+            "type":"any",
+            "description":"Data",
+            "description-ru":"Данные",
+            "readonly":false,
+            "deprecated":false
+        },"stringData":{
+            "type":"any",
+            "description":"Data as a string",
+            "description-ru":"Данные в виде строки",
+            "readonly":false,
+            "deprecated":false
+        },"scriptName":{
+            "type":"string",
+            "description":"Script name",
+            "description-ru":"Имя скрипта",
+            "readonly":false,
+            "deprecated":false
+        },"loggerId":{
+            "type":"number",
+            "description":"Logger Id",
+            "description-ru":"Id логгера",
+            "readonly":false,
+            "deprecated":false
+        }
+    }, "methods":{},
+    "events":{}, 
+    "binds":{}
+}
