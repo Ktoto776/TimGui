@@ -1,0 +1,65 @@
+---@diagnostic disable: undefined-type
+---@meta
+---@class Colors : Preset : TClass
+--[[Основной цвет(текст/картинка или другое) кнопки в кнопки ]]
+---@field ButtonOnButtonMain Color3
+--[[Цвет текста TextBox'а на окне ]]
+---@field OnTWindowTextBoxTextColor Color3
+--[[Цвет картинки у кнопки закрытия окна TWindow ]]
+---@field TWindowCloseColor Color3
+--[[Цвет кнопки в кнопке ]]
+---@field ButtonOnButtonBackground Color3
+--[[Цвет видимого отступа не глобальных групп ]]
+---@field GroupVisibleIndent Color3
+--[[Цвет фона в заголовке ]]
+---@field HeaderBackgroundColor Color3
+--[[Цвет текста кнопок ]]
+---@field TextColor Color3
+--[[Цвет текста кнопки отмены на окне(обычно промтах) ]]
+---@field OnTWindowCancelButtonTextColor Color3
+--[[Цвет фона MenuItem в Menu ]]
+---@field MenuBackgroundTextColor Color3
+--[[Цвет текста MenuItem в Menu ]]
+---@field MenuItemTextColor Color3
+--[[Цвет фона у кнопки закрытия TWindow, появляющийся при наводке ]]
+---@field TWindowBackgroundCloseColor Color3
+--[[Цвет текста для Обьектов без фона, например: TText ]]
+---@field TTextColor Color3
+--[[Цвет текста MenuText в Menu ]]
+---@field MenuTextTextColor Color3
+--[[Цвет кнопки подтверждения на окне(обычно промтах) ]]
+---@field OnTWindowConfirmButtonColor Color3
+--[[Цвет фона TextBox'а на окне ]]
+---@field OnTWindowTextBoxBackgroundColor Color3
+--[[Цвет текстов на TWindow'ах ]]
+---@field OnTWindowTextColor Color3
+--[[Цвет текста кнопки подтверждения на окне(обычно промтах) ]]
+---@field OnTWindowConfirmButtonTextColor Color3
+--[[Цвет стрелочки для статуса открытия не глобальных групп ]]
+---@field GroupOpenArrowColor Color3
+--[[Цвет разделителя в заголовке ]]
+---@field HeaderSeparatorColor Color3
+--[[Цвет кнопки отмены на окне(обычно промтах) ]]
+---@field OnTWindowCancelButtonColor Color3
+--[[Цвет фона кнопок ]]
+---@field ButtonBackground Color3
+--[[Цвет фона у Header в TWindow ]]
+---@field TWindowHeaderBackgroundColor Color3
+--[[Цвет фона ]]
+---@field MainBackgroundColor Color3
+--[[Цвет первой части имени в заголовке ]]
+---@field HeaderFirstNameColor Color3
+--[[Цвет стрелочки открытия ]]
+---@field ArrowColor Color3
+--[[Цвет фона в Группах ]]
+---@field GroupsBackgroundColor Color3
+--[[Цвет текста заголовка в TWindow ]]
+---@field TWindowHeaderTextColor Color3
+--[[Цвет второй части имени в заголовке ]]
+---@field HeaderSecondNameColor Color3
+--[[Цвет ошибки на кнопке статуса(вместо кнопки открытия) ]]
+---@field ErrorColor Color3
+--[[Цвет фона у TWindow ]]
+---@field TWindowBackgroundColor Color3
+--[[Класс для цветов, использующий пресет ]]
+Colors={}

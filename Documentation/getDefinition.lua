@@ -1,6 +1,7 @@
 ---@diagnostic disable: undefined-global
 local data = _G.DefinitionSetup
 local DocumentationPath = (data and data.DocsPath) or "./TimGUI-V3/Documentation/"
+local makeDefFolder = (not data) or data.makeDefintionFolder
 
 -- create .OUT folder
 local outFolder = DocumentationPath.."OUT/"
@@ -58,10 +59,13 @@ end
 --GLOBALS
 local function savefile(name,val)
     return writefile(outFolder..name..".d.lua",val)
+end local function savepartfile(name,classname,val)
+    makefolder(outFolder..name)
+    writefile(outFolder..name.."/"..classname..".d.lua",val)
 end
 makefolder(outFolder)
 local russianLang = data and data.russianLang russianLang = true
-local packs = (data and data.packages) or {"TimGui"}
+local packs = (data and data.packages) or {"TimGui","BetterGUI","EasterEggs"}
 local tab = "    "
 
 --PACKAGES
@@ -69,7 +73,9 @@ for _,packName in pairs(packs) do
     local packPath = DocumentationPath..packName.."/"
     local result = "---@diagnostic disable: undefined-type\n"
     result = result.."---@meta"
-
+    if packName=="EasterEggs" and russianLang then --ЭЭЭ, ты должен был это заметить уже в готовом файле
+        result = "---О! Ты чтоле новые пасхалки решил сделать? XD\n"..result
+    end
     local function NewProperty(k,v)
         local prop = ""
         -- Set Description
@@ -110,14 +116,15 @@ for _,packName in pairs(packs) do
                     desc = arg["description-ru"]
                 end if not desc then
                     desc = ""
-                end prop = prop.."---@param "..arg.name.." "..(arg.dType or arg.class or arg.type).." "..desc
+                end
+                prop = prop.."---@param "..arg.name
                 if not arg.required then
                     prop = prop.."?"
-                end prop = prop.."\n"
+                end prop = prop.." "..(arg.dType or arg.class or arg.type).." "..desc.."\n"
             end
         end -- Returns
         if v.returns then
-            for _,ret in pairs(v.args) do
+            for _,ret in pairs(v.returns) do
                 local desc = ret.description
                 if not desc or russianLang then
                     desc = ret["description-ru"]
@@ -131,7 +138,7 @@ for _,packName in pairs(packs) do
         return prop
     end
     local ScriptSignal = [[
-    %Signal% = {}
+    local %Signal% = {}
     ---@param callback fun(%callback2%)
     ---@return RBXScriptConnection
     function %Signal%:Connect(callback:(%callback%)->()) end
@@ -153,7 +160,7 @@ for _,packName in pairs(packs) do
             prop = prop.."--@deprecated\n"
         end -- MAIN
         prop = prop..ScriptSignal
-        local signalName = k.."_"..v.type
+        local signalName = string.sub(k,1,5).."_"..string.sub(v.type,1,2)
         prop = string.gsub(prop,"%%Signal%%",signalName)
         local args,args2 = "",""
         local returnArgs = ""
@@ -176,14 +183,14 @@ for _,packName in pairs(packs) do
     ---@return TClass name
     -- callback: Arg:any, returnCallback RunF: ---@param, Bind: string
     local BindInstance = [[
-    %Bind% = {}
+    local %Bind% = {}
     ---@param callback fun(%callback%)
     ---*return (%returnArgsDesc%)*
     function %Bind%:Bind(callback:(%callback%)->()) end
     %RunF%
     function %Bind%:Run(%callback%) end
 
-    %Bind%_OnRun = {}
+    local %Bind%_OnRun = {}
     ---@param callback fun(%callback%)
     ---@return RBXScriptConnection
     function %Bind%_OnRun:Connect(callback:(%callback%)->()) end
@@ -207,7 +214,7 @@ for _,packName in pairs(packs) do
             prop = prop.."--@deprecated\n"
         end -- MAIN + type
         prop = prop..BindInstance
-        local BindName = k.."_Bind"
+        local BindName = string.sub(k,1,5).."_Bind"
         prop = string.gsub(prop,"%%Bind%%",BindName)
         local callback,retCall,RunF = "","",""
         for k,v in pairs(v.args) do
@@ -237,7 +244,10 @@ for _,packName in pairs(packs) do
             Object = "---@class "..data.class
             -- Set inherited
             if data.inherited then
-                Object = Object.." : "..table.concat(data.inherited," : ")
+                local reverse = {}
+                for _,v in pairs(data.inherited) do
+                    table.insert(reverse,1,v)
+                end Object = Object.." : "..table.concat(reverse," : ")
             end
         else --Set type
             Object = "---@type "..data.type
@@ -288,7 +298,12 @@ for _,packName in pairs(packs) do
         else Name = string.sub(v,string.len(packPath)+1)
         end
         if string.sub(Name,1,1)~="." then
-            result = result.."\n\n"..NewObject(Name)
+            if makeDefFolder then
+                savepartfile(packName,Name,result.."\n"..NewObject(Name))
+            else result = result.."\n\n"..NewObject(Name)
+            end
         end
-    end savefile(packName,result)
+    end if not makeDefFolder then
+        savefile(packName,result)
+    end
 end

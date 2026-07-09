@@ -1,0 +1,80 @@
+{
+    "type":"class",
+    "description":"A class for importing other packages",
+    "description-ru":"Класс для импорта других пакетов",
+    "class":"Packages",
+    "inherited":["TClass"],
+    "deprecated":false,
+    "properties":{}, 
+    "methods":{
+        "GetPackageRawCode":{
+            "description":"Returns a raw package code",
+            "description-ru":"Возвращает сырой код пакета",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Package name",
+                    "description-ru":"Имя пакета",
+                    "required":true
+                },{
+                    "name":"dontUseCached",
+                    "type":"boolean",
+                    "description":"Don't return cached data?",
+                    "description-ru":"Не возвращать кэшированные данные?",
+                    "required":false
+                }
+            ],"returns":[
+                {
+                    "name":"code",
+                    "type":"string",
+                    "description":"Package code",
+                    "description-ru":"Код пакета"
+                }
+            ]
+        },"GetPackageData":{
+            "description":"Returns a raw package code",
+            "description-ru":"Возвращает сырой код пакета",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Package name",
+                    "description-ru":"Имя пакета",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"data",
+                    "type":"class",
+                    "class":"PackageData",
+                    "description":"Package code",
+                    "description-ru":"Код пакета"
+                }
+            ]
+        },"Require":{
+            "description":"Require this package",
+            "description-ru":"Запускает этот пакет, возвращая его данные",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"Name",
+                    "type":"string",
+                    "description":"Package name",
+                    "description-ru":"Имя пакета",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"data",
+                    "type":"any",
+                    "description":"Package",
+                    "description-ru":"Пакет"
+                }
+            ]
+        }
+    }, "events":{}, 
+    "binds":{}
+}

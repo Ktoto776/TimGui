@@ -1,0 +1,31 @@
+---@diagnostic disable: undefined-type
+---@meta
+---@class GuiAnimations : Preset : TClass
+--[[TweenInfo анимации стрелочки показа/скрытия окна TWindow ]]
+---@field TWindowHideArrowTI TweenInfo
+--[[Включена ли анимация смены цвет Toggle ]]
+---@field EnableTextColorForToggleAnimation boolean
+--[[Включена ли анимация стрелочки при показе/скрытии окна ]]
+---@field EnableArrowTWindowAnimation boolean
+--[[Включена ли анимация открытия/закрытия групп ]]
+---@field EnableGroupAnimation boolean
+--[[TweenInfo открытия ]]
+---@field OpenTI TweenInfo
+--[[Включена ли анимация поворота стрелочки ]]
+---@field ArrowRotateAnimationEnabled boolean
+--[[Включена ли анимация открытия ]]
+---@field OpenAnimationEnabled boolean
+--[[TweenInfo анимации стрелочки групп ]]
+---@field GroupOpenArrowTI TweenInfo
+--[[TweenInfo поворота стрелочки ]]
+---@field ArrowRotateTI TweenInfo
+--[[TweenInfo анимации цвета текста Toggle ]]
+---@field TextColorForToggleTI TweenInfo
+--[[Класс для кастомизации анимаций, использующий пресеты ]]
+GuiAnimations={}
+--[[Анимировать открытие ]]
+---@param isOpened? boolean Состояние открытия, если `nil` то возьмёт из `_G.TimGui.Opened`
+function GuiAnimations:OpenAnimation(isOpened) end
+--[[Анимировать прокрутку стрелочки(как при открытии) ]]
+---@param isOpened? boolean Состояние стрелки, если `nil` то возьмёт из `_G.TimGui.Opened`
+function GuiAnimations:ArrowRotateAnimation(isOpened) end

@@ -1,0 +1,23 @@
+---@diagnostic disable: undefined-type
+---@meta
+---@class Assets : Preset : TClass
+--[[rbxassetid:// на значок закрывания окна ]]
+---@field CloseTWindow string
+--[[rbxassetid:// на стрелочку статуса TSequence ]]
+---@field SequenceOpenArrow string
+--[[rbxassetid:// на стрелочку статуса группы ]]
+---@field GroupOpenArrow string
+--[[rbxassetid:// на значок скрывания/раскрывания окна ]]
+---@field HideTWindow string
+--[[rbxassetid:// на значок создания Keybind'а ]]
+---@field AddKeybind string
+--[[rbxassetid:// на картинку ошибки ]]
+---@field Error string
+--[[rbxassetid:// на картинку загрузки ]]
+---@field Loading string
+--[[rbxassetid:// на значок удаления Keybind'а ]]
+---@field DeleteKeybindObject string
+--[[rbxassetid:// на стрелочку открытия ]]
+---@field Arrow string
+--[[Класс для ресурсов, использующий пресеты ]]
+Assets={}

@@ -1,0 +1,16 @@
+---@diagnostic disable: undefined-type
+---@meta
+---@class Header : TClass
+--[[Вторая часть Имени ]]
+--*[ReadOnly]*
+---@field SecondName TTranslator
+--[[Ширина разделителя(может быть 0 или меньше) ]]
+---@field SeparatorSize number
+--[[Первая часть Имени ]]
+--*[ReadOnly]*
+---@field FirstName TTranslator
+--[[Информация в заголовке(По умолчанию время).Если не string, то конвертирует в string. Listeners: 1-clock, 2-fps ]]
+--*[ReadOnly]*
+---@field InfoValue ValueBinder
+--[[Класс для кастомизации заголовка ]]
+Header={}

@@ -1,0 +1,46 @@
+{
+    "type":"class",
+    "description":"Header title easter egg",
+    "description-ru":"Пасхалка-заголовок",
+    "class":"EasterHeaderTitle",
+    "inherited":["TClass"],
+    "deprecated":false,
+    "properties":{
+        "Chance":{
+            "type":"number",
+            "description":"The chance of getting this specific title—where 100 is the common one.",
+            "description-ru":"Шанс на выпадение именно этого заголовка, где 100 - обычный.",
+            "readonly":false,
+            "deprecated":false
+        },"FirstPart":{
+            "type":"class",
+            "class":"TTranslator",
+            "description":"First part of header",
+            "description-ru":"Первая часть заголовка",
+            "readonly":true,
+            "deprecated":false
+        },"SecondPart":{
+            "type":"class",
+            "class":"TTranslator",
+            "description":"Second part of header",
+            "description-ru":"Вторая часть заголовка",
+            "readonly":true,
+            "deprecated":false
+        },"Id":{
+            "type":"string",
+            "description":"The name of this Easter egg, which must be unique",
+            "description-ru":"Название этой пасхалки, которое должно быть уникально",
+            "readonly":true,
+            "deprecated":false
+        }
+    }, "methods":{}, 
+    "events":{
+        "OnSelected":{
+            "type":"RBXScriptSignal",
+            "description":"Fires when this easter has been selected",
+            "description-ru":"Запускается если была выбрана эта пасхалка",
+            "deprecated":false,
+            "args":[]
+        }
+    }, "binds":{}
+}

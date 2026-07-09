@@ -190,6 +190,20 @@
             "description-ru":"Глобально открытая группа(типо та которая в группах слево)",
             "readonly":true,
             "deprecated":false
+        },"Classes":{
+            "type":"class",
+            "class":"TClasses",
+            "description":"Class for create other class",
+            "description-ru":"Класс для создания других классов👍",
+            "readonly":true,
+            "deprecated":false
+        },"Packages":{
+            "type":"class",
+            "class":"Packages",
+            "description":"A class for importing other packages",
+            "description-ru":"Класс для импорта других пакетов",
+            "readonly":true,
+            "deprecated":false
         }
     }, "methods":{
         "IsA":{
@@ -242,6 +256,32 @@
                     "type":"string",
                     "description":"Link to receive.",
                     "description-ru":"Ссылка для получение.",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"response",
+                    "type":"string?",
+                    "description":"Result",
+                    "description-ru":"Результат"
+                }
+            ]
+        }, "BetterHttpGet":{
+            "description":"Gets data from the internet. If it starts with './', it gets it from the script directory. But with attempts on error",
+            "description-ru":"Получает данные из инета. Если начинается на './', то получает из директории скрипта. Но с попытками при ошибке",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"URL",
+                    "type":"string",
+                    "description":"Link to receive.",
+                    "description-ru":"Ссылка для получение.",
+                    "required":true
+                },{
+                    "name":"attemptsCount",
+                    "type":"number",
+                    "description":"Count of attempts",
+                    "description-ru":"Количество попыток",
                     "required":false
                 }
             ],"returns":[
@@ -303,7 +343,7 @@
     }, "events":{
         "OnOpened":{
             "type":"RBXScriptSignal",
-            "description":"Runs if TimGui.Opened has changed",
+            "description":"Fires if TimGui.Opened has changed",
             "description-ru":"Запускается если TimGui.Opened изменился",
             "deprecated":false,
             "args":[
@@ -316,13 +356,13 @@
             ]
         },"OnExit":{
             "type":"RBXScriptSignal",
-            "description":"Runs if TimGui:Exit() is running to close the GUI.",
+            "description":"Fires if TimGui:Exit() is running to close the GUI.",
             "description-ru":"Запускается если TimGui:Exit() запущен, чтобы закрыть GUI",
             "deprecated":false,
             "args":[]
         },"LanguageChanged":{
             "type":"RBXScriptSignal",
-            "description":"Runs if language preferences have changed",
+            "description":"Fires if language preferences have changed",
             "description-ru":"Запускается если языковые предпочтения изменились",
             "deprecated":false,
             "args":[
@@ -336,8 +376,14 @@
             ]
         },"GlobalOpenedGroupChanged":{
             "type":"RBXScriptSignal",
-            "description":"Triggered when a globally open group changes.",
+            "description":"Fires when a globally open group changes.",
             "description-ru":"Запускается когда глобально открытая группа изменилась",
+            "deprecated":false,
+            "args":[]
+        },"OnLoaded":{
+            "type":"RBXScriptSignal",
+            "description":"Fires when TimGui is fully loaded.",
+            "description-ru":"Запускается когда TimGui полностью загружен",
             "deprecated":false,
             "args":[]
         }

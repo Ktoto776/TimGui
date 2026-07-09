@@ -1,0 +1,24 @@
+---@diagnostic disable: undefined-type
+---@meta
+---@class TKey : TClass
+--[[Имя кнопки например A/1/KEnter/K1(K1 - Keypad One)/LeftMB(LeftMB-Left Mouse Button) ]]
+---@field KeyName string
+--[[Эта кнопка мыши? ]]
+--*[ReadOnly]*
+---@field IsMouseKey boolean
+--[[Словарь с зажатыми кнопками, типо {LeftCTRL=true,LeftShift=false} ]]
+---@field Holding table
+--[[KeyCode этой кнопки клавиатуры ]]
+---@field KeyCode Enum.KeyCode
+--[[Пустой ли TKey(тоесть, пользователь не может повторить этот TKey?) ]]
+--*[ReadOnly]*
+---@field IsEmpty boolean
+--[[Цифра кнопки на мыши(если это не кнопка мыши = 0), работает как в роблоксе 1-Левая,2-Правая,3-Колёсико ]]
+---@field MouseKey number
+--[[Полное имя кнопки, типо: LeftCTRL + T ]]
+---@field Name string
+--[[Эта кнопка клавиатуры? ]]
+--*[ReadOnly]*
+---@field IsKeyboardKey boolean
+--[[Класс - кнопка, нужен для получения нажатой кнопки ]]
+TKey={}

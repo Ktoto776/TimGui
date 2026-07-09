@@ -1,0 +1,41 @@
+---@diagnostic disable: undefined-type
+---@meta
+---@class GuiInstances : TClass
+--[[Разделитель в заголовке ]]
+--*[ReadOnly]*
+---@field HeaderSeparator TextLabel
+--[[Иконка которая появляется при ошибке вместо кнопки открытия ]]
+--*[ReadOnly]*
+---@field ErrorStateImage ImageLabel
+--[[Frame со статусами и кнопкой открытия ]]
+--*[ReadOnly]*
+---@field State Frame
+--[[Текст над кнопкой открытия, появляющийся при наводке на эту кнопку ]]
+--*[ReadOnly]*
+---@field Saying Frame
+--[[Главный Frame, на котором расположено само меню со всеми кнопками ]]
+--*[ReadOnly]*
+---@field Main Frame
+--[[Информация в заголовке ]]
+--*[ReadOnly]*
+---@field HeaderInfo TextLabel
+--[[Главный ScreenGui ]]
+--*[ReadOnly]*
+---@field ScreenGui ScreenGui
+--[[Заголовок ]]
+--*[ReadOnly]*
+---@field Header Frame
+--[[Первая часть текста заголовка ]]
+--*[ReadOnly]*
+---@field FirstHeaderName TextLabel
+--[[Иконка открытия(обычно,стрелочка) ]]
+--*[ReadOnly]*
+---@field OpenImage ImageLabel
+--[[Вторая часть текста заголовка ]]
+--*[ReadOnly]*
+---@field SecondHeaderName TextLabel
+--[[Иконка которая появляется при загрузке вместо кнопки открытия ]]
+--*[ReadOnly]*
+---@field LoadingStateImage ImageLabel
+--[[Класс с GUI обьектами ]]
+GuiInstances={}

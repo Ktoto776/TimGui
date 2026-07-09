@@ -1,0 +1,36 @@
+{
+    "type":"class",
+    "description":"A collection of functions that were not included in the main script.",
+    "description-ru":"Сборник функций, которые не вошли в основной скрипт",
+    "class":"BetterGUI",
+    "inherited":["TClass"],
+    "deprecated":false,
+    "properties":{}, 
+    "methods":{
+        "ConvertToTranslator":{
+            "description":"Converts the value to TTranslator.",
+            "description-ru":"Конвертирует значение в TTranslator",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"value",
+                    "type":"class | any",
+                    "class":"TTranslator",
+                    "dType":"TTranslator | table<string,string> | any",
+                    "description":"It doesn't matter if TTranslator doesn't change anything—for instance, if TClass returns a TTranslator with '...'—or if the table loads it into a new TTranslator.",
+                    "description-ru":"Значение, если TTranslator, менять ничего не будет. Если TClass вернёт TTranslator с '...'. А если таблица загрузит её в новый TTranslator",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"return",
+                    "type":"class",
+                    "class":"TTranslator",
+                    "description":"TTranslator",
+                    "description-ru":"Переводчик"
+                }
+            ]
+        }
+    }, "events":{}, 
+    "binds":{}
+}

@@ -1,0 +1,11 @@
+---@diagnostic disable: undefined-type
+---@meta
+---@class MenuText : MenuItem : TClass
+--[[Обьект соддержащий текст(здесь - TextLabel). Тоже самое что и `.TextLabel`, но для совместимости ]]
+--*[ReadOnly]*
+---@field TextObject TextLabel
+--[[Основной TextLabel этого меню обьекта ]]
+--*[ReadOnly]*
+---@field TextLabel TextLabel
+--[[Текст в меню ]]
+MenuText={}

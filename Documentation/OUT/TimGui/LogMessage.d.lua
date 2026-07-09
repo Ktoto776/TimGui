@@ -1,0 +1,21 @@
+---@diagnostic disable: undefined-type
+---@meta
+---@class LogMessage
+--[[Названия места ]]
+---@field place string
+--[[Результат лога, содержащий всю информацию, который можно использовать в print ]]
+---@field result string
+--[[Id логгера ]]
+---@field loggerId number
+--[[Данные ]]
+---@field data any
+--[[Имя скрипта ]]
+---@field scriptName string
+--[[Тип лога ]]
+---@field type string
+--[[Время создания лога ]]
+---@field time number
+--[[Данные в виде строки ]]
+---@field stringData any
+--[[Сообщения лога ]]
+LogMessage={}

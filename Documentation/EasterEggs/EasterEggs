@@ -1,0 +1,42 @@
+{
+    "type":"class",
+    "description":"Class for creating easter eggs",
+    "description-ru":"Класс для создания пасхалок",
+    "class":"EasterEggs",
+    "inherited":["TClass"],
+    "deprecated":false,
+    "properties":{
+        "DefaultIsLoaded":{
+            "type":"boolean",
+            "description":"Are the standard Easter eggs loaded?",
+            "description-ru":"Загружены ли стандартные пасхалки?",
+            "readonly":false,
+            "deprecated":false
+        }
+    }, 
+    "methods":{
+        "CreateHeaderTitle":{
+            "description":"Creates easter egg of header title",
+            "description-ru":"Создаёт пасхалку заголовка",
+            "deprecated":false,
+            "args":[
+                {
+                    "name":"Id",
+                    "type":"string",
+                    "description":"Id of this easter egg",
+                    "description-ru":"Id этой пасхалки",
+                    "required":true
+                }
+            ],"returns":[
+                {
+                    "name":"EHT",
+                    "type":"class",
+                    "class":"EasterHeaderTitle",
+                    "description":"Header title easter egg",
+                    "description-ru":"Пасхалка-заголовок"
+                }
+            ]
+        }
+    }, "events":{}, 
+    "binds":{}
+}

@@ -1,0 +1,81 @@
+---@diagnostic disable: undefined-type
+---@meta
+---@class GuiSize : Preset : TClass
+--[[Размер видимой части отступа не глобальных групп ]]
+---@field NotGlobalGroupVisibleIndent UDim
+--[[Размер для иконки статуса открытия не TSequence. Scale - Y размер кнопки ]]
+---@field SequenceOpenImageSize UDim
+--[[X Размер разделения окна конфигураций(между списком конфигов и выбранным конфигом) ]]
+---@field ConfigsSeparatorSize UDim
+--[[Y Позиция основы ]]
+---@field YPosition UDim
+--[[X Позиция основы ]]
+---@field XPosition UDim
+--[[Размер текста MenuItem'а ]]
+---@field MenuItemTextSize number
+--[[Размер TextBox'а в TextPrompt'е ]]
+---@field TextBoxPromptSize UDim2
+--[[Размер Frame с кнопками в TextPrompt'е ]]
+---@field TextPromptButtonsSize UDim2
+--[[XAlign, к чему прикрепить кнопки и TextBox в TextPrompt(0-лево,0.5-центр,1-право) ]]
+---@field TextPromptXAnchor number
+--[[Радиус скруглённых углов у кнопок ]]
+---@field ButtonCornerRadius UDim
+--[[Размер текста для описания в TextPrompt ]]
+---@field TextPromptDescriptionTextSize number
+--[[Размер видимой части отступа не TSequence ]]
+---@field NotGlobalSequenceVisibleIndent UDim
+--[[Толщина ScrollBar'а в Keybinder'е ]]
+---@field KeybinderScrollBarThickness number
+--[[Отступ промта сверху и снизу ]]
+---@field PromptYIndent UDim2
+--[[Ширина основы ]]
+---@field Width UDim
+--[[Y Размер нижних кнопок в Keybinder'е ]]
+---@field KeybinderButtonsYSize UDim
+--[[Размер текста MenuText'а ]]
+---@field MenuTextTextSize number
+--[[Размер заголовка в Keybinder'е ]]
+---@field KeybinderTitleSize UDim2
+--[[Y размер Keybind в Keybinder ]]
+---@field KeybindYSize UDim
+--[[Радиус скругления Keybind ]]
+---@field KeybindCornerRadius UDim
+--[[Размер Y MenuItem'а ]]
+---@field MenuItemYSize number
+--[[Размер для иконки статуса открытия не глобальных групп. Scale - Y размер кнопки ]]
+---@field GroupOpenImageSize UDim
+--[[Радиус скругления кнопок внутри Keybind ]]
+---@field KeybindButtonsCornerRadius UDim
+--[[Высота заголовка окна ]]
+---@field HeaderSize UDim
+--[[Y Размер конфигураций в размере конфигуратора ]]
+---@field ConfigsWindowConfigsSize UDim
+--[[Радиус скругления верхних углов(заголовка) TWindow ]]
+---@field TWindowHeaderCornerRadius UDim
+--[[Размер невидимой части отступа не TSequence(только с одной стороны) ]]
+---@field NotGlobalSequenceIndent UDim
+--[[Размер шрифта текста над кнопкой открытия(Scale - размер кнопки) ]]
+---@field SayingFontSize UDim
+--[[Точка крепления основного Frame ]]
+---@field AnchorPoint Vector2
+--[[Размер обьектов в TSequence ]]
+---@field SequenceObjectSize UDim2
+--[[Включена ли стандартная установка размеру и позиции основному Frame ]]
+---@field DefaultPositionEnabled boolean
+--[[Размер невидимой части отступа не глобальных групп(только с одной стороны) ]]
+---@field NotGlobalGroupIndent UDim
+--[[Ширина скролла глобальных групп ]]
+---@field GroupsSize UDim
+--[[Радиус скругления нижних углов(заголовка) TWindow ]]
+---@field TWindowCornerRadius UDim
+--[[Размер заголовка(названия) выбранного конфига в конфигураторе ]]
+---@field ConfigsTitleSize UDim2
+--[[X размер списка конфигураций(слево) в конфигураторе ]]
+---@field ConfigsWindowConfigsFrameSize UDim
+--[[Размер кнопки для перемещения для обьекта TSequence. Scale - Y всего frame ]]
+---@field SequenceObjectGrabSize UDim
+--[[Высота основы(без заголовка) ]]
+---@field Height UDim
+--[[Класс для кастомизации размеров интерфейса ]]
+GuiSize={}

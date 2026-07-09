@@ -39,6 +39,7 @@ if _G.TimGui~=nil then
     end
 end
 -- CODE
+OnLoadedEvent = Instance.new("BindableEvent")
 local UIS = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local TextService = game:GetService("TextService")
@@ -106,6 +107,8 @@ TimGui.OnExit = OnExitEvent.Event
 table.insert(TimGuiReadOnly,"OnExit")
 TimGui.Closed = false
 table.insert(TimGuiReadOnly,"Closed")
+TimGui.OnLoaded = OnLoadedEvent.Event
+table.insert(TimGuiReadOnly,"OnLoaded")
 function TimGui:Exit()
     TimGuiRaw.Closed = true
     OnExitEvent:Fire()
@@ -159,6 +162,17 @@ if type(HttpGet)~="function" then
 end function TimGui:HttpGet(URL:string)
     if type(URL)~="string" then error("URL is incorrect") end
     return HttpGet(URL)
+end function TimGui:BetterHttpGet(URL:string,attempts:number?)
+    if type(URL)~="string" then error("URL is incorrect") end
+    local lastErr
+    for i=1,(attempts or 5) do
+        if i~=1 then task.wait(1) end
+        local s,r = pcall(HttpGet,URL)
+        if s then
+            return r
+        else lastErr = r
+        end
+    end error(r)
 end
 -- #FIND_POINT Logger
 local LoggersReadOnly = {"Log"}
@@ -1314,7 +1328,7 @@ function Classes:CreateMenuItem(Name:string,Title:{[string]:string}|string?)
             local oldTitle = Title
             Title = Classes:CreateTranslator(Name)
             Title:Load(oldTitle)
-        elseif not Title:IsA("Translator") then
+        elseif not Title:IsA("TTranslator") then
             Title = Classes:CreateTranslator(Name)
         end
     end local MenuItem = Classes:CreateTClass(nil,nil,{"Parent"})
@@ -1679,7 +1693,7 @@ local function TGuiObjectClass(Name:string,Title:string|{string}?,Parent:any?,Ob
             local oldTitle = Title
             Title = Classes:CreateTranslator("...")
             Title:Load(oldTitle)
-        elseif not Title:IsA("Translator") then
+        elseif not Title:IsA("TTranslator") then
             Title = Classes:CreateTranslator("...")
         end
     end if type(Object)~="table" then Object = Classes:CreateTClass(nil,nil,writeSameModeExcludeForTGuiObjects) end
@@ -2311,13 +2325,13 @@ function GuiObjects:CreateToggle(Name:string,Title:string|{[string]:string}?,Par
     Button.Type = "Toggle"
     Button:SetReadOnly("Type")
     Button.Value = false
+    Button.DefaultValue = false
     Button:GetPropertyChangedEvent("DefaultValue"):Connect(function()
         Button:AddPropertyToConfigSave("Value",Button.DefaultValue)
-    end) Button.DefaultValue = false
-    task.spawn(function()
+    end) task.spawn(function()
         task.wait() if not Button:GetReadOnly("DefaultValue") then
             Button.DefaultValue = Button.Value
-        end
+        end Button:AddPropertyToConfigSave("Value",Button.DefaultValue)
     end) Button.Keybinder.Event:Connect(function(EventType)
         if EventType=="change" then
             Button.Value = not Button.Value
@@ -2475,18 +2489,21 @@ function GuiObjects:CreateTextbox(Name:string,Title:string|{[string]:string}?,Pa
     Textbox = MakeTextBoxObject(Textbox)
     Textbox:AddClassName("TTextBox")
     Textbox.Value = ""
+    Textbox.DefaultValue = ""
+    local isSaving = false
     Textbox:GetPropertyChangedEvent("DefaultValue"):Connect(function()
+        if not isSaving then return end
         Textbox:AddPropertyToConfigSave("Value",Textbox.DefaultValue)
-    end) Textbox.DefaultValue = ""
-    task.spawn(function()
+    end) task.spawn(function()
         task.wait() if not Textbox:GetReadOnly("DefaultValue") then
             Textbox.DefaultValue = Textbox.Value
-        end
+        end isSaving = true
+        Textbox:AddPropertyToConfigSave("Value",Textbox.DefaultValue)
     end) Textbox.InputType = "string"
     Textbox:GetPropertyChangedEvent("InputType"):Connect(function()
         if InputTypes[Textbox.InputType] then
-            Textbox.DefaultValue = InputTypes[Textbox.InputType](Textbox.DefaultValue,false)
             Textbox.Value = InputTypes[Textbox.InputType](Textbox.Value,false)
+            Textbox.DefaultValue = InputTypes[Textbox.InputType](Textbox.DefaultValue,false)
         else Textbox.InputType = "string"
         end Textbox.ButtonsEnabled = table.find(ButtonsEnabledForInpType,Textbox.InputType)~=nil
     end) local changedEvent = Instance.new("BindableEvent")
@@ -2498,7 +2515,7 @@ function GuiObjects:CreateTextbox(Name:string,Title:string|{[string]:string}?,Pa
             Textbox.Value = val
         end if Textbox.TextBox:IsFocused() then
             Textbox.TextBox.Text = InputTypes[Textbox.InputType](Textbox.TextBox.Text,true,true)
-        end
+        end 
     end) Textbox.TextBox.FocusLost:Connect(function(input)
         Textbox.TextBox.Text = InputTypes[Textbox.InputType](Textbox.TextBox.Text,true)
     end) Textbox:GetPropertyChangedEvent("Value"):Connect(function()
@@ -2758,7 +2775,7 @@ function GuiObjects:CreateSequence(Name:string,Title:string|{[string]:string}?,P
             if Title.__type~="TClass" then
                 local new = Classes:CreateTranslator(Name)
                 new:Load(Title) Title = new
-            elseif not Title:IsA("Translator") then
+            elseif not Title:IsA("TTranslator") then
                 logger:critical_error("Sequence:AddObject","Title is incorrect")
             end
         else Title = Classes:CreateTranslator(Name)
@@ -3250,7 +3267,7 @@ function Classes:CreateTWindow(Name:string,Title:string|{[string]:string}?,disab
             local oldTitle = Title
             Title = Classes:CreateTranslator(Name)
             Title:Load(oldTitle)
-        elseif not Title:IsA("Translator") then
+        elseif not Title:IsA("TTranslator") then
             Title = Classes:CreateTranslator(Name)
         end
     end logger:debug("Classes:CreateTWindow","Creating window: "..Name)
@@ -3616,7 +3633,7 @@ function Classes:CreatePrompt(PromptType:string,Name:string,Title: string | {[st
             local oldTitle = Description
             Description = Classes:CreateTranslator("")
             Description:Load(oldTitle)
-        elseif not Description:IsA("Translator") then
+        elseif not Description:IsA("TTranslator") then
             Description = Classes:CreateTranslator("")
         end
     end local Prompt = Classes:CreateTWindow(Name,Title,disableDefaultConfigSettingsRefresh)
@@ -4598,7 +4615,7 @@ function KeyBinding:CreateKeybinder(Name:string,Title:string|{[string]:string}?,
             local oldTitle = Title
             Title = Classes:CreateTranslator("")
             Title:Load(oldTitle)
-        elseif not Title:IsA("Translator") then
+        elseif not Title:IsA("TTranslator") then
             Title = Classes:CreateTranslator("")
         end
     end
@@ -4668,7 +4685,7 @@ function KeyBinding:CreateKeybinder(Name:string,Title:string|{[string]:string}?,
                 local oldTitle = Title
                 Title = Classes:CreateTranslator(name)
                 Title:Load(oldTitle)
-            elseif not Title:IsA("Translator") then
+            elseif not Title:IsA("TTranslator") then
                 Title = Classes:CreateTranslator(name)
             end
         end local EventType = {}
@@ -5211,6 +5228,7 @@ function TimGui:GetTScript(ScriptName:string,allowLoadTwice:boolean?)
 end
 -- #FIND_POINT PACKAGES
 local Packages = Classes:CreateTClass()
+Packages:AddClassName("Packages")
 local RawCodes = {}
 local function GetPackageCode(Name:string)
     Name = Name..".lua"
@@ -5218,7 +5236,7 @@ local function GetPackageCode(Name:string)
     local isLocalPackage = SavesIsSupported and isfile(LocalPath)
     if isLocalPackage then
         return readfile(LocalPath)
-    else return TimGui:HttpGet("./Packages/"..Name)
+    else return TimGui:BetterHttpGet("./Packages/"..Name)
     end
 end
 function Packages:GetPackageRawCode(Name:string,dontUseCached:boolean)
@@ -5289,7 +5307,7 @@ function Packages:Require(Name:string)
         return requiredPackages[Name][2]
     else logger:critical_error("Error to load package",pack[2])
     end
-end
+end TimGui.Packages = Packages
 
 local s,Groups = pcall(function()
     local Groups = MakeGUIArchitectureClass()
@@ -5314,6 +5332,8 @@ end) if not s then
     logger:critical_error("MAIN","Error to create Settings group: \n"..tostring(Groups))
 end
 --MAIN --------
+s,v = pcall(function() Packages:Require("EasterEggs") end)
+if not s then logger:error(v,"Error to load easter eggs") end
 local s,Settings = pcall(function()
     local Settings = TimGui.Groups:CreateGroup("Settings")
     TimGui.GlobalOpenedGroup = Settings
@@ -5406,7 +5426,11 @@ testG:CreateTextbox("Test cfg on number box",{
 }).InputType = "number"
 task.wait(2.5)
 State:ResetToDefault()
-return TimGui
+
+task.spawn(function()
+    task.wait()
+    OnLoadedEvent:Fire()
+end) return TimGui
 --[[
 План:
     Сделать старые функции:
